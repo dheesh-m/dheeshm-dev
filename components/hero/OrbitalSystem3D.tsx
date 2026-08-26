@@ -159,8 +159,9 @@ export default function OrbitalSystem3D() {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
-    const W = canvas.width;
-    const H = canvas.height;
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.width / dpr;
+    const H = canvas.height / dpr;
     const cx = W / 2;
     const cy = H / 2;
     const camZ = CAM_Z;
@@ -179,10 +180,10 @@ export default function OrbitalSystem3D() {
     const mouseTiltX = rotateX(-my * 0.25 + Math.sin(t * 0.04) * 0.08);
     const globalMat = mulMat(mouseTiltX, autoRotY);
 
-    // Clear
+    // Clear full logical canvas
     ctx.clearRect(0, 0, W, H);
 
-    // Atmospheric glow around center (Toned down)
+    // Atmospheric glow around center (Toned down & centered)
     const glowR = Math.min(W, H) * 0.40;
     const atmosGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
     if (light) {
@@ -199,23 +200,23 @@ export default function OrbitalSystem3D() {
     ctx.fill();
 
     // ── 1. Rigorous Safe Orbital Boundaries Calculation ──────────────────────
-    // Responsive safe area inset (Desktop: 10%, Tablet: 12%, Mobile: 15%)
-    const insetPct = W >= 1024 ? 0.10 : (W >= 640 ? 0.12 : 0.15);
-    const marginPad = 48; // Accounts for sphere radius + glow + label width
-    const safeHalfW = Math.max(80, (W * (1 - 2 * insetPct)) * 0.5 - marginPad);
-    const safeHalfH = Math.max(50, (H * (1 - 2 * insetPct)) * 0.5 - marginPad);
+    const isMobile = W < 640;
+    const insetPct = W >= 1024 ? 0.08 : (W >= 640 ? 0.10 : 0.08);
+    const marginPad = isMobile ? 26 : 44; // Accounts for sphere radius + glow + label width
+    const safeHalfW = Math.max(65, (W * (1 - 2 * insetPct)) * 0.5 - marginPad);
+    const safeHalfH = Math.max(55, (H * (1 - 2 * insetPct)) * 0.5 - marginPad);
 
-    // Divide by max perspective projection expansion factor (~1.30)
+    // Divide by max perspective projection expansion factor (~1.25)
     // so that even at the closest z-depth to camera, projected coordinates stay inside safe area
-    const MAX_PERSPECTIVE_FACTOR = 1.30;
+    const MAX_PERSPECTIVE_FACTOR = 1.25;
     const maxSafeRadiusX = safeHalfW / MAX_PERSPECTIVE_FACTOR;
     const maxSafeRadiusY = safeHalfH / MAX_PERSPECTIVE_FACTOR;
 
-    // Strict Orbital Hierarchy: Outer: 88%, Middle: 68%, Inner: 48%
+    // Strict Orbital Hierarchy: Outer: 90%, Middle: 70%, Inner: 50%
     const orbitRadii = [
-      { rx: maxSafeRadiusX * 0.88, ry: maxSafeRadiusY * 0.88 },
-      { rx: maxSafeRadiusX * 0.68, ry: maxSafeRadiusY * 0.68 },
-      { rx: maxSafeRadiusX * 0.48, ry: maxSafeRadiusY * 0.48 },
+      { rx: maxSafeRadiusX * 0.90, ry: maxSafeRadiusY * 0.90 },
+      { rx: maxSafeRadiusX * 0.70, ry: maxSafeRadiusY * 0.70 },
+      { rx: maxSafeRadiusX * 0.50, ry: maxSafeRadiusY * 0.50 },
     ];
 
     // ── 2. Compute 3D Projected Positions for All Nodes ─────────────────────
@@ -234,15 +235,15 @@ export default function OrbitalSystem3D() {
 
       const depth = (world.z + 220) / 440;
       const alpha = Math.max(0.3, Math.min(1.0, 0.3 + depth * 0.7));
-      const r = Math.max(5, 10.5 * (0.55 + depth * 0.8));
+      const r = Math.max(isMobile ? 4.5 : 5, (isMobile ? 8.5 : 10.5) * (0.55 + depth * 0.8));
 
       // Calculate exact visual footprint for safe containment
-      ctx.font = `bold ${Math.max(8, r * 0.9)}px "Manrope", system-ui, sans-serif`;
+      ctx.font = `bold ${Math.max(isMobile ? 7.5 : 8, r * 0.9)}px "Manrope", system-ui, sans-serif`;
       const textMetrics = ctx.measureText(node.label);
-      const labelHalfW = textMetrics.width / 2 + 4;
-      const footprintX = Math.max(r * 1.4, labelHalfW) + 4;
-      const footprintTop = r * 1.4 + 4;
-      const footprintBottom = (r + 4 + 14) + 4; // includes label below sphere
+      const labelHalfW = textMetrics.width / 2 + 3;
+      const footprintX = Math.max(r * 1.3, labelHalfW) + 3;
+      const footprintTop = r * 1.3 + 3;
+      const footprintBottom = (r + 3 + 12) + 3; // includes label below sphere
 
       // Clamp coordinates within container safe margin [inset, 1-inset]
       const safeSx = Math.max(footprintX, Math.min(W - footprintX, proj.sx));

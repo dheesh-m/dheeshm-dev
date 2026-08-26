@@ -94,14 +94,43 @@ export default function ExperienceItem({ experience, isOpen, onClick }: Experien
             className="overflow-hidden"
           >
             <div className="px-4 sm:px-6 md:px-8 pb-6 sm:pb-8 pt-2">
-              <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
-                <div className="flex-1 space-y-4 sm:space-y-5 relative z-10">
+              <div className="flex flex-col md:flex-row gap-4 sm:gap-6 md:gap-8 items-start">
+                {/* Visual Company Logo (above content on mobile, right side on desktop) */}
+                <div className={`order-first md:order-last flex shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 items-center justify-center relative ${experience.logo ? 'opacity-95' : 'opacity-20'} mx-auto md:mx-0 mb-1 sm:mb-2 md:mb-0`}>
+                  <motion.div 
+                    className="absolute inset-0 border border-white/10 rounded-full pointer-events-none"
+                    animate={spinning ? { rotate: 360, scale: [1, 1.05, 1] } : { rotate: 0, scale: 1 }}
+                    transition={spinning ? { duration: 10, repeat: Infinity, ease: "linear" } : { duration: 0 }}
+                  />
+                  <motion.div 
+                    className="absolute inset-3 sm:inset-4 border border-white/5 rounded-full pointer-events-none"
+                    animate={spinning ? { rotate: -360, scale: [1, 1.1, 1] } : { rotate: 0, scale: 1 }}
+                    transition={spinning ? { duration: 15, repeat: Infinity, ease: "linear" } : { duration: 0 }}
+                  />
+                  {experience.logo ? (
+                    <div className="w-11 h-11 sm:w-13 sm:h-13 md:w-16 md:h-16 rounded-full overflow-hidden flex items-center justify-center bg-black/40 backdrop-blur-sm border border-white/10 shadow-lg p-1.5">
+                      <Image
+                        src={experience.logo}
+                        alt={`${experience.company} logo`}
+                        width={64}
+                        height={64}
+                        sizes="64px"
+                        className="w-full h-full object-contain rounded-full"
+                      />
+                    </div>
+                  ) : (
+                    <div className="text-[10px] md:text-xs font-mono text-white/20">EXP</div>
+                  )}
+                </div>
+
+                {/* Text Content */}
+                <div className="flex-1 space-y-3.5 sm:space-y-5 relative z-10 w-full">
                   
                   {/* Metadata: Location & Link */}
-                  <div className="flex flex-wrap items-center gap-4 text-sm font-mono text-[#8A8A8A]">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm font-mono text-[#8A8A8A]">
                     {experience.location && (
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="w-4 h-4 text-zinc-500" />
+                        <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-500" />
                         {experience.location}
                       </div>
                     )}
@@ -112,56 +141,28 @@ export default function ExperienceItem({ experience, isOpen, onClick }: Experien
                         rel="noopener noreferrer"
                         className="flex items-center gap-1.5 hover:text-white transition-colors"
                       >
-                        <ExternalLink className="w-4 h-4 text-zinc-400" />
+                        <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400" />
                         {experience.companyUrl}
                       </a>
                     )}
                   </div>
 
                   {/* Description */}
-                  <p className="text-[#A5A5A5] leading-loose text-[15px]">
+                  <p className="text-[#A5A5A5] leading-relaxed sm:leading-loose text-sm sm:text-[15px]">
                     {experience.description}
                   </p>
 
                   {/* Technologies */}
-                  <div className="flex flex-wrap gap-2 pt-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1 sm:pt-2">
                     {experience.technologies.map((tech) => (
                       <span
                         key={tech}
-                        className="px-3 py-1 rounded-full text-[10px] font-mono text-[#D4D4D4] bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.08)] transition-colors"
+                        className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9.5px] sm:text-[10px] font-mono text-[#D4D4D4] bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.08)] transition-colors"
                       >
                         {tech}
                       </span>
                     ))}
                   </div>
-                </div>
-
-                {/* Optional visual graphic on the right */}
-                <div className={`flex shrink-0 w-24 h-24 md:w-32 md:h-32 items-center justify-center relative ${experience.logo ? 'opacity-90' : 'opacity-15'} mx-auto md:mx-0 mt-4 md:mt-0`}>
-                  <motion.div 
-                    className="absolute inset-0 border border-white/10 rounded-full pointer-events-none"
-                    animate={spinning ? { rotate: 360, scale: [1, 1.05, 1] } : { rotate: 0, scale: 1 }}
-                    transition={spinning ? { duration: 10, repeat: Infinity, ease: "linear" } : { duration: 0 }}
-                  />
-                  <motion.div 
-                    className="absolute inset-4 border border-white/5 rounded-full pointer-events-none"
-                    animate={spinning ? { rotate: -360, scale: [1, 1.1, 1] } : { rotate: 0, scale: 1 }}
-                    transition={spinning ? { duration: 15, repeat: Infinity, ease: "linear" } : { duration: 0 }}
-                  />
-                  {experience.logo ? (
-                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden flex items-center justify-center bg-transparent border border-white/5 shadow-sm">
-                      <Image
-                        src={experience.logo}
-                        alt={`${experience.company} logo`}
-                        width={64}
-                        height={64}
-                        sizes="64px"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                  ) : (
-                    <div className="text-[10px] md:text-xs font-mono text-white/20">EXP</div>
-                  )}
                 </div>
               </div>
             </div>

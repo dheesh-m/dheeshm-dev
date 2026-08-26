@@ -15,7 +15,7 @@ export default function EnterpriseCard({ item, isActive, onMouseEnter }: Enterpr
   return (
     <div onMouseEnter={onMouseEnter} className="h-full">
       <SweepCard className={cn(
-        "flex flex-col p-6 sm:p-8 transition-all duration-500 cursor-default h-full",
+        "flex flex-col p-3.5 sm:p-6 md:p-8 transition-all duration-500 cursor-default h-full",
         isActive ? "bg-white/5" : ""
       )}>
       {/* Subtle Grid/Circuit Pattern on Hover */}
@@ -25,9 +25,9 @@ export default function EnterpriseCard({ item, isActive, onMouseEnter }: Enterpr
       )} />
 
       {/* Top Header */}
-      <div className="flex justify-between items-start mb-6 sm:mb-12 relative z-10">
+      <div className="flex justify-between items-start mb-2 sm:mb-6 md:mb-10 relative z-10">
         <span className={cn(
-          "font-mono text-xs transition-colors duration-300",
+          "font-mono text-[11px] sm:text-xs transition-colors duration-300",
           isActive ? "text-white" : "text-gray-500 group-hover:text-white"
         )}>
           {item.id}
@@ -37,7 +37,7 @@ export default function EnterpriseCard({ item, isActive, onMouseEnter }: Enterpr
           animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : -5 }}
           className="text-white"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:w-3.5 sm:h-3.5">
             <line x1="5" y1="12" x2="19" y2="12"></line>
             <polyline points="12 5 19 12 12 19"></polyline>
           </svg>
@@ -46,7 +46,7 @@ export default function EnterpriseCard({ item, isActive, onMouseEnter }: Enterpr
 
       {/* Content */}
       <div className="relative z-10 mt-auto flex flex-col">
-        <h3 className="text-xl font-light tracking-tight text-white mb-3 font-display">
+        <h3 className="text-sm sm:text-lg md:text-xl font-medium sm:font-light tracking-tight text-white mb-1.5 sm:mb-3 font-display leading-snug">
           {item.title === "PRODUCTION AI SYSTEMS" ? (
             <>
               Production{" "}
@@ -80,16 +80,16 @@ export default function EnterpriseCard({ item, isActive, onMouseEnter }: Enterpr
           )}
         </h3>
         
-        <p className="text-sm text-gray-400 font-sans leading-relaxed mb-6">
+        <p className="text-[11.5px] sm:text-sm text-gray-400 font-sans leading-snug sm:leading-relaxed mb-2.5 sm:mb-5">
           {item.description}
         </p>
 
         {/* Secondary Metadata */}
-        <div className="flex flex-wrap gap-2 mt-auto">
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-auto">
           {item.technologies.map(tech => (
             <span
               key={tech}
-              className="px-2 py-1 bg-white/5 border border-white/10 text-[10px] font-mono text-gray-400 rounded transition-colors group-hover:bg-white/10 group-hover:text-gray-300"
+              className="px-1.5 py-0.5 sm:px-2 sm:py-1 bg-white/5 border border-white/10 text-[9px] sm:text-[10px] font-mono text-gray-400 rounded transition-colors group-hover:bg-white/10 group-hover:text-gray-300"
             >
               {tech}
             </span>

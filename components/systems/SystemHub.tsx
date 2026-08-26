@@ -117,20 +117,35 @@ function SystemHub({
   activeNodeRef.current = activeNode;
   hoveredTechIdRef.current = hoveredTechId;
 
-  // Node configuration with evenly distributed start angles
+  // Node configuration with evenly distributed start angles and non-overlapping orbits
   const nodeConfigs = useRef(
-    technologies.map((tech, i) => {
-      const orbit = i % 3;
-      const total = technologies.length;
-      const startAngle = (i / total) * Math.PI * 2;
-      const speed = 0.16 + (orbit * 0.035) + ((i * 0.012) % 0.03);
-      return {
-        tech,
-        orbit,
-        startAngle,
-        speed,
-      };
-    })
+    (() => {
+      const orbitGroups: number[][] = [[], [], []];
+      technologies.forEach((_, i) => {
+        orbitGroups[i % 3].push(i);
+      });
+
+      return technologies.map((tech, i) => {
+        const orbit = i % 3;
+        const group = orbitGroups[orbit];
+        const indexInOrbit = group.indexOf(i);
+        const countInOrbit = Math.max(1, group.length);
+
+        // Evenly space angles per orbit with a phase shift per orbit
+        const phaseShift = (orbit * Math.PI * 2) / 3 + 0.4;
+        const startAngle = (indexInOrbit / countInOrbit) * Math.PI * 2 + phaseShift;
+        // Alternate directions and vary speeds so nodes stay nicely separated in 3D
+        const dir = orbit === 1 ? -1 : 1;
+        const speed = dir * (0.13 + orbit * 0.025 + indexInOrbit * 0.012);
+
+        return {
+          tech,
+          orbit,
+          startAngle,
+          speed,
+        };
+      });
+    })()
   );
 
   // Hit targets for mouse hover
@@ -150,8 +165,9 @@ function SystemHub({
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
-    const W = canvas.width;
-    const H = canvas.height;
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.width / dpr;
+    const H = canvas.height / dpr;
     const cx = W / 2;
     const cy = (H - 24) / 2; // Offset center slightly upward to leave clearance for bottom title
     const light = isLightRef.current;
@@ -187,24 +203,22 @@ function SystemHub({
     ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
     ctx.fill();
 
-    // ── Safe Dynamic Boundary Calculation ────────────────────────────────────
-    // Responsive safe area inset (Desktop: 10%, Tablet: 12%, Mobile: 15%)
-    const insetPct = W >= 1024 ? 0.10 : (W >= 640 ? 0.12 : 0.15);
-    const marginPad = 52; // Accounts for sphere radius + glow + label width + bottom badge
-    const safeHalfW = Math.max(70, (W * (1 - 2 * insetPct)) * 0.5 - marginPad);
-    const safeHalfH = Math.max(45, (H * (1 - 2 * insetPct)) * 0.5 - marginPad);
+    // ── Safe Dynamic Boundary Calculation (Expanded for Mobile) ───────────────
+    const isMobile = W < 640;
+    const insetPct = W >= 1024 ? 0.08 : (W >= 640 ? 0.08 : 0.03);
+    const marginPad = isMobile ? 16 : 38;
+    const safeHalfW = Math.max(105, (W * (1 - 2 * insetPct)) * 0.5 - marginPad);
+    const safeHalfH = Math.max(90, (H * (1 - 2 * insetPct)) * 0.5 - marginPad);
 
-    // Divide by perspective projection expansion factor (~1.30)
-    // to guarantee rings and nodes never touch or cross container boundaries during 3D tilt
-    const MAX_PERSPECTIVE_FACTOR = 1.30;
+    const MAX_PERSPECTIVE_FACTOR = isMobile ? 1.15 : 1.25;
     const maxSafeRadiusX = safeHalfW / MAX_PERSPECTIVE_FACTOR;
     const maxSafeRadiusY = safeHalfH / MAX_PERSPECTIVE_FACTOR;
 
-    // Strict Orbital Hierarchy: Outer: 88%, Middle: 68%, Inner: 48%
+    // Strict Orbital Hierarchy: Outer: 94%, Middle: 68%, Inner: 44%
     const orbitRadii = [
-      { rx: maxSafeRadiusX * 0.88, ry: maxSafeRadiusY * 0.88 },
+      { rx: maxSafeRadiusX * 0.94, ry: maxSafeRadiusY * 0.94 },
       { rx: maxSafeRadiusX * 0.68, ry: maxSafeRadiusY * 0.68 },
-      { rx: maxSafeRadiusX * 0.48, ry: maxSafeRadiusY * 0.48 },
+      { rx: maxSafeRadiusX * 0.44, ry: maxSafeRadiusY * 0.44 },
     ];
 
     // ── 1. Calculate 3D Projected Positions with Strict Boundary Clamping ────
@@ -225,21 +239,22 @@ function SystemHub({
 
       const depth = (world.z + 220) / 440;
       const alpha = Math.max(0.35, Math.min(1.0, 0.35 + depth * 0.65));
-      const r = Math.max(5.5, 10.5 * (0.6 + depth * 0.75));
+      const r = Math.max(isMobile ? 3.8 : 5.5, (isMobile ? 6.8 : 10.5) * (0.6 + depth * 0.75));
 
-      // Calculate exact visual footprint (radius + glow + label width) for safe containment
-      ctx.font = `bold ${Math.max(8.5, r * 0.95)}px "Manrope", system-ui, sans-serif`;
+      // Calculate exact visual footprint for safe containment
+      const fontSize = isMobile ? Math.max(7, Math.min(8.5, r * 0.9)) : Math.max(8.5, r * 0.95);
+      ctx.font = `bold ${fontSize}px "Manrope", system-ui, sans-serif`;
       const textMetrics = ctx.measureText(cfg.tech.name.toUpperCase());
-      const labelHalfW = textMetrics.width / 2 + 5;
-      const footprintX = Math.max(r * 1.4, labelHalfW) + 4;
-      const footprintTop = r * 1.4 + 4;
-      const footprintBottom = (r + 4 + 14) + 4; // includes label below sphere + margin
+      const labelHalfW = textMetrics.width / 2 + 3;
+      const footprintX = Math.max(r * 1.3, labelHalfW) + 3;
+      const footprintTop = r * 1.3 + 3;
+      const footprintBottom = (r + 3 + 12) + 3;
 
-      // Clamp coordinates within container safe margin [10% - 90%]
+      // Clamp coordinates within container safe margin
       const safeMinX = footprintX;
       const safeMaxX = W - footprintX;
       const safeMinY = footprintTop;
-      const safeMaxY = H - footprintBottom - 26; // 26px clear of the bottom category badge
+      const safeMaxY = H - footprintBottom - (isMobile ? 18 : 26);
 
       const safeSx = Math.max(safeMinX, Math.min(safeMaxX, proj.sx));
       const safeSy = Math.max(safeMinY, Math.min(safeMaxY, proj.sy));
@@ -256,6 +271,7 @@ function SystemHub({
         depth,
         alpha,
         r,
+        fontSize,
         isHovered,
       };
     });
@@ -310,7 +326,7 @@ function SystemHub({
       drawSphere(ctx, node.sx, node.sy, node.r, nodeSphereColor, nodeGlowColor, node.alpha);
 
       // Draw Floating Label
-      drawLabel(ctx, node.tech.name, node.sx, node.sy, node.r, node.alpha, nodeTextColor);
+      drawLabel(ctx, node.tech.name, node.sx, node.sy, node.r, node.alpha, nodeTextColor, node.fontSize);
 
       currentHitTargets.push({
         tech: node.tech,
@@ -321,7 +337,7 @@ function SystemHub({
     });
 
     // ── 5. Draw Central Core Sphere ──────────────────────────────────────────
-    const coreR = 24;
+    const coreR = isMobile ? 19 : 24;
     const pulse = 1 + Math.sin(t * 1.8) * 0.06;
 
     // Pulsing outer halo (Toned down)
@@ -347,7 +363,7 @@ function SystemHub({
     // Central Text
     ctx.save();
     ctx.fillStyle = light ? "#ffffff" : "#f9fafb";
-    ctx.font = `bold 11.5px "Manrope", system-ui, sans-serif`;
+    ctx.font = `bold ${isMobile ? 10 : 11.5}px "Manrope", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.globalAlpha = 0.98;
@@ -401,19 +417,20 @@ function SystemHub({
     sy: number,
     r: number,
     alpha: number,
-    textColor: string
+    textColor: string,
+    fontSize: number = 8.5
   ) {
     ctx.save();
     ctx.globalAlpha = Math.min(1, alpha * 1.3);
     ctx.fillStyle = textColor;
-    ctx.font = `bold ${Math.max(8.5, r * 0.95)}px "Manrope", system-ui, sans-serif`;
+    ctx.font = `bold ${fontSize}px "Manrope", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
     ctx.letterSpacing = "0.5px";
-    ctx.shadowColor = "rgba(0, 0, 0, 0.6)";
+    ctx.shadowColor = "rgba(0, 0, 0, 0.7)";
     ctx.shadowBlur = 4;
     ctx.shadowOffsetY = 1;
-    ctx.fillText(text.toUpperCase(), sx, sy + r + 4);
+    ctx.fillText(text.toUpperCase(), sx, sy + r + 3.5);
     ctx.restore();
   }
 

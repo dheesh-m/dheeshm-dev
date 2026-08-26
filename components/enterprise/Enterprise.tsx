@@ -13,8 +13,8 @@ export default function Enterprise() {
   const activeItem = enterpriseData.find(item => item.id === activeId) || enterpriseData[0];
 
   return (
-    <section id="expertise" className="relative w-full py-20 md:py-28 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="expertise" className="relative w-full py-12 sm:py-20 md:py-28 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -29,20 +29,20 @@ export default function Enterprise() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-20%" }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="mb-16"
+          className="mb-8 sm:mb-16"
         >
-          <h2 className="text-[clamp(2.5rem,10vw,4.5rem)] font-light tracking-[-0.04em] text-white leading-none mb-6 font-display">
+          <h2 className="text-[clamp(2rem,8vw,4.5rem)] font-light tracking-[-0.04em] text-white leading-none mb-3 sm:mb-6 font-display">
             Engineering <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">Systems</span>
           </h2>
-          <p className="text-gray-400 font-sans max-w-2xl text-lg">
+          <p className="text-gray-400 font-sans max-w-2xl text-sm sm:text-lg">
             Hover over the areas below to explore the architecture and implementation details of the systems I build.
           </p>
         </motion.div>
 
         {/* Technical Editorial Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/10 border border-white/10 rounded-xl overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-px bg-transparent sm:bg-white/10 sm:border sm:border-white/10 rounded-xl overflow-hidden">
           {enterpriseData.map((item) => (
-            <div key={item.id} className="bg-background">
+            <div key={item.id} className="bg-background rounded-xl sm:rounded-none overflow-hidden">
               <EnterpriseCard 
                 item={item} 
                 isActive={activeId === item.id} 

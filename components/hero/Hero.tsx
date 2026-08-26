@@ -153,7 +153,7 @@ export default function Hero() {
         {/* ── RIGHT COLUMN: 3D Orbital System ── */}
         <motion.div
           style={{ scale: graphScale, y: graphY, opacity: graphOpacity }}
-          className="relative flex items-center justify-center w-full h-[380px] sm:h-[480px] lg:h-[560px] -mt-8"
+          className="relative flex items-center justify-center w-full max-w-[500px] lg:max-w-none h-[380px] sm:h-[480px] lg:h-[560px] mx-auto mt-2 lg:-mt-8"
         >
           <SystemGraph />
         </motion.div>
