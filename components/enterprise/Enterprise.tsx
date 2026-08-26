@@ -13,7 +13,7 @@ export default function Enterprise() {
   const activeItem = enterpriseData.find(item => item.id === activeId) || enterpriseData[0];
 
   return (
-    <section id="enterprise" className="relative w-full py-16 md:py-32 overflow-hidden bg-background">
+    <section id="enterprise" className="relative w-full py-20 md:py-28 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0 }}

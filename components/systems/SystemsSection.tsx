@@ -6,7 +6,7 @@ import SystemCluster from "./SystemCluster";
 
 export default function SystemsSection() {
   return (
-    <section id="skills" className="relative w-full min-h-screen py-32 overflow-hidden bg-transparent">
+    <section id="skills" className="relative w-full py-20 md:py-28 overflow-hidden bg-transparent">
       
       {/* Subtle Grid Background removed to show global neural background */}
 

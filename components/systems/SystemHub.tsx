@@ -1,7 +1,6 @@
 "use client";
 
 import { memo } from "react";
-import { motion } from "framer-motion";
 import { Technology } from "@/data/technologies";
 import SystemNode from "./SystemNode";
 import { cn } from "@/lib/utils";
@@ -15,6 +14,7 @@ interface SystemHubProps {
   activeHub: string | null;
   onNodeHover: (tech: Technology | null, rect: DOMRect | null) => void;
   onHubHover: (category: string | null) => void;
+  isAnimating: boolean;
 }
 
 function SystemHub({
@@ -25,7 +25,8 @@ function SystemHub({
   activeNode,
   activeHub,
   onNodeHover,
-  onHubHover
+  onHubHover,
+  isAnimating
 }: SystemHubProps) {
   
   const isActive = activeHub === category;
@@ -33,11 +34,13 @@ function SystemHub({
   const isDimmed = activeHub !== null && activeHub !== category && !activeNode;
   const isNodeDimmed = activeNode !== null && activeNode.category !== category && !technologies.some(t => activeNode.related.includes(t.id));
 
-  // Calculate ring counts
-  const ringCounts = [0, 0, 0];
-  technologies.forEach((_, i) => ringCounts[i % 3]++);
-  
-  let ringIndices = [0, 0, 0];
+  // Ring placement is derived, not accumulated. These used to be arrays
+  // mutated during render (`ringIndices[ring]++`), which React Compiler
+  // memoizes - so the counters were not reset between the server and client
+  // passes and every node hydrated at a different angle.
+  const total = technologies.length;
+  // Indices 0,3,6.. land in ring 0; 1,4,7.. in ring 1; 2,5,8.. in ring 2.
+  const countInRing = (ring: number) => Math.ceil((total - ring) / 3);
 
   return (
     <div 
@@ -57,10 +60,15 @@ function SystemHub({
         onMouseEnter={() => onHubHover(category)}
         onMouseLeave={() => onHubHover(null)}
       >
-        <div 
+        {/* Pulses rather than spins: this core is a stadium-shaped pill, and
+            rotating a non-circular border sweeps a lens-shaped artifact. */}
+        <div
+          aria-hidden="true"
           className={cn(
-            "absolute inset-0 rounded-full border border-white/10",
-            isActive || isNodeActive ? "animate-[spin_4s_linear_infinite]" : "animate-[spin_10s_linear_infinite]"
+            "absolute inset-0 rounded-full border border-white/10 pointer-events-none",
+            isActive || isNodeActive
+              ? "animate-[ring-pulse_2s_ease-in-out_infinite]"
+              : "animate-[ring-pulse_5s_ease-in-out_infinite]"
           )}
         />
         <span className="text-[#F5F5F5] text-xs font-display tracking-widest uppercase">
@@ -86,14 +94,14 @@ function SystemHub({
       {technologies.map((tech, index) => {
         // Distribute across 3 orbital rings
         const ring = index % 3;
-        const ringIndex = ringIndices[ring]++;
-        const countInRing = ringCounts[ring];
-        
+        const ringIndex = Math.floor(index / 3);
+        const inRing = countInRing(ring);
+
         // Tight orbital radiuses: 90px, 135px, 180px
         const radius = 90 + (ring * 45);
-        
+
         // Offset evenly inside its own ring
-        const angleOffset = (ringIndex / countInRing) * 360 + (ring * 45);
+        const angleOffset = (ringIndex / inRing) * 360 + (ring * 45);
         
         // Different orbital speeds based on ring
         const speed = 45 + (ring * 12);
@@ -108,6 +116,7 @@ function SystemHub({
         return (
           <SystemNode
             key={tech.id}
+            isAnimating={isAnimating}
             technology={tech}
             radius={radius}
             angleOffset={angleOffset}

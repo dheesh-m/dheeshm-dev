@@ -14,6 +14,8 @@ interface TechnologyNodeProps {
   isActive: boolean;
   isRelated: boolean;
   isDimmed: boolean;
+  /** Orbits only run while the section is on screen. */
+  isAnimating: boolean;
   onHover: (tech: Technology | null, rect: DOMRect | null) => void;
 }
 
@@ -26,6 +28,7 @@ function TechnologyNode({
   isActive,
   isRelated,
   isDimmed,
+  isAnimating,
   onHover
 }: TechnologyNodeProps) {
   
@@ -39,30 +42,26 @@ function TechnologyNode({
 
   const direction = isClockwise ? 1 : -1;
   const duration = speed * (isActive ? 3 : 1); // Slow down significantly when active/hovered
+  // `initial={false}` keeps the server and first client render identical.
+  const spin = isAnimating
+    ? ({ duration, repeat: Infinity, ease: "linear" } as const)
+    : ({ duration: 0 } as const);
 
   return (
     // The wrapper acts as the rotating orbit track
     <motion.div
       className="absolute top-1/2 left-1/2 w-0 h-0"
-      initial={{ rotate: angleOffset }}
-      animate={{ rotate: angleOffset + (360 * direction) }}
-      transition={{ 
-        duration, 
-        repeat: Infinity, 
-        ease: "linear"
-      }}
+      initial={false}
+      animate={{ rotate: isAnimating ? angleOffset + 360 * direction : angleOffset }}
+      transition={spin}
     >
       {/* The node is offset by the radius and counter-rotates to stay upright */}
       <motion.div
         className="absolute"
         style={{ x: radius, y: "-50%", top: "50%" }}
-        initial={{ rotate: -angleOffset }}
-        animate={{ rotate: -(angleOffset + (360 * direction)) }}
-        transition={{ 
-          duration, 
-          repeat: Infinity, 
-          ease: "linear"
-        }}
+        initial={false}
+        animate={{ rotate: isAnimating ? -(angleOffset + 360 * direction) : -angleOffset }}
+        transition={spin}
       >
         <div
           onMouseEnter={handleMouseEnter}

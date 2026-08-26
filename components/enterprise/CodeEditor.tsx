@@ -36,7 +36,7 @@ export default function CodeEditor({ activeItem }: CodeEditorProps) {
 
       <div className="relative rounded-xl border border-white/10 bg-[#101010]/80 backdrop-blur-md overflow-hidden shadow-2xl">
         {/* Editor Top Bar */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#030712]/50">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#050505]/50">
           <div className="flex gap-2">
             <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" />
             <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50" />

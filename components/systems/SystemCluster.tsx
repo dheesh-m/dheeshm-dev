@@ -1,12 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useInView } from "framer-motion";
 import { systemTechnologies, aiTechnologies, Technology } from "@/data/technologies";
 import SystemHub from "./SystemHub";
 import NetworkCanvas from "./NetworkCanvas";
 import TechnologyInfoCard from "../glossary/TechnologyInfoCard";
 
 export default function SystemCluster() {
+  // A single observer for the whole cluster gates 52 orbital animations,
+  // rather than each of the 26 nodes registering its own.
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { margin: "200px" });
+
   const [activeNode, setActiveNode] = useState<Technology | null>(null);
   const [activeHub, setActiveHub] = useState<string | null>(null);
   const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
@@ -34,7 +40,7 @@ export default function SystemCluster() {
   };
 
   return (
-    <div className="relative w-full min-h-[2200px] md:min-h-[1400px] lg:min-h-[1000px] flex items-center justify-center mt-12 mb-20 overflow-x-clip">
+    <div ref={containerRef} className="relative w-full flex items-center justify-center mt-8 mb-12 overflow-x-clip">
       
       {/* Network Background Connections (Canvas) */}
       <NetworkCanvas activeNode={activeNode} activeHub={activeHub} />
@@ -52,6 +58,7 @@ export default function SystemCluster() {
             activeHub={activeHub}
             onNodeHover={handleNodeHover}
             onHubHover={handleHubHover}
+            isAnimating={isInView}
           />
         </div>
         
@@ -65,6 +72,7 @@ export default function SystemCluster() {
             activeHub={activeHub}
             onNodeHover={handleNodeHover}
             onHubHover={handleHubHover}
+            isAnimating={isInView}
           />
         </div>
 
@@ -78,6 +86,7 @@ export default function SystemCluster() {
             activeHub={activeHub}
             onNodeHover={handleNodeHover}
             onHubHover={handleHubHover}
+            isAnimating={isInView}
           />
         </div>
 
@@ -91,6 +100,7 @@ export default function SystemCluster() {
             activeHub={activeHub}
             onNodeHover={handleNodeHover}
             onHubHover={handleHubHover}
+            isAnimating={isInView}
           />
         </div>
 

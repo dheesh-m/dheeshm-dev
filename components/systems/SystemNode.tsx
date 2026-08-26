@@ -15,6 +15,8 @@ interface SystemNodeProps {
   isRelated: boolean;
   isDimmed: boolean;
   isHubActive: boolean;
+  /** Orbits only run while the section is on screen. */
+  isAnimating: boolean;
   onHover: (tech: Technology | null, rect: DOMRect | null) => void;
 }
 
@@ -28,6 +30,7 @@ function SystemNode({
   isRelated,
   isDimmed,
   isHubActive,
+  isAnimating,
   onHover
 }: SystemNodeProps) {
   
@@ -41,28 +44,26 @@ function SystemNode({
 
   const direction = isClockwise ? 1 : -1;
   const duration = speed * (isActive || isHubActive ? 0.5 : 1); // Speed up when active
+  // `initial={false}` keeps the server and first client render identical
+  // (a static angle), which also removes the hydration mismatch these
+  // infinite rotations used to produce.
+  const spin = isAnimating
+    ? ({ duration, repeat: Infinity, ease: "linear" } as const)
+    : ({ duration: 0 } as const);
 
   return (
     <motion.div
       className="absolute top-1/2 left-1/2 w-0 h-0"
-      initial={{ rotate: angleOffset }}
-      animate={{ rotate: angleOffset + (360 * direction) }}
-      transition={{ 
-        duration, 
-        repeat: Infinity, 
-        ease: "linear"
-      }}
+      initial={false}
+      animate={{ rotate: isAnimating ? angleOffset + 360 * direction : angleOffset }}
+      transition={spin}
     >
       <motion.div
         className="absolute"
         style={{ x: radius, y: "-50%", top: "50%" }}
-        initial={{ rotate: -angleOffset }}
-        animate={{ rotate: -(angleOffset + (360 * direction)) }}
-        transition={{ 
-          duration, 
-          repeat: Infinity, 
-          ease: "linear"
-        }}
+        initial={false}
+        animate={{ rotate: isAnimating ? -(angleOffset + 360 * direction) : -angleOffset }}
+        transition={spin}
       >
         <div
           id={`node-${technology.id}`}

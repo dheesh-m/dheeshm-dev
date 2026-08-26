@@ -15,7 +15,7 @@ export default function About() {
   const textY = useTransform(scrollYProgress, [0, 1], ["20%", "-20%"]);
 
   return (
-    <section ref={containerRef} id="about" className="relative w-full min-h-screen py-16 md:py-32 overflow-hidden">
+    <section ref={containerRef} id="about" className="relative w-full py-20 md:py-28 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0 }}
@@ -64,7 +64,7 @@ export default function About() {
                   { label: "AI SYSTEMS" },
                   { label: "REAL-TIME APPS" },
                   { label: "FULL-STACK PRODUCTS" }
-                ].map((item, i) => (
+                ].map((item) => (
                   <li key={item.label} className="flex items-center gap-4 group cursor-default">
                     <div className="w-1.5 h-1.5 rounded-full bg-white/20 group-hover:scale-150 transition-transform relative">
                       <div className={`absolute inset-0 rounded-full bg-white opacity-0 group-hover:opacity-100 transition-opacity`} />

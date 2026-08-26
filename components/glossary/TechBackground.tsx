@@ -1,11 +1,18 @@
 "use client";
 
-import { memo } from "react";
-import { motion } from "framer-motion";
+import { memo, useRef } from "react";
+import { motion, useInView } from "framer-motion";
 
 function TechBackground() {
+  const ref = useRef<HTMLDivElement>(null);
+  // Decorative only, so it idles entirely while the section is off screen.
+  const isInView = useInView(ref, { margin: "200px" });
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+    <div
+      ref={ref}
+      className="absolute inset-0 overflow-hidden pointer-events-none z-0"
+    >
       {/* Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:48px_48px]" />
 
@@ -13,8 +20,8 @@ function TechBackground() {
       <motion.div 
         className="absolute top-[15%] left-[5%] text-[10px] font-mono text-white/10 whitespace-pre"
         initial={{ opacity: 0 }}
-        animate={{ opacity: [0.05, 0.15, 0.05] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        animate={isInView ? { opacity: [0.05, 0.15, 0.05] } : { opacity: 0.05 }}
+        transition={isInView ? { duration: 8, repeat: Infinity, ease: "easeInOut" } : { duration: 0 }}
       >
         {`> initializing_vector_index
 > loading_embeddings (dim=1536)
@@ -25,8 +32,8 @@ function TechBackground() {
       <motion.div 
         className="absolute bottom-[20%] right-[10%] text-[10px] font-mono text-white/10 whitespace-pre text-right"
         initial={{ opacity: 0 }}
-        animate={{ opacity: [0.05, 0.15, 0.05] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        animate={isInView ? { opacity: [0.05, 0.15, 0.05] } : { opacity: 0.05 }}
+        transition={isInView ? { duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 } : { duration: 0 }}
       >
         {`[sys_state]: optimal
 > tool_call({ "query": "latency" })
@@ -50,8 +57,8 @@ function TechBackground() {
       <motion.div
         className="absolute left-0 right-0 h-[1px] bg-white/10"
         initial={{ top: 0, opacity: 0 }}
-        animate={{ top: "100%", opacity: [0, 1, 1, 0] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        animate={isInView ? { top: "100%", opacity: [0, 1, 1, 0] } : { top: 0, opacity: 0 }}
+        transition={isInView ? { duration: 15, repeat: Infinity, ease: "linear" } : { duration: 0 }}
       />
     </div>
   );

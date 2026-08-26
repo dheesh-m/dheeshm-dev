@@ -1,20 +1,21 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 import type { Project } from "@/types";
 import SweepCard from "../ui/SweepCard";
 import { ExternalLink } from "lucide-react";
 
-const HumanoidVisual = () => (
+const HumanoidVisual = ({ on }: { on: boolean }) => (
   <div className="absolute inset-0 flex items-center justify-center bg-[#101010] overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.05),transparent_70%)]" />
     <svg className="w-full h-full opacity-60" viewBox="0 0 100 100" preserveAspectRatio="none">
       <motion.circle cx="50" cy="30" r="8" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" 
-        animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 4, repeat: Infinity }} />
+        animate={on ? { scale: [1, 1.1, 1] } : { scale: 1 }} transition={on ? { duration: 4, repeat: Infinity } : { duration: 0 }} />
       <circle cx="50" cy="30" r="2" fill="rgba(255,255,255,0.8)" />
       
       <motion.path d="M 50 38 L 50 60" stroke="rgba(255,255,255,0.15)" strokeWidth="1" 
-        strokeDasharray="2 2" animate={{ strokeDashoffset: [0, 10] }} transition={{ duration: 5, repeat: Infinity, ease: "linear" }} />
+        strokeDasharray="2 2" animate={on ? { strokeDashoffset: [0, 10] } : { strokeDashoffset: 0 }} transition={on ? { duration: 5, repeat: Infinity, ease: "linear" } : { duration: 0 }} />
       
       <circle cx="35" cy="55" r="4" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
       <circle cx="65" cy="55" r="4" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
@@ -22,32 +23,32 @@ const HumanoidVisual = () => (
       <path d="M 50 45 L 35 55 M 50 45 L 65 55" stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
       
       <motion.circle cx="50" cy="75" r="15" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" 
-        animate={{ rotate: 360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} strokeDasharray="4 4" />
+        animate={on ? { rotate: 360 } : { rotate: 0 }} transition={on ? { duration: 15, repeat: Infinity, ease: "linear" } : { duration: 0 }} strokeDasharray="4 4" />
     </svg>
   </div>
 );
 
-const APTVisual = () => (
+const APTVisual = ({ on }: { on: boolean }) => (
   <div className="absolute inset-0 flex items-center justify-center bg-[#101010] overflow-hidden">
     <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:1rem_1rem]" />
     
     <motion.div 
       className="absolute w-[200%] h-px bg-white/10"
-      animate={{ y: [-50, 150] }}
-      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+      animate={on ? { y: [-50, 150] } : { y: -50 }}
+      transition={on ? { duration: 3, repeat: Infinity, ease: "linear" } : { duration: 0 }}
     />
     
     <div className="relative w-24 h-12 border border-white/10 rounded-full flex items-center justify-between px-3 bg-white/5 backdrop-blur-sm">
       <motion.div className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" 
-        animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity }} />
+        animate={on ? { opacity: [0.3, 1, 0.3] } : { opacity: 0.3 }} transition={on ? { duration: 2, repeat: Infinity } : { duration: 0 }} />
       <div className="w-8 h-0.5 bg-white/20 rounded-full" />
       <motion.div className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" 
-        animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }} />
+        animate={on ? { opacity: [1, 0.3, 1] } : { opacity: 1 }} transition={on ? { duration: 2, repeat: Infinity } : { duration: 0 }} />
     </div>
   </div>
 );
 
-const APTDemoVisual = () => (
+const APTDemoVisual = ({ on }: { on: boolean }) => (
   <div className="absolute inset-0 flex items-center justify-center bg-[#101010] overflow-hidden">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_60%)]" />
     
@@ -56,8 +57,8 @@ const APTDemoVisual = () => (
         <motion.div 
           key={i}
           className="w-8 h-24 border border-white/10 rounded-sm relative overflow-hidden"
-          animate={{ y: [0, -20, 0] }}
-          transition={{ duration: 4, repeat: Infinity, delay: i * 0.2, ease: "easeInOut" }}
+          animate={on ? { y: [0, -20, 0] } : { y: 0 }}
+          transition={on ? { duration: 4, repeat: Infinity, delay: i * 0.2, ease: "easeInOut" } : { duration: 0 }}
         >
           <div className="absolute inset-x-0 top-1 h-2 border-y border-white/5" />
           <div className="absolute inset-x-0 bottom-1 h-2 border-y border-white/5" />
@@ -72,18 +73,89 @@ const APTDemoVisual = () => (
   </div>
 );
 
-const getProjectVisual = (id: string) => {
+const FarmLensVisual = ({ on }: { on: boolean }) => (
+  <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#101010] overflow-hidden p-6 gap-6">
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.03),transparent_70%)]" />
+    
+    {/* 01 Leaf Upload Step */}
+    <motion.div 
+      className="w-full max-w-[200px] border border-white/10 rounded-lg p-3 bg-white/[0.02] backdrop-blur-sm relative overflow-hidden"
+      animate={on ? { borderColor: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.1)'] } : {}}
+      transition={{ duration: 4, repeat: Infinity }}
+    >
+      <div className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 mb-2">01 · Leaf Upload</div>
+      <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-400">
+        <span className="text-white">Image</span>
+        <span className="text-zinc-600">→</span>
+        <span>Preprocess</span>
+        <span className="text-zinc-600">→</span>
+        <span>Infer</span>
+      </div>
+      
+      {/* Scanning effect */}
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-b from-transparent via-white/5 to-transparent h-[200%] w-full"
+        animate={on ? { top: ['-100%', '100%'] } : {}}
+        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+      />
+    </motion.div>
+
+    {/* Connecting line */}
+    <div className="w-px h-4 bg-gradient-to-b from-white/20 to-white/5" />
+
+    {/* 02 Prediction Record */}
+    <motion.div 
+      className="w-full max-w-[240px] border border-white/10 rounded-lg p-3 bg-white/[0.02] backdrop-blur-sm"
+      initial={{ opacity: 0.5 }}
+      animate={on ? { opacity: [0.5, 1, 0.5] } : {}}
+      transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+    >
+      <div className="text-[9px] font-mono uppercase tracking-widest text-zinc-500 mb-2">02 · Prediction Record</div>
+      
+      <div className="flex justify-between items-end mb-2">
+        <div className="flex flex-col">
+          <span className="text-[9px] text-zinc-500 uppercase tracking-widest">Condition</span>
+          <span className="text-xs text-white">Tomato — Early Blight</span>
+        </div>
+        <div className="flex flex-col text-right">
+          <span className="text-[9px] text-zinc-500 uppercase tracking-widest">Confidence</span>
+          <span className="text-xs text-white font-mono">91.4%</span>
+        </div>
+      </div>
+      
+      <div className="text-[9px] font-mono text-zinc-500 border-t border-white/10 pt-2 mt-2">
+        Treatment recommended · logged to history
+      </div>
+    </motion.div>
+  </div>
+);
+
+const getProjectVisual = (id: string, on: boolean) => {
   switch (id) {
-    case "humanoid": return <HumanoidVisual />;
-    case "apt": return <APTVisual />;
-    case "apt-demo": return <APTDemoVisual />;
+    case "farmlens": return <FarmLensVisual on={on} />;
+    case "humanoid": return <HumanoidVisual on={on} />;
+    case "apt": return <APTVisual on={on} />;
+    case "apt-demo": return <APTDemoVisual on={on} />;
     default: return null;
   }
 };
 
 export default function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // Each card's decorative loops idle until it is near the viewport.
+  const isInView = useInView(ref, { margin: "200px" });
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const hasExtraContent = !!(
+    project.problem || 
+    project.outcome || 
+    project.architecture || 
+    project.engineeringFocus
+  );
+
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
@@ -99,7 +171,7 @@ export default function ProjectCard({ project, index }: { project: Project; inde
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
           >
-            {getProjectVisual(project.id)}
+            {getProjectVisual(project.id, isInView)}
           </motion.div>
           
           <div className="absolute top-4 left-4">
@@ -117,11 +189,11 @@ export default function ProjectCard({ project, index }: { project: Project; inde
             {project.title}
           </motion.h3>
 
-          <p className="text-sm text-zinc-400 leading-relaxed font-sans mb-8 flex-grow">
+          <div className={`text-sm text-zinc-400 leading-relaxed font-sans mb-6 ${!isExpanded ? "line-clamp-3" : ""}`}>
             {project.description}
-          </p>
+          </div>
 
-          <div className="flex flex-wrap gap-2 mb-8">
+          <div className="flex flex-wrap gap-2 mb-6">
             {project.technologies.map((tech) => (
               <span key={tech} className="px-2.5 py-1 text-[10px] font-mono bg-white/5 border border-white/10 text-[#9A9A9A] rounded group-hover/card:border-white/20 group-hover/card:bg-white/10 group-hover/card:text-white transition-colors">
                 {tech}
@@ -129,8 +201,60 @@ export default function ProjectCard({ project, index }: { project: Project; inde
             ))}
           </div>
 
-          <div className="flex items-center gap-6 mt-auto border-t border-white/10 pt-6">
-            {project.githubUrl && (
+          <motion.div
+            initial={false}
+            animate={{ height: isExpanded ? "auto" : 0, opacity: isExpanded ? 1 : 0 }}
+            className="overflow-hidden"
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <div className="flex flex-col gap-6 pb-6">
+              {project.flows && project.flows.length > 0 && (
+                <div className="flex flex-col gap-6 mb-2 border-b border-white/10 pb-6">
+                  {project.flows.map((flow, i) => (
+                    <div key={i}>
+                      <h4 className="text-[9px] uppercase tracking-widest text-zinc-500 mb-2 font-mono">{flow.title}</h4>
+                      <p className="text-[10px] text-zinc-300 font-mono flex items-center flex-wrap">
+                        {flow.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {project.problem && (
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-widest text-zinc-500 mb-2 font-mono">Problem</h4>
+                  <p className="text-xs text-zinc-400 leading-relaxed">{project.problem}</p>
+                </div>
+              )}
+              {project.outcome && (
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-widest text-zinc-500 mb-2 font-mono">Outcome</h4>
+                  <p className="text-xs text-zinc-400 leading-relaxed">{project.outcome}</p>
+                </div>
+              )}
+              {project.architecture && (
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-widest text-zinc-500 mb-2 font-mono">Architecture</h4>
+                  <p className="text-xs text-zinc-400 leading-relaxed">{project.architecture}</p>
+                </div>
+              )}
+              {project.engineeringFocus && (
+                <div>
+                  <h4 className="text-[10px] uppercase tracking-widest text-zinc-500 mb-2 font-mono">Engineering Focus</h4>
+                  <ul className="text-xs text-zinc-400 leading-relaxed flex flex-col gap-1">
+                    {project.engineeringFocus.map((focus, i) => (
+                      <li key={i} className="flex gap-2">
+                        <span className="text-zinc-600">—</span> <span>{focus}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </motion.div>
+
+          <div className="flex items-center flex-wrap gap-4 mt-auto border-t border-white/10 pt-6">
+            {project.githubUrl && project.githubUrl !== "private" && (
               <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors group/link py-2 min-h-[44px]">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 group-hover/link:text-white transition-colors">
                   <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
@@ -139,12 +263,33 @@ export default function ProjectCard({ project, index }: { project: Project; inde
                 <span>Source</span>
               </a>
             )}
-            {project.liveUrl && (
-              <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors group/link ml-auto py-2 min-h-[44px]">
-                <span>View Live</span>
-                <ExternalLink className="w-4 h-4 group-hover/link:text-white transition-colors transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
-              </a>
+            
+            {project.githubUrl === "private" && (
+              <div className="flex items-center gap-2 text-xs font-semibold text-zinc-600 py-2 min-h-[44px]">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span>Private source</span>
+              </div>
             )}
+
+            <div className="flex items-center gap-4 ml-auto">
+              {hasExtraContent && (
+                <button 
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="text-xs font-semibold text-white hover:text-zinc-300 transition-colors py-2 min-h-[44px]"
+                >
+                  {isExpanded ? "View Less ↑" : "View More →"}
+                </button>
+              )}
+              {project.liveUrl && (
+                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-xs font-semibold text-zinc-400 hover:text-white transition-colors group/link py-2 min-h-[44px]">
+                  <span>{project.customLiveText || "View Live"}</span>
+                  <ExternalLink className="w-4 h-4 group-hover/link:text-white transition-colors transform group-hover/link:-translate-y-0.5 group-hover/link:translate-x-0.5" />
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </SweepCard>

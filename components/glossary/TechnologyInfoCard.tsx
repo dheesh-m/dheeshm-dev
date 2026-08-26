@@ -23,7 +23,7 @@ export default function TechnologyInfoCard({ technology, position }: TechnologyI
           }}
           className="fixed z-50 w-72 pointer-events-none"
         >
-          <div className="bg-[#030712]/90 backdrop-blur-xl border border-white/10 rounded-xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
+          <div className="bg-[#050505]/90 backdrop-blur-xl border border-white/10 rounded-xl p-5 shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
               <h4 className="text-white font-mono font-bold tracking-tight text-sm">

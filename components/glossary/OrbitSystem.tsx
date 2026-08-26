@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useInView } from "framer-motion";
 import { Technology } from "@/data/technologies";
 import TechnologyNode from "./TechnologyNode";
 import ConnectionLine from "./ConnectionLine";
@@ -12,6 +13,10 @@ interface OrbitSystemProps {
 }
 
 export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemProps) {
+  // One observer gates every orbit in this system.
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { margin: "200px" });
+
   const [activeNode, setActiveNode] = useState<Technology | null>(null);
   const [hoverPosition, setHoverPosition] = useState<{ x: number; y: number } | null>(null);
 
@@ -51,10 +56,10 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
   const activeRelated = activeNode?.related || [];
 
   return (
-    <div className="relative w-full aspect-square max-w-[800px] mx-auto flex items-center justify-center">
+    <div ref={containerRef} className="relative w-full aspect-square max-w-[800px] mx-auto flex items-center justify-center">
       
       {/* Central Core */}
-      <div className="relative z-30 flex items-center justify-center w-32 h-32 rounded-full border border-white/10 bg-[#030712]/80 backdrop-blur-md shadow-[0_0_30px_rgba(255,255,255,0.05)] group">
+      <div className="relative z-30 flex items-center justify-center w-32 h-32 rounded-full border border-white/10 bg-[#050505]/80 backdrop-blur-md shadow-[0_0_30px_rgba(255,255,255,0.05)] group">
         <div className="absolute inset-0 rounded-full border border-white/10 animate-[spin_10s_linear_infinite]" />
         <div className="absolute inset-2 rounded-full border border-dashed border-white/20 animate-[spin_15s_linear_infinite_reverse]" />
         <span className="text-white text-xs font-mono font-bold text-center px-4 leading-tight">
@@ -86,6 +91,7 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
               isClockwise={node.isClockwise}
               isActive={isActive}
               isRelated={isRelated}
+              isAnimating={isInView}
             />
             <TechnologyNode
               technology={node.tech}
@@ -96,6 +102,7 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
               isActive={isActive}
               isRelated={isRelated}
               isDimmed={isDimmed}
+              isAnimating={isInView}
               onHover={handleHover}
             />
           </div>

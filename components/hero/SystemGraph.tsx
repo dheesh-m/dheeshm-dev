@@ -1,7 +1,22 @@
 "use client";
 
-import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
+import { useCallback, useRef, useSyncExternalStore } from "react";
+import {
+  motion,
+  useAnimationFrame,
+  useInView,
+  useMotionValue,
+} from "framer-motion";
 import SystemNode from "./SystemNode";
+import { useTheme } from "@/components/providers/ThemeProvider";
+
+const DESKTOP_QUERY = "(min-width: 768px)";
+
+function subscribeToBreakpoint(onChange: () => void) {
+  const mq = window.matchMedia(DESKTOP_QUERY);
+  mq.addEventListener("change", onChange);
+  return () => mq.removeEventListener("change", onChange);
+}
 
 // Desktop Nodes & Connections
 const NODES = [
@@ -25,39 +40,66 @@ const CONNECTIONS = [
   { source: "agents", target: "tools" },
 ];
 
-// Mobile Nodes (Tighter layout, taller viewBox)
+// Mobile Nodes (Balanced layout for compact viewports)
 const MOBILE_NODES = [
-  { ...NODES[0], x: 200, y: 300 }, // LLM (Center)
-  { ...NODES[1], x: 60, y: 160 },  // RAG
-  { ...NODES[2], x: 340, y: 160 }, // TOOLS
-  { ...NODES[3], x: 200, y: 80 },  // MEMORY
-  { ...NODES[4], x: 200, y: 520 }, // AGENTS
-  { ...NODES[5], x: 60, y: 440 },  // VECTOR
-  { ...NODES[6], x: 340, y: 440 }, // API
+  { ...NODES[0], x: 200, y: 250 }, // LLM (Center)
+  { ...NODES[1], x: 80, y: 140 },  // RAG
+  { ...NODES[2], x: 320, y: 140 }, // TOOLS
+  { ...NODES[3], x: 200, y: 70 },  // MEMORY
+  { ...NODES[4], x: 200, y: 430 }, // AGENTS
+  { ...NODES[5], x: 80, y: 360 },  // VECTOR
+  { ...NODES[6], x: 320, y: 360 }, // API
 ];
 
 export default function SystemGraph() {
   const rotation = useMotionValue(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { margin: "100px" });
+  const { isLightMode } = useTheme();
 
-  // Slow orbital rotation
+  // Only one of the two layouts is mounted. Both used to render into the DOM
+  // simultaneously, toggled purely by CSS, so both animated all the time.
+  const isDesktop = useSyncExternalStore(
+    subscribeToBreakpoint,
+    useCallback(() => window.matchMedia(DESKTOP_QUERY).matches, []),
+    useCallback(() => true, [])
+  );
+
+  // Slow orbital rotation, parked once the hero scrolls away.
   useAnimationFrame((time) => {
+    if (!isInView) return;
     rotation.set((time / 150) % 360);
   });
 
-  const renderGraph = (nodes: typeof NODES, cx: number, cy: number, isMobile: boolean) => (
-    <svg viewBox={isMobile ? "0 0 400 600" : "0 0 600 500"} className="w-full h-full overflow-visible">
+  const renderGraph = (
+    nodes: typeof NODES,
+    cx: number,
+    cy: number,
+    isMobile: boolean
+  ) => (
+    <svg viewBox={isMobile ? "0 0 400 500" : "0 0 600 500"} className="w-full h-full overflow-visible">
       {/* Atmospheric Depth / Glow */}
       <radialGradient id={`hero-glow-${isMobile ? 'm' : 'd'}`} cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor="rgba(255, 255, 255, 0.05)" />
-        <stop offset="40%" stopColor="rgba(255, 255, 255, 0.02)" />
-        <stop offset="100%" stopColor="rgba(16, 16, 16, 0)" />
+        {isLightMode ? (
+          <>
+            <stop offset="0%" stopColor="rgba(168, 85, 247, 0.32)" />
+            <stop offset="45%" stopColor="rgba(192, 132, 252, 0.14)" />
+            <stop offset="100%" stopColor="rgba(247, 246, 251, 0)" />
+          </>
+        ) : (
+          <>
+            <stop offset="0%" stopColor="rgba(255, 255, 255, 0.05)" />
+            <stop offset="40%" stopColor="rgba(255, 255, 255, 0.02)" />
+            <stop offset="100%" stopColor="rgba(16, 16, 16, 0)" />
+          </>
+        )}
       </radialGradient>
-      <circle cx={cx} cy={cy} r={isMobile ? 200 : 280} fill={`url(#hero-glow-${isMobile ? 'm' : 'd'})`} pointerEvents="none" />
+      <circle cx={cx} cy={cy} r={isMobile ? 180 : 280} fill={`url(#hero-glow-${isMobile ? 'm' : 'd'})`} pointerEvents="none" />
 
       {/* Orbital Rings */}
-      <circle cx={cx} cy={cy} r={isMobile ? 90 : 120} fill="none" stroke="rgba(255, 255, 255, 0.03)" strokeWidth={1} pointerEvents="none" />
-      <circle cx={cx} cy={cy} r={isMobile ? 140 : 170} fill="none" stroke="rgba(255, 255, 255, 0.1)" strokeWidth={1} strokeDasharray="4 4" pointerEvents="none" />
-      <circle cx={cx} cy={cy} r={isMobile ? 190 : 223} fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth={1} pointerEvents="none" />
+      <circle cx={cx} cy={cy} r={isMobile ? 80 : 120} fill="none" stroke={isLightMode ? "rgba(160, 150, 210, 0.28)" : "rgba(255, 255, 255, 0.03)"} strokeWidth={1} pointerEvents="none" />
+      <circle cx={cx} cy={cy} r={isMobile ? 130 : 170} fill="none" stroke={isLightMode ? "rgba(160, 150, 210, 0.32)" : "rgba(255, 255, 255, 0.1)"} strokeWidth={1} strokeDasharray="4 4" pointerEvents="none" />
+      <circle cx={cx} cy={cy} r={isMobile ? 180 : 223} fill="none" stroke={isLightMode ? "rgba(160, 150, 210, 0.28)" : "rgba(255, 255, 255, 0.05)"} strokeWidth={1} pointerEvents="none" />
 
       {/* Connections */}
       {CONNECTIONS.map((conn, i) => {
@@ -71,14 +113,14 @@ export default function SystemGraph() {
             <path
               d={path}
               fill="none"
-              stroke="rgba(255, 255, 255, 0.05)"
+              stroke={isLightMode ? "rgba(160, 150, 210, 0.38)" : "rgba(255, 255, 255, 0.05)"}
               strokeWidth={1}
             />
             {/* Glowing animated line */}
             <motion.path
               d={path}
               fill="none"
-              stroke="rgba(255, 255, 255, 0.15)"
+              stroke={isLightMode ? "rgba(168, 85, 247, 0.7)" : "rgba(255, 255, 255, 0.15)"}
               strokeWidth={1.5}
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
@@ -88,13 +130,24 @@ export default function SystemGraph() {
             {!isMobile && (
               <motion.circle
                 r={1.5}
-                fill="rgba(255, 255, 255, 1)"
+                fill={isLightMode ? "rgba(170, 140, 255, 1)" : "rgba(255, 255, 255, 1)"}
                 initial={{ offsetDistance: "0%" }}
                 animate={{ offsetDistance: "100%" }}
-                transition={{ duration: 4 + (i % 2), repeat: Infinity, ease: "linear", delay: i * 0.4 }}
+                transition={
+                  isInView
+                    ? {
+                        duration: 4 + (i % 2),
+                        repeat: Infinity,
+                        ease: "linear",
+                        delay: i * 0.4,
+                      }
+                    : { duration: 0 }
+                }
                 style={{ 
                   offsetPath: `path("${path}")`,
-                  filter: "drop-shadow(0 0 3px rgba(255, 255, 255, 0.8))"
+                  filter: isLightMode 
+                    ? "drop-shadow(0 0 5px rgba(170, 140, 255, 0.45))"
+                    : "drop-shadow(0 0 3px rgba(255, 255, 255, 0.8))"
                 }}
               />
             )}
@@ -110,20 +163,14 @@ export default function SystemGraph() {
   );
 
   return (
-    <div className="relative w-full aspect-square md:aspect-auto max-w-[600px] flex items-center justify-center">
-      <motion.div 
-        style={{ rotate: rotation }} 
-        className="w-full h-full"
-      >
-        {/* Desktop Layout */}
-        <div className="hidden md:block w-full h-full">
-          {renderGraph(NODES, 300, 250, false)}
-        </div>
-        
-        {/* Mobile Layout */}
-        <div className="block md:hidden w-full h-full">
-          {renderGraph(MOBILE_NODES, 200, 300, true)}
-        </div>
+    <div
+      ref={containerRef}
+      className="relative w-full aspect-square md:aspect-auto max-w-[600px] flex items-center justify-center"
+    >
+      <motion.div style={{ rotate: rotation }} className="w-full h-full">
+        {isDesktop
+          ? renderGraph(NODES, 300, 250, false)
+          : renderGraph(MOBILE_NODES, 200, 300, true)}
       </motion.div>
     </div>
   );

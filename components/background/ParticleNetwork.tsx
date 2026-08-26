@@ -1,67 +1,113 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
 
-class Particle {
+/**
+ * Ambient particle field + deep galaxy star field.
+ *
+ * Renders three depth layers into a single canvas:
+ *   1. galaxy  – hundreds of tiny, nearly-invisible white/grey micro-stars that
+ *                drift at the same spatial velocity as the constellation system.
+ *                A small fraction twinkle very subtly.
+ *   2. far     – the original dim, oversized defocused particles.
+ *   3. near    – the original crisp constellation nodes, linked by faint lines.
+ *
+ * Rendering quality:
+ *   • devicePixelRatio-aware (Retina / HiDPI / 4K).
+ *   • setTransform instead of scale() so re-runs don't compound the DPR.
+ *   • Sub-pixel positions kept as floats throughout.
+ *   • lineWidth 0.5 CSS-px → 1 physical pixel on 2× screens.
+ */
+
+const LINK_DIST = 120;
+const LINK_DIST_SQ = LINK_DIST * LINK_DIST;
+const OPACITY_BUCKETS = 5;
+const MAX_LINK_ALPHA = 0.2;
+const REPEL_RADIUS_SQ = 150 * 150;
+
+/* ── galaxy star tunables ─────────────────────────────────────────────── */
+const GALAXY_DENSITY        = 1 / 2800;  // stars per CSS-px² on desktop
+const GALAXY_DENSITY_MOBILE = 1 / 5200;  // reduced on small screens
+const MOBILE_BREAKPOINT     = 768;        // px
+const TWINKLE_FRACTION      = 0.14;       // ~14 % of stars twinkle subtly
+
+interface Particle {
   x: number;
   y: number;
   vx: number;
   vy: number;
   radius: number;
-  baseAlpha: number;
-  canvasWidth: number;
-  canvasHeight: number;
-
-  constructor(canvasWidth: number, canvasHeight: number) {
-    this.canvasWidth = canvasWidth;
-    this.canvasHeight = canvasHeight;
-    this.x = Math.random() * canvasWidth;
-    this.y = Math.random() * canvasHeight;
-    
-    // Very slow movement
-    this.vx = (Math.random() - 0.5) * 0.15;
-    this.vy = (Math.random() - 0.5) * 0.15;
-    
-    // Tiny nodes
-    this.radius = Math.random() * 1.5 + 0.5;
-    
-    // Nodes towards the right side can be slightly brighter based on user preference
-    const xRatio = this.x / canvasWidth;
-    this.baseAlpha = (Math.random() * 0.4 + 0.1) * (0.5 + xRatio * 0.5);
-  }
-
-  update(mouseX: number, mouseY: number) {
-    this.x += this.vx;
-    this.y += this.vy;
-
-    // Wrap around edges
-    if (this.x < 0) this.x = this.canvasWidth;
-    if (this.x > this.canvasWidth) this.x = 0;
-    if (this.y < 0) this.y = this.canvasHeight;
-    if (this.y > this.canvasHeight) this.y = 0;
-
-    // Subtle parallax / repulsion from mouse
-    if (mouseX !== 0 && mouseY !== 0) {
-      const dx = mouseX - this.x;
-      const dy = mouseY - this.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      
-      if (dist < 150) {
-        // Very subtle push
-        this.x -= (dx / dist) * 0.2;
-        this.y -= (dy / dist) * 0.2;
-      }
-    }
-  }
-
-  draw(ctx: CanvasRenderingContext2D) {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255, 255, 255, ${this.baseAlpha})`;
-    ctx.fill();
-  }
+  alpha: number;
+  colorType: number;
 }
+
+interface GalaxyStar {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  radius: number;        // CSS px, kept tiny (0.15 – 0.85)
+  alpha: number;         // base opacity
+  liveAlpha: number;     // current rendered opacity (modulated by twinkle)
+  twinkle: boolean;
+  twinklePhase: number;
+  twinkleSpeed: number;
+  colorType: number;
+}
+
+function createParticle(w: number, h: number, far: boolean): Particle {
+  const x = Math.random() * w;
+  const xRatio = x / w;
+  const baseAlpha = (Math.random() * 0.4 + 0.1) * (0.5 + xRatio * 0.5);
+  const radius = Math.random() * 1.5 + 0.5;
+  return {
+    x,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.15,
+    vy: (Math.random() - 0.5) * 0.15,
+    // The far layer reads as defocused via a larger radius at much lower
+    // alpha, which costs nothing next to an actual blur filter.
+    radius: far ? radius * 2.2 : radius,
+    alpha: far ? baseAlpha * 0.32 : baseAlpha * 0.8,
+    colorType: Math.random() < 0.7 ? 0 : Math.random() < 0.66 ? 1 : 2,
+  };
+}
+
+/**
+ * Create a single galaxy micro-star whose velocity is drawn from the same
+ * distribution as the constellation particles so the whole scene drifts as
+ * one coherent environment.
+ */
+function createGalaxyStar(w: number, h: number): GalaxyStar {
+  // Use a quadratic curve so the majority of stars are smaller/fainter,
+  // matching the visual distribution of a real starfield.
+  const r = Math.pow(Math.random(), 2);
+  const alpha   = r * 0.8 + 0.2;   // 0.2 – 1.0
+  const radius  = r * 0.7 + 0.15;  // 0.15 – 0.85 CSS-px
+  const twinkle = Math.random() < TWINKLE_FRACTION;
+  return {
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.12,
+    vy: (Math.random() - 0.5) * 0.12,
+    radius,
+    alpha,
+    liveAlpha: alpha,
+    twinkle,
+    twinklePhase: Math.random() * Math.PI * 2,
+    twinkleSpeed: Math.random() * 0.008 + 0.003,
+    colorType: Math.random() < 0.7 ? 0 : Math.random() < 0.66 ? 1 : 2,
+  };
+}
+
+// Half-neighbourhood: visiting these five offsets sees each pair exactly once.
+const CELL_OFFSETS: ReadonlyArray<readonly [number, number]> = [
+  [0, 0],
+  [1, 0],
+  [-1, 1],
+  [0, 1],
+  [1, 1],
+];
 
 export default function ParticleNetwork() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -69,119 +115,388 @@ export default function ParticleNetwork() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
-    // Handle Reduced Motion
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
 
-    let animationFrameId: number;
-    let particles: Particle[] = [];
-    
+    let frameId = 0;
+    let running = false;
+    let near: Particle[]    = [];
+    let far: Particle[]     = [];
+    let galaxy: GalaxyStar[] = [];
+    let width  = 0;
+    let height = 0;
+    let cols = 0;
+    let rows = 0;
+    let cells: number[][] = [];
+    /** Monotonically increasing frame counter used for twinkling. */
+    let tick = 0;
+
     let mouseX = 0;
     let mouseY = 0;
-    let targetMouseX = 0;
-    let targetMouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    let pointerActive = false;
+
+    // Reused every frame so the link pass allocates nothing steady-state.
+    const buckets: number[][] = Array.from(
+      { length: OPACITY_BUCKETS },
+      () => []
+    );
 
     const init = () => {
-      // Set actual size in memory (scaled to account for extra pixel ratio)
       const dpr = window.devicePixelRatio || 1;
-      // Get CSS size
       const rect = canvas.getBoundingClientRect();
-      
-      // Set actual size in memory (scaled to account for extra pixel ratio)
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+      width = rect.width;
+      height = rect.height;
 
-      // Normalize coordinate system to use css pixels
-      ctx.scale(dpr, dpr);
-      
-      const width = rect.width;
-      const height = rect.height;
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      // setTransform, not scale: scale() multiplies onto the existing matrix,
+      // so re-running this on resize compounded the DPR each time.
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Responsive particle count
-      const area = width * height;
-      const particleDensity = 15000; // 1 particle per 15k pixels
-      const count = Math.min(Math.floor(area / particleDensity), 250); // Cap at 250
+      const count = Math.min(Math.floor((width * height) / 15000), 160);
+      near = Array.from({ length: count }, () =>
+        createParticle(width, height, false)
+      );
+      far = Array.from({ length: Math.round(count * 0.4) }, () =>
+        createParticle(width, height, true)
+      );
 
-      particles = [];
-      for (let i = 0; i < count; i++) {
-        particles.push(new Particle(width, height));
+      // Galaxy micro-star count scaled by area; capped lower on mobile.
+      const isMobile = width < MOBILE_BREAKPOINT;
+      const density  = isMobile ? GALAXY_DENSITY_MOBILE : GALAXY_DENSITY;
+      const galaxyCount = Math.min(
+        Math.round(width * height * density),
+        isMobile ? 380 : 860
+      );
+      galaxy = Array.from({ length: galaxyCount }, () =>
+        createGalaxyStar(width, height)
+      );
+
+      cols = Math.max(1, Math.ceil(width / LINK_DIST));
+      rows = Math.max(1, Math.ceil(height / LINK_DIST));
+      cells = Array.from({ length: cols * rows }, () => []);
+    };
+
+    const step = (list: Particle[], repel: boolean) => {
+      for (const p of list) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = width;
+        else if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        else if (p.y > height) p.y = 0;
+
+        if (repel && pointerActive) {
+          const dx = mouseX - p.x;
+          const dy = mouseY - p.y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < REPEL_RADIUS_SQ && distSq > 0.0001) {
+            const dist = Math.sqrt(distSq);
+            p.x -= (dx / dist) * 0.2;
+            p.y -= (dy / dist) * 0.2;
+          }
+        }
       }
+    };
+
+    /**
+     * Advance galaxy stars. They move identically to constellation particles
+     * (wrap-around boundaries) and twinklers modulate liveAlpha via a slow sine.
+     */
+    const stepGalaxy = () => {
+      for (const s of galaxy) {
+        s.x += s.vx;
+        s.y += s.vy;
+        if (s.x < 0) s.x = width;
+        else if (s.x > width) s.x = 0;
+        if (s.y < 0) s.y = height;
+        else if (s.y > height) s.y = 0;
+
+        if (s.twinkle) {
+          // Slow sine on top of base alpha; range ≈ [alpha * 0.3, alpha * 1.0]
+          const wave = Math.sin(s.twinklePhase + tick * s.twinkleSpeed);
+          s.liveAlpha = s.alpha * (0.3 + 0.7 * ((wave + 1) / 2));
+        }
+      }
+    };
+
+    /**
+     * Draw the galaxy layer.
+     *
+     * Two passes to achieve a "crisp white center with soft halo" without
+     * blowing out the overall background brightness:
+     *
+     *   1. Base pass: draws all stars at their original size and low opacity
+     *      to maintain the subtle deep-space texture.
+     *   2. Core + Glow pass: draws a tiny, high-opacity pinpoint in the center
+     *      of each star, with a tight white shadowBlur to create the halo.
+     */
+    const drawGalaxy = (isLight: boolean) => {
+      ctx.save();
+
+      for (const s of galaxy) {
+        let renderAlpha = s.liveAlpha;
+
+        if (isLight) {
+          if (s.colorType === 0) {
+            // 70% Tiny stars: ~1px, crisp light-grey/white
+            const r = Math.max(0.65, s.radius * 1.15);
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(135, 130, 155, ${Math.min(1, renderAlpha * 1.9)})`;
+            ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (s.colorType === 1) {
+            // 20% Lavender stars: ~1.5 - 2.5px, soft lavender
+            const r = Math.max(1.1, s.radius * 2.1);
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(160, 130, 230, ${Math.min(1, renderAlpha * 2.1)})`;
+            ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            // 10% Bright stars: ~2 - 4px with small soft halo + 4-point sparkle
+            const r = Math.max(1.6, s.radius * 3.2);
+            const a = Math.min(1, renderAlpha * 2.2);
+
+            // Soft purple halo bloom
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, r * 2.4, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(170, 140, 255, ${a * 0.35})`;
+            ctx.fill();
+
+            // 4-point delicate sparkle flare (matches the reference image ✦)
+            ctx.beginPath();
+            const flare = r * 2.5;
+            ctx.strokeStyle = `rgba(170, 140, 255, ${a * 0.55})`;
+            ctx.lineWidth = 0.75;
+            ctx.moveTo(s.x - flare, s.y);
+            ctx.lineTo(s.x + flare, s.y);
+            ctx.moveTo(s.x, s.y - flare);
+            ctx.lineTo(s.x, s.y + flare);
+            ctx.stroke();
+            ctx.restore();
+
+            // Core bright white / lavender center
+            ctx.beginPath();
+            ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1, a * 1.5)})`;
+            ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(160, 130, 240, ${a * 0.7})`;
+            ctx.lineWidth = 0.5;
+            ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        } else {
+          // Dark mode (100% untouched)
+          ctx.beginPath();
+          ctx.shadowBlur = 2;
+          ctx.shadowColor = "rgba(255,255,255,0.8)";
+          ctx.fillStyle = `rgba(255,255,255,${s.liveAlpha})`;
+          ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    };
+
+    const drawDots = (list: Particle[], isLight: boolean) => {
+      for (const p of list) {
+        ctx.beginPath();
+        let renderAlpha = p.alpha;
+        let drawnRadius = p.radius;
+        
+        if (isLight) {
+          renderAlpha = Math.min(1, p.alpha * 2.5);
+          drawnRadius = Math.max(1.2, p.radius * 1.3);
+          
+          let rgb = "170, 150, 220"; 
+          if (p.colorType === 0) rgb = "150, 140, 190"; 
+          else if (p.colorType === 1) rgb = "168, 130, 240"; 
+          else rgb = "140, 100, 230"; 
+
+          // Subtle orbital ring around selected prominent constellation nodes
+          if (p.colorType === 2 && drawnRadius > 1.8) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, drawnRadius * 3.2, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(160, 150, 210, ${renderAlpha * 0.35})`;
+            ctx.lineWidth = 0.8;
+            ctx.setLineDash([3, 3]);
+            ctx.stroke();
+            ctx.restore();
+          }
+
+          ctx.fillStyle = `rgba(${rgb}, ${renderAlpha * 0.75})`;
+          ctx.arc(p.x, p.y, drawnRadius, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    };
+
+    const drawLinks = (isLight: boolean) => {
+      for (const bucket of buckets) bucket.length = 0;
+      for (const cell of cells) cell.length = 0;
+
+      for (let i = 0; i < near.length; i++) {
+        const p = near[i];
+        const cx = Math.min(cols - 1, Math.max(0, (p.x / LINK_DIST) | 0));
+        const cy = Math.min(rows - 1, Math.max(0, (p.y / LINK_DIST) | 0));
+        cells[cy * cols + cx].push(i);
+      }
+
+      for (let cy = 0; cy < rows; cy++) {
+        for (let cx = 0; cx < cols; cx++) {
+          const cellA = cells[cy * cols + cx];
+          if (cellA.length === 0) continue;
+
+          for (const [ox, oy] of CELL_OFFSETS) {
+            const nx = cx + ox;
+            const ny = cy + oy;
+            if (nx < 0 || ny < 0 || nx >= cols || ny >= rows) continue;
+            const cellB = cells[ny * cols + nx];
+            if (cellB.length === 0) continue;
+            const sameCell = ox === 0 && oy === 0;
+
+            for (let a = 0; a < cellA.length; a++) {
+              const pi = near[cellA[a]];
+              for (let b = sameCell ? a + 1 : 0; b < cellB.length; b++) {
+                const pj = near[cellB[b]];
+                const dx = pi.x - pj.x;
+                const dy = pi.y - pj.y;
+                const distSq = dx * dx + dy * dy;
+                if (distSq >= LINK_DIST_SQ) continue;
+
+                const t = 1 - Math.sqrt(distSq) / LINK_DIST;
+                const slot = Math.min(
+                  OPACITY_BUCKETS - 1,
+                  (t * OPACITY_BUCKETS) | 0
+                );
+                buckets[slot].push(pi.x, pi.y, pj.x, pj.y);
+              }
+            }
+          }
+        }
+      }
+
+      ctx.lineWidth = isLight ? 1 : 0.5; // Line width requested: 1px
+      const rgb = isLight ? "150, 140, 190" : "200, 210, 255"; // connection line color requested
+      for (let s = 0; s < OPACITY_BUCKETS; s++) {
+        const seg = buckets[s];
+        if (seg.length === 0) continue;
+        
+        let alpha = ((s + 0.5) / OPACITY_BUCKETS) * MAX_LINK_ALPHA;
+        if (isLight) {
+           // Map to 0.18 - 0.28
+           alpha = 0.18 + ((s + 0.5) / OPACITY_BUCKETS) * 0.10;
+        }
+        ctx.strokeStyle = `rgba(${rgb}, ${alpha})`;
+        ctx.beginPath();
+        for (let k = 0; k < seg.length; k += 4) {
+          ctx.moveTo(seg[k], seg[k + 1]);
+          ctx.lineTo(seg[k + 2], seg[k + 3]);
+        }
+        ctx.stroke();
+      }
+    };
+
+    const render = () => {
+      const isLight = document.body.classList.contains("light-theme");
+      ctx.clearRect(0, 0, width, height);
+      // Layer order: galaxy (deepest) → far defocus → links → near nodes
+      drawGalaxy(isLight);
+      drawDots(far, isLight);
+      drawLinks(isLight);
+      drawDots(near, isLight);
     };
 
     const animate = () => {
-      const rect = canvas.getBoundingClientRect();
-      const width = rect.width;
-      const height = rect.height;
-
-      ctx.clearRect(0, 0, width, height);
-
-      // Smooth mouse interpolation
-      mouseX += (targetMouseX - mouseX) * 0.05;
-      mouseY += (targetMouseY - mouseY) * 0.05;
-
-      // Draw connections
-      ctx.lineWidth = 0.5;
-      
-      for (let i = 0; i < particles.length; i++) {
-        if (!prefersReducedMotion) {
-          particles[i].update(mouseX, mouseY);
-        }
-        
-        // Connect nearby particles
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          const maxDist = 120;
-          if (dist < maxDist) {
-            const opacity = (1 - dist / maxDist) * 0.2; // Max opacity 0.2
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(200, 210, 255, ${opacity})`;
-            ctx.stroke();
-          }
-        }
-        
-        particles[i].draw(ctx);
-      }
-
-      animationFrameId = requestAnimationFrame(animate);
+      tick++;
+      mouseX += (targetX - mouseX) * 0.05;
+      mouseY += (targetY - mouseY) * 0.05;
+      stepGalaxy();
+      step(far, false);
+      step(near, true);
+      render();
+      frameId = requestAnimationFrame(animate);
     };
 
-    // Initialize and start
+    const start = () => {
+      if (running || reduceMotion) return;
+      running = true;
+      frameId = requestAnimationFrame(animate);
+    };
+
+    const stop = () => {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(frameId);
+    };
+
+    // Started eagerly on purpose. Deferring this to requestIdleCallback was
+    // measured and made things worse: the background painted late and Speed
+    // Index regressed from 1.6s to 3.5s on throttled mobile.
     init();
-    animate();
+    if (reduceMotion) {
+      // A single static frame; the loop is never scheduled at all.
+      render();
+    } else {
+      start();
+    }
 
-    const handleResize = () => init();
-    const handleMouseMove = (e: MouseEvent) => {
-      targetMouseX = e.clientX;
-      targetMouseY = e.clientY;
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        init();
+        if (reduceMotion) render();
+      }, 150);
     };
 
-    window.addEventListener("resize", handleResize);
-    if (!prefersReducedMotion) {
-      window.addEventListener("mousemove", handleMouseMove);
+    const handlePointerMove = (e: PointerEvent) => {
+      targetX = e.clientX;
+      targetY = e.clientY;
+      pointerActive = true;
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) stop();
+      else start();
+    };
+
+    window.addEventListener("resize", handleResize, { passive: true });
+    document.addEventListener("visibilitychange", handleVisibility);
+    if (!reduceMotion) {
+      window.addEventListener("pointermove", handlePointerMove, {
+        passive: true,
+      });
     }
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      stop();
+      clearTimeout(resizeTimer);
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("pointermove", handlePointerMove);
     };
   }, []);
 
   return (
-    <motion.canvas
+    <canvas
       ref={canvasRef}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 2 }}
-      className="absolute inset-0 w-full h-full pointer-events-none"
+      aria-hidden="true"
+      className="absolute inset-0 h-full w-full pointer-events-none animate-particle-fade"
     />
   );
 }

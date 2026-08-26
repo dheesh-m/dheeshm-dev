@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface NavItemProps {
@@ -12,46 +11,55 @@ interface NavItemProps {
   isScrolled?: boolean;
 }
 
-export default function NavItem({ id, label, href, isActive, onClick, isScrolled }: NavItemProps) {
+export default function NavItem({
+  id,
+  label,
+  href,
+  isActive,
+  onClick,
+  isScrolled,
+}: NavItemProps) {
   return (
     <a
       href={href}
-      onClick={(e) => {
-        e.preventDefault();
-        onClick();
-      }}
+      onClick={onClick}
+      aria-current={isActive ? "true" : undefined}
       className={cn(
-        "relative flex flex-col items-center justify-center group",
-        isScrolled ? "py-1.5 px-3" : "py-2 px-3"
+        "relative flex flex-col items-center justify-center group rounded-full",
+        "outline-none focus-visible:ring-2 focus-visible:ring-white/60",
+        "transition-[padding] duration-[400ms] ease-out",
+        isScrolled ? "py-1.5 px-3" : "py-2 px-3.5"
       )}
     >
-      <span className={cn(
-        "text-[11px] md:text-xs font-mono mb-1 transition-colors duration-300 whitespace-nowrap",
-        isActive ? "text-white font-bold" : "text-zinc-500 group-hover:text-white"
-      )}>
+      <span
+        className={cn(
+          "text-[10px] md:text-[11px] font-sans font-medium mb-0.5 transition-colors duration-300 whitespace-nowrap",
+          isActive ? "text-white font-semibold" : "text-zinc-500 group-hover:text-white"
+        )}
+      >
         {id}
       </span>
-      
-      <span className={cn(
-        "text-[13px] md:text-[15px] font-mono tracking-widest transition-all duration-300 whitespace-nowrap",
-        isActive ? "text-[#F5F5F5] font-bold" : "text-zinc-400 group-hover:text-[#F5F5F5]"
-      )}>
-        {"// " + (isScrolled ? label.toLowerCase() : label)}
+
+      <span
+        className={cn(
+          "text-[12.5px] md:text-[14px] font-display font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap",
+          isActive
+            ? "text-[#F5F5F5] font-bold"
+            : "text-zinc-400 group-hover:text-[#F5F5F5]"
+        )}
+      >
+        {"// " + label}
       </span>
 
       {/* Underline indicator */}
-      <div
+      <span
+        aria-hidden="true"
         className={cn(
-          "absolute -bottom-1 left-1/2 -translate-x-1/2 h-[1px] bg-white origin-center transition-all duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-          isActive ? "w-4 opacity-100" : "w-0 opacity-0 group-hover:w-4 group-hover:opacity-100"
+          "nav-active-indicator absolute -bottom-1 left-1/2 h-[2px] w-5 -translate-x-1/2 rounded-full bg-white origin-center transition-all duration-300",
+          isActive
+            ? "scale-x-100 opacity-100 shadow-[0_0_8px_rgba(255,255,255,0.7)]"
+            : "scale-x-0 opacity-0 group-hover:scale-x-75 group-hover:opacity-40"
         )}
-      />
-      
-      {/* Subtle hover translation */}
-      <motion.div 
-        className="absolute inset-0"
-        whileHover={{ y: -1 }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
       />
     </a>
   );

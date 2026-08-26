@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import ExperienceAccordion from "./ExperienceAccordion";
+import SectionLabel from "../ui/SectionLabel";
 
 export default function ExperienceSection() {
   return (
@@ -16,6 +17,7 @@ export default function ExperienceSection() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-center mb-16 md:mb-24"
         >
+          <SectionLabel number="06" text="EXPERIENCE" />
           <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-tight">
             Professional<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">

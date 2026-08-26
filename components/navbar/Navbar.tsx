@@ -1,116 +1,154 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import MobileMenu from "./MobileMenu";
 import NavbarGlow from "./NavbarGlow";
 import NavItem from "./NavItem";
+import ThemeToggle from "./ThemeToggle";
+import { NAV_ITEMS, SECTION_IDS } from "./navItems";
 
-const NAV_ITEMS = [
-  { id: "01", label: "HOME", href: "#home" },
-  { id: "02", label: "ABOUT", href: "#about" },
-  { id: "03", label: "EXPERTISE", href: "#enterprise" },
-  { id: "04", label: "PROJECTS", href: "#projects" },
-  { id: "05", label: "SKILLS", href: "#skills" },
-  { id: "06", label: "EXPERIENCE", href: "#experience" },
-  { id: "07", label: "CONTACT", href: "#contact" },
-];
+const MOBILE_MENU_ID = "primary-mobile-menu";
+
+// A spring reads as settling rather than sliding to a stop, which is what the
+// old fixed-duration CSS ease on max-width/height felt mechanical doing.
+const BAR_SPRING = {
+  type: "spring",
+  stiffness: 320,
+  damping: 34,
+  mass: 0.9,
+} as const;
 
 export default function Navbar() {
   const [active, setActive] = useState("HOME");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Highly optimized scroll listener that only updates state when crossing the threshold.
-  // Zero continuous React re-renders while scrolling.
+  // Only flips state when crossing the threshold, so scrolling causes no
+  // continuous re-renders.
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setIsScrolled(window.scrollY > 60);
-          ticking = false;
-        });
-        ticking = true;
-      }
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        setIsScrolled(window.scrollY > 60);
+        ticking = false;
+      });
     };
-    
-    // Initial check
-    handleScroll();
 
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Scroll spy. Ratios persist across callbacks because IntersectionObserver
+  // only reports the entries that changed, so the winner has to be chosen
+  // against the full picture rather than whatever fired last.
   useEffect(() => {
-    const sections = ["home", ...NAV_ITEMS.map((item) => item.href.replace("#", ""))];
+    const ratios = new Map<string, number>();
+    const labelById = new Map(
+      NAV_ITEMS.map((item) => [item.href.slice(1), item.label])
+    );
+
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            if (id === "home") setActive("HOME");
-            else {
-              const label = NAV_ITEMS.find((item) => item.href === `#${id}`)?.label;
-              if (label) setActive(label);
-            }
+        for (const entry of entries) {
+          ratios.set(
+            entry.target.id,
+            entry.isIntersecting ? entry.intersectionRatio : 0
+          );
+        }
+
+        let bestId = "";
+        let bestRatio = 0;
+        for (const id of SECTION_IDS) {
+          const ratio = ratios.get(id) ?? 0;
+          // Strict `>` keeps the earlier (topmost) section on a tie.
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = id;
           }
-        });
+        }
+
+        const label = labelById.get(bestId);
+        if (label) setActive(label);
       },
-      { rootMargin: "-40% 0px -55% 0px" }
+      {
+        rootMargin: "-40% 0px -55% 0px",
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      }
     );
-    sections.forEach((id) => {
+
+    for (const id of SECTION_IDS) {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
-    });
+    }
     return () => observer.disconnect();
   }, []);
 
-  const handleNavClick = (label: string, href: string) => {
+  // Anchors navigate natively, so this is only optimistic feedback ahead of
+  // the observer catching up.
+  const handleNavClick = useCallback((label: string) => {
     setActive(label);
     setMobileOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
+
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
 
   return (
     <>
       <header className="fixed top-4 md:top-6 left-0 right-0 z-[100] flex justify-center px-4 md:px-8 pointer-events-none">
-        <div
+        <motion.div
+          // The pill hugs its own content on desktop (`lg:w-auto`) instead of
+          // being pinned to a max-width. A fixed max-width could not shrink
+          // below the nav's min-content, so the bar overflowed and left a dead
+          // gap at wide sizes. Height/padding/gap animate on a spring; the
+          // background cross-fades in CSS.
+          initial={false}
+          animate={{
+            height: isScrolled ? 56 : 66,
+            paddingLeft: isScrolled ? 22 : 30,
+            paddingRight: isScrolled ? 22 : 30,
+          }}
+          transition={BAR_SPRING}
           className={cn(
-            "relative flex items-center justify-between overflow-hidden rounded-[20px] border pointer-events-auto",
-            "transition-all duration-[700ms] ease-in-out group",
-            isScrolled 
-              ? "h-[54px] w-full max-w-[950px] px-5 md:px-8 bg-[rgba(14,15,17,0.85)] md:bg-transparent border-white/20 backdrop-blur-xl backdrop-saturate-150 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:bg-white/[0.05] hover:shadow-[0_8px_32px_0_rgba(255,255,255,0.1)] hover:border-white/30" 
-              : "h-[60px] md:h-[68px] w-full max-w-[1400px] px-5 md:px-7 bg-[rgba(14,15,17,0.7)] md:bg-transparent border-[rgba(255,255,255,0.1)] md:border-transparent backdrop-blur-xl md:backdrop-blur-md"
+            "ios-glass-nav relative flex w-full max-w-full lg:w-auto items-center justify-between lg:justify-start gap-6 lg:gap-10",
+            "overflow-hidden rounded-full border pointer-events-auto",
+            "backdrop-blur-3xl backdrop-saturate-[190%]",
+            "transition-[background-color,border-color,box-shadow] duration-500 ease-out",
+            isScrolled
+              ? "bg-[rgba(16,16,20,0.85)] border-white/20 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.65)]"
+              : "bg-[rgba(16,16,20,0.65)] border-white/10 shadow-[0_8px_32px_-6px_rgba(0,0,0,0.4)]"
           )}
         >
-          {/* We only render NavbarGlow in the un-scrolled state to keep compact state clean */}
-          <div className={cn("transition-opacity duration-500", isScrolled ? "opacity-0" : "opacity-100")}>
-            <NavbarGlow />
-          </div>
-          
-          {/* Logo - Collapses via CSS when scrolled */}
-          <a
-            href="#home"
-            onClick={(e) => { e.preventDefault(); handleNavClick("HOME", "#home"); }}
-            className={cn(
-              "relative z-10 flex items-center overflow-hidden whitespace-nowrap",
-              "transition-all duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-              isScrolled ? "max-w-[120px] opacity-100 mr-auto md:max-w-0 md:opacity-0 md:mr-0" : "max-w-[120px] opacity-100 mr-auto md:mr-8"
-            )}
-          >
-            <span className="text-xl md:text-2xl font-mono text-white font-bold tracking-tight">
-              DM<span className="text-zinc-400">._</span>
-            </span>
-          </a>
+          <NavbarGlow />
 
-          {/* Desktop Nav */}
-          <nav 
-            className={cn(
-              "relative z-10 hidden lg:flex items-center transition-all duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-              isScrolled ? "gap-4 xl:gap-6 mx-auto" : "gap-6 xl:gap-8"
-            )}
+          <div className="relative z-10 flex items-center">
+            <a
+              href="#home"
+              onClick={() => handleNavClick("HOME")}
+              className="flex items-center whitespace-nowrap rounded-full outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+            >
+              <motion.span
+                initial={false}
+                animate={{ scale: isScrolled ? 0.88 : 1 }}
+                transition={BAR_SPRING}
+                className="origin-left font-display text-xl font-bold tracking-tight text-white md:text-2xl"
+              >
+                DM<span className="text-zinc-400">._</span>
+              </motion.span>
+            </a>
+          </div>
+
+          {/* Desktop nav */}
+          <motion.nav
+            aria-label="Primary"
+            initial={false}
+            animate={{ gap: isScrolled ? 16 : 26 }}
+            transition={BAR_SPRING}
+            className="relative z-10 hidden items-center lg:flex"
           >
             {NAV_ITEMS.map((item) => (
               <NavItem
@@ -119,26 +157,60 @@ export default function Navbar() {
                 label={item.label}
                 href={item.href}
                 isActive={active === item.label}
-                onClick={() => handleNavClick(item.label, item.href)}
+                onClick={() => handleNavClick(item.label)}
                 isScrolled={isScrolled}
               />
             ))}
-          </nav>
+          </motion.nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="relative z-10 lg:hidden flex flex-col justify-center items-center w-10 h-10 group"
-            aria-label="Toggle menu"
-          >
-            <span className={`block w-5 h-px bg-[#F5F5F5] transition-transform duration-300 ${mobileOpen ? "translate-y-1 rotate-45" : "-translate-y-1 group-hover:w-6 group-hover:bg-white"}`} />
-            <span className={`block w-5 h-px bg-[#F5F5F5] transition-opacity duration-300 absolute ${mobileOpen ? "opacity-0" : "opacity-100 group-hover:w-6 group-hover:bg-white"}`} />
-            <span className={`block w-5 h-px bg-[#F5F5F5] transition-transform duration-300 ${mobileOpen ? "-translate-y-px -rotate-45" : "translate-y-1 group-hover:w-6 group-hover:bg-white"}`} />
-          </button>
-        </div>
+          <div className="relative z-10 flex items-center gap-2 lg:ml-2">
+            <ThemeToggle />
+            
+            {/* Mobile / tablet menu button */}
+            <button
+              type="button"
+              onClick={() => setMobileOpen((open) => !open)}
+              className="flex h-10 w-10 flex-col items-center justify-center lg:hidden group/burger ml-1"
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+              aria-controls={MOBILE_MENU_ID}
+            >
+              <span
+                className={cn(
+                  "navbar-burger-line block h-[1.5px] w-5 bg-white transition-transform duration-300 rounded-full",
+                  mobileOpen
+                    ? "translate-y-1 rotate-45"
+                    : "-translate-y-1 group-hover/burger:bg-white"
+                )}
+              />
+              <span
+                className={cn(
+                  "navbar-burger-line absolute block h-[1.5px] w-5 bg-white transition-opacity duration-300 rounded-full",
+                  mobileOpen
+                    ? "opacity-0"
+                    : "opacity-100 group-hover/burger:bg-white"
+                )}
+              />
+              <span
+                className={cn(
+                  "navbar-burger-line block h-[1.5px] w-5 bg-white transition-transform duration-300 rounded-full",
+                  mobileOpen
+                    ? "-translate-y-px -rotate-45"
+                    : "translate-y-1 group-hover/burger:bg-white"
+                )}
+              />
+            </button>
+          </div>
+        </motion.div>
       </header>
 
-      <MobileMenu isOpen={mobileOpen} onClose={() => setMobileOpen(false)} activeItem={active} />
+      <MobileMenu
+        id={MOBILE_MENU_ID}
+        isOpen={mobileOpen}
+        onClose={closeMobile}
+        activeItem={active}
+        onNavigate={handleNavClick}
+      />
     </>
   );
 }

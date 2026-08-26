@@ -15,7 +15,7 @@ export default function EnterpriseCard({ item, isActive, onMouseEnter }: Enterpr
   return (
     <div onMouseEnter={onMouseEnter} className="h-full">
       <SweepCard className={cn(
-        "flex flex-col p-8 transition-all duration-500 cursor-default h-full",
+        "flex flex-col p-6 sm:p-8 transition-all duration-500 cursor-default h-full",
         isActive ? "bg-white/5" : ""
       )}>
       {/* Subtle Grid/Circuit Pattern on Hover */}
@@ -25,7 +25,7 @@ export default function EnterpriseCard({ item, isActive, onMouseEnter }: Enterpr
       )} />
 
       {/* Top Header */}
-      <div className="flex justify-between items-start mb-12 relative z-10">
+      <div className="flex justify-between items-start mb-6 sm:mb-12 relative z-10">
         <span className={cn(
           "font-mono text-xs transition-colors duration-300",
           isActive ? "text-white" : "text-gray-500 group-hover:text-white"
@@ -47,7 +47,37 @@ export default function EnterpriseCard({ item, isActive, onMouseEnter }: Enterpr
       {/* Content */}
       <div className="relative z-10 mt-auto flex flex-col">
         <h3 className="text-xl font-light tracking-tight text-white mb-3 font-display">
-          {item.title}
+          {item.title === "PRODUCTION AI SYSTEMS" ? (
+            <>
+              Production{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">
+                AI Systems
+              </span>
+            </>
+          ) : item.title === "FULL-STACK PRODUCTS" ? (
+            <>
+              Full-Stack{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">
+                Products
+              </span>
+            </>
+          ) : item.title === "REAL-TIME APPLICATIONS" ? (
+            <>
+              Real-Time{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">
+                Applications
+              </span>
+            </>
+          ) : item.title === "AI EXPERIMENTS / PROJECTS" ? (
+            <>
+              AI Experiments{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">
+                / Projects
+              </span>
+            </>
+          ) : (
+            item.title
+          )}
         </h3>
         
         <p className="text-sm text-gray-400 font-sans leading-relaxed mb-6">

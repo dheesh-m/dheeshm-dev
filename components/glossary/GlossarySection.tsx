@@ -7,7 +7,7 @@ import TechnologyConstellation from "./TechnologyConstellation";
 
 export default function GlossarySection() {
   return (
-    <section id="glossary" className="relative w-full min-h-screen py-32 overflow-hidden bg-background">
+    <section id="glossary" className="relative w-full py-20 md:py-28 overflow-hidden">
       <TechBackground />
       
       <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -17,7 +17,7 @@ export default function GlossarySection() {
           viewport={{ once: true, margin: "-20%" }}
           transition={{ duration: 0.8 }}
         >
-          <SectionLabel number="04" text="TECHNOLOGY CONSTELLATION" />
+          <SectionLabel text="TECHNOLOGY CONSTELLATION" />
         </motion.div>
 
         <motion.div

@@ -8,7 +8,7 @@ import ProjectCard from "./ProjectCard";
 export default function Projects() {
 
   return (
-    <section id="projects" className="relative w-full py-16 md:py-32 overflow-hidden">
+    <section id="projects" className="relative w-full py-20 md:py-28 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0 }}
@@ -34,7 +34,12 @@ export default function Projects() {
         <div className="flex flex-col w-full">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 group/grid">
             {projects.map((project, i) => (
-              <ProjectCard key={project.id} project={project} index={i} />
+              <div 
+                key={project.id}
+                className={`h-full ${project.id === "apt" ? "lg:col-start-2" : ""}`}
+              >
+                <ProjectCard project={project} index={i} />
+              </div>
             ))}
           </div>
         </div>

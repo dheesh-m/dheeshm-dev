@@ -7,16 +7,42 @@ import GlossarySection from "@/components/glossary/GlossarySection";
 import SystemsSection from "@/components/systems/SystemsSection";
 import ExperienceSection from "@/components/experience/ExperienceSection";
 import NeuralBackground from "@/components/background/NeuralBackground";
+import Contact from "@/components/contact/Contact";
 import Footer from "@/components/footer/Footer";
+import { SAME_AS, EMAIL } from "@/data/socials";
+import { SITE_URL } from "@/lib/siteUrl";
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Dheesh Medekar",
+  url: SITE_URL,
+  email: `mailto:${EMAIL}`,
+  jobTitle: "AI / Software Engineer",
+  description:
+    "I build intelligent systems, real-time applications and full-stack products.",
+  sameAs: SAME_AS,
+  knowsAbout: [
+    "LLM Engineering",
+    "Retrieval-Augmented Generation",
+    "Backend APIs",
+    "Full-Stack Development",
+  ],
+};
 
 export default function Home() {
   return (
     <div className="relative min-h-screen bg-background text-foreground selection:bg-white/20">
-      {/* Neural Background System */}
+      <script
+        type="application/ld+json"
+        // Static, author-controlled object; no user input reaches this.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+
       <NeuralBackground />
 
       <Navbar />
-      
+
       <main className="relative z-10 flex flex-col items-center w-full mx-auto">
         <Hero />
         <About />
@@ -25,9 +51,10 @@ export default function Home() {
         <Projects />
         <SystemsSection />
         <ExperienceSection />
-        <Footer />
+        <Contact />
       </main>
+
+      <Footer />
     </div>
   );
 }
-

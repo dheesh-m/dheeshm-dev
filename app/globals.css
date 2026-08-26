@@ -4,18 +4,37 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+
+  /* Tailwind v4 generates color utilities from --color-* tokens.
+     These previously lived on :root only, which left bg-background and
+     text-foreground compiling to nothing. */
+  --color-background: #050505;
+  --color-foreground: #f5f5f5;
 }
 
 @layer base {
   :root {
     --background: #050505;
     --foreground: #f5f5f5;
-    --card: rgba(255, 255, 255, 0.02);
-    --card-hover: rgba(255, 255, 255, 0.04);
     --border: rgba(255, 255, 255, 0.04);
     --border-hover: rgba(255, 255, 255, 0.1);
-    --white: #ffffff;
-    --white-glow: rgba(255, 255, 255, 0.2);
+  }
+
+  html {
+    /* Next 16 no longer overrides scroll-behavior; the data attribute in
+       app/layout.tsx is the documented opt-in that makes this apply to
+       anchor navigation. Previously this sat on <body>, where it had no
+       effect on document scrolling at all. */
+    scroll-behavior: smooth;
+    /* Keeps anchor targets clear of the fixed navbar instead of landing
+       underneath it. */
+    scroll-padding-top: 5.5rem;
+  }
+
+  @media (min-width: 768px) {
+    html {
+      scroll-padding-top: 7rem;
+    }
   }
 
   body {
@@ -23,32 +42,49 @@
     color: var(--foreground);
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
-    scroll-behavior: smooth;
   }
 }
 
 @layer utilities {
-  .text-glow {
-    text-shadow: 0 0 20px var(--accent-glow);
-  }
-  .text-white-glow {
-    text-shadow: 0 0 20px var(--white-glow);
-  }
-  
   .glass-panel {
     background-color: rgba(10, 10, 10, 0.6);
     border: 1px solid var(--border);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
-  
-  .glass-panel-hover {
-    transition: all 0.3s ease;
+
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
   }
-  .glass-panel-hover:hover {
-    background-color: rgba(20, 20, 20, 0.8);
-    border-color: var(--border-hover);
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* Custom cursor. Scoped to a class the component adds only on fine pointers,
+   so the rule disappears entirely on touch and never has to be !important.
+   Text-entry targets keep a real caret. */
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none;
+}
+html.has-custom-cursor input,
+html.has-custom-cursor textarea,
+html.has-custom-cursor select,
+html.has-custom-cursor [contenteditable="true"] {
+  cursor: auto;
 }
 
 @property --sweep-angle {
@@ -60,6 +96,34 @@
 @keyframes sweep {
   0% { --sweep-angle: 0deg; }
   100% { --sweep-angle: 360deg; }
+}
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Above-the-fold entry animation. Deliberately CSS rather than framer-motion:
+   a JS-driven fade from opacity 0 delays Largest Contentful Paint until the
+   bundle has loaded and hydrated (measured at +3.2s on throttled mobile).
+   A CSS animation starts at first paint instead. */
+.reveal-up {
+  animation: reveal-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+@keyframes ring-pulse {
+  0%, 100% { opacity: 0.45; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@keyframes particle-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-particle-fade {
+  animation: particle-fade 2s ease-out both;
 }
 
 .animate-sweep {
@@ -79,4 +143,372 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-sweep,
+  .animate-particle-fade,
+  [class*="ring-pulse"] {
+    animation: none;
+  }
+  .reveal-up {
+    animation-delay: 0s;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Ambient & Grid Default (Dark Mode) ── */
+.light-ambient-glow,
+.light-grid-overlay {
+  display: none;
+  opacity: 0;
+}
+
+/* =======================================================================
+   LIGHT MODE OVERRIDES
+   These rules override hardcoded dark-mode Tailwind classes when the
+   .light-theme class is active on the <body> tag.
+   ======================================================================= */
+
+body, body * {
+  /* Exclude transform and opacity so Framer Motion is untouched */
+  transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              color 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base Light Theme Backgrounds */
+body.light-theme,
+body.light-theme .neural-bg-root,
+body.light-theme .bg-\[\#050505\],
+body.light-theme .bg-zinc-950,
+body.light-theme .bg-black {
+  background: linear-gradient(135deg, #F7F6FB 0%, #F3F2F8 100%) !important;
+}
+
+/* Hide dark mode ambient elements */
+body.light-theme .ambient-glow,
+body.light-theme .ambient-vignette {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* Show Light Mode Atmospheric Glows */
+body.light-theme .light-ambient-glow {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+/* Show Light Mode Technical Grid (Visible across entire viewport) */
+body.light-theme .light-grid-overlay {
+  display: block !important;
+  opacity: 1 !important;
+  background-image: 
+    linear-gradient(rgba(120, 120, 135, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 120, 135, 0.14) 1px, transparent 1px),
+    linear-gradient(rgba(148, 142, 176, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 142, 176, 0.08) 1px, transparent 1px);
+  background-size: 60px 60px, 60px 60px, 20px 20px, 20px 20px;
+  background-position: center top;
+}
+
+/* Card / Surface Backgrounds */
+body.light-theme .bg-background {
+  background-color: transparent !important;
+}
+
+/* Universal Light Cards (About, Experience, Projects, Enterprise, Glossary) */
+body.light-theme .glass-panel,
+body.light-theme .bg-\[\#101010\],
+body.light-theme .bg-\[\#0A0A0A\],
+body.light-theme [class*="bg-[#0a0a0a]"],
+body.light-theme [class*="bg-[#0A0A0A]"],
+body.light-theme [class*="bg-[#101010]"],
+body.light-theme [class*="bg-[#151515]"],
+body.light-theme [class*="bg-[#1C1C1C]"],
+body.light-theme [class*="bg-[#050505]/"],
+body.light-theme [class*="bg-[rgba(14,15,17"],
+body.light-theme [class*="hover:bg-[rgba(20,21,24"] {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(160, 150, 210, 0.25) !important;
+  box-shadow: 0 8px 30px -4px rgba(139, 92, 246, 0.08) !important;
+}
+
+/* Glass Panel specifics (About side panel) */
+body.light-theme .glass-panel .text-gray-500 {
+  color: #4B5563 !important;
+  font-weight: 600 !important;
+}
+body.light-theme .glass-panel .text-gray-300 {
+  color: #111827 !important;
+  font-weight: 600 !important;
+}
+body.light-theme .glass-panel .bg-white\/20 {
+  background-color: rgba(139, 92, 246, 0.35) !important;
+}
+body.light-theme .glass-panel .bg-white {
+  background-color: #8B5CF6 !important;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.7) !important;
+}
+
+/* Card Hover and Active States */
+body.light-theme [class*="group-hover:bg-[#101010]"],
+body.light-theme [class*="hover:bg-[rgba(20,21,24"]:hover {
+  background-color: #ffffff !important;
+  border-color: rgba(168, 85, 247, 0.4) !important;
+  box-shadow: 0 12px 40px -4px rgba(139, 92, 246, 0.14) !important;
+}
+
+body.light-theme .bg-white\/5,
+body.light-theme .bg-white\/\[0\.02\] {
+  background-color: rgba(243, 240, 255, 0.7) !important;
+}
+
+body.light-theme .bg-white\/10 {
+  background-color: rgba(160, 150, 210, 0.15) !important;
+}
+
+body.light-theme .bg-white\/20 {
+  background-color: rgba(160, 150, 210, 0.3) !important;
+}
+
+/* Tech Badges */
+body.light-theme span[class*="bg-white/5"],
+body.light-theme [class*="bg-[rgba(255,255,255,0.04)"] {
+  background-color: rgba(243, 240, 255, 0.95) !important;
+  border-color: rgba(160, 150, 210, 0.35) !important;
+  color: #374151 !important;
+}
+
+/* iOS 26 Glassmorphism Navbar System */
+.ios-glass-nav {
+  backdrop-filter: blur(32px) saturate(190%) contrast(102%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(190%) contrast(102%) !important;
+}
+
+/* Dark Mode iOS 26 Glassmorphism */
+header .ios-glass-nav {
+  background: linear-gradient(135deg, rgba(22, 22, 28, 0.72) 0%, rgba(12, 12, 16, 0.65) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 
+    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.3),
+    0 20px 48px -8px rgba(0, 0, 0, 0.65),
+    0 4px 16px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Light Mode iOS 26 Glassmorphism */
+body.light-theme header .ios-glass-nav {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(247, 245, 255, 0.68) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  box-shadow: 
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px 0 rgba(160, 150, 210, 0.15),
+    0 18px 48px -8px rgba(139, 92, 246, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-theme header .ios-glass-nav a .text-white {
+  color: #111827 !important;
+}
+
+body.light-theme header .ios-glass-nav a .text-zinc-400,
+body.light-theme header .ios-glass-nav a .text-zinc-500 {
+  color: #6B7280 !important;
+}
+
+body.light-theme header .ios-glass-nav a:hover .text-zinc-400,
+body.light-theme header .ios-glass-nav a:hover .text-zinc-500 {
+  color: #111827 !important;
+}
+
+body.light-theme header .ios-glass-nav .nav-active-indicator {
+  background-color: #8B5CF6 !important;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.75) !important;
+}
+
+/* Text Overrides */
+body.light-theme,
+body.light-theme .text-white,
+body.light-theme .text-\[\#F5F5F5\],
+body.light-theme .text-\[\#EAEAEA\],
+body.light-theme .text-white\/90,
+body.light-theme .text-white\/80 {
+  color: #111827 !important; /* near-black / deep charcoal */
+}
+
+body.light-theme .text-gray-400,
+body.light-theme .text-zinc-400,
+body.light-theme .text-\[\#9A9A9A\],
+body.light-theme .text-\[\#B5B5B5\],
+body.light-theme .text-\[\#A5A5A5\],
+body.light-theme .text-\[\#8A8A8A\],
+body.light-theme .text-white\/60 {
+  color: #4B5563 !important; /* dark grey */
+}
+
+body.light-theme .text-\[\#D4D4D4\] {
+  color: #1F2937 !important;
+}
+
+body.light-theme .text-gray-500,
+body.light-theme .text-zinc-500,
+body.light-theme .text-white\/40 {
+  color: #6B7280 !important;
+}
+
+body.light-theme .text-zinc-600 {
+  color: #9CA3AF !important;
+}
+
+/* Typography Gradient Overrides (Medekar, Systems, Stack, etc.) */
+body.light-theme .bg-clip-text,
+body.light-theme .from-\[\#8A8A8A\] {
+  background-image: linear-gradient(90deg, #111827 0%, #8B5CF6 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Section Label & Badges */
+body.light-theme .animate-pulse.bg-white {
+  background-color: #8B5CF6 !important;
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.6) !important;
+}
+
+/* Hero Action Buttons in Light Mode */
+body.light-theme .hero-btn-primary,
+body.light-theme .contact-btn-primary,
+body.light-theme a.bg-white.text-\[\#050505\],
+body.light-theme button.bg-white.text-\[\#050505\] {
+  background-color: #111827 !important;
+  color: #FFFFFF !important;
+}
+body.light-theme .hero-btn-primary:hover,
+body.light-theme .contact-btn-primary:hover,
+body.light-theme a.bg-white.text-\[\#050505\]:hover,
+body.light-theme button.bg-white.text-\[\#050505\]:hover {
+  background-color: #1F2937 !important;
+}
+
+body.light-theme .hero-btn-secondary,
+body.light-theme .contact-btn-secondary,
+body.light-theme a.border-white\/10.text-white,
+body.light-theme button.border-white\/10.text-white {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  color: #111827 !important;
+  border-color: rgba(160, 150, 210, 0.4) !important;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.08) !important;
+}
+body.light-theme .contact-btn-secondary:hover {
+  background-color: #FFFFFF !important;
+  border-color: rgba(168, 85, 247, 0.5) !important;
+}
+
+body.light-theme .contact-email-btn {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #374151 !important;
+  border-color: rgba(160, 150, 210, 0.35) !important;
+}
+body.light-theme .contact-email-btn:hover {
+  background-color: #FFFFFF !important;
+  color: #111827 !important;
+}
+
+/* Mobile Navbar Elements in Light Mode */
+body.light-theme .navbar-burger-line {
+  background-color: #111827 !important;
+}
+
+body.light-theme .theme-toggle-star {
+  color: #374151 !important;
+}
+body.light-theme .theme-toggle-star:hover {
+  color: #111827 !important;
+}
+
+/* Mobile Drawer Menu in Light Mode */
+body.light-theme #mobile-menu {
+  background-color: rgba(247, 246, 251, 0.98) !important;
+}
+
+body.light-theme #mobile-menu nav a span {
+  color: #4B5563 !important;
+}
+
+body.light-theme #mobile-menu nav a[aria-current="true"] span {
+  color: #111827 !important;
+  font-weight: 800 !important;
+}
+
+body.light-theme #mobile-menu nav a span.font-sans {
+  color: #6B7280 !important;
+}
+
+body.light-theme #mobile-menu div[class*="rounded-full bg-white"] {
+  background-color: #8B5CF6 !important;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.75) !important;
+}
+
+/* Border Overrides */
+body.light-theme .border-white\/10,
+body.light-theme .border-white\/5,
+body.light-theme .border-white\/15,
+body.light-theme .border-white\/\[0\.08\] {
+  border-color: rgba(160, 150, 210, 0.25) !important;
+}
+
+body.light-theme .border-white\/20 {
+  border-color: rgba(160, 150, 210, 0.35) !important;
+}
+
+/* Footer: Gradient from white to purple top to down */
+body.light-theme footer {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAF5FF 35%, #F3E8FF 70%, #E9D5FF 100%) !important;
+  border-top: 1px solid rgba(160, 150, 210, 0.3) !important;
+}
+
+body.light-theme footer a,
+body.light-theme footer a .text-white {
+  color: #111827 !important;
+}
+
+body.light-theme footer a .text-zinc-500 {
+  color: #8B5CF6 !important;
+}
+
+body.light-theme footer p {
+  color: #4B5563 !important;
+  font-weight: 600 !important;
+}
+
+/* Specialized Overrides */
+.theme-toggle-bg {
+  background-color: transparent;
+}
+.theme-toggle-glow {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+body.light-theme .theme-toggle-bg {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+body.light-theme .theme-toggle-glow {
+  box-shadow: 0 0 12px rgba(180, 150, 255, 0.4);
+}
+
+body.light-theme .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+body.light-theme .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
 }
