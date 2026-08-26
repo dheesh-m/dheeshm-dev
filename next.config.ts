@@ -23,7 +23,7 @@ const contentSecurityPolicy = [
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
-  "font-src 'self'",
+  "font-src 'self' data: blob:",
   // Dev needs websockets for HMR.
   `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
   "media-src 'self'",

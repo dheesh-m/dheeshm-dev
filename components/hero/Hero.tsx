@@ -150,10 +150,10 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* ── RIGHT COLUMN: System Graph ── */}
+        {/* ── RIGHT COLUMN: 3D Orbital System ── */}
         <motion.div
           style={{ scale: graphScale, y: graphY, opacity: graphOpacity }}
-          className="relative flex items-center justify-center w-full h-[400px] lg:h-full lg:min-h-[600px]"
+          className="relative flex items-center justify-center w-full h-[380px] sm:h-[480px] lg:h-[560px]"
         >
           <SystemGraph />
         </motion.div>

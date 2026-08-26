@@ -21,14 +21,14 @@
   }
 
   html {
-    /* Next 16 no longer overrides scroll-behavior; the data attribute in
-       app/layout.tsx is the documented opt-in that makes this apply to
-       anchor navigation. Previously this sat on <body>, where it had no
-       effect on document scrolling at all. */
-    scroll-behavior: smooth;
-    /* Keeps anchor targets clear of the fixed navbar instead of landing
-       underneath it. */
+    /* scroll-behavior is intentionally NOT set here — Lenis smooth-scroll
+       handles interpolation itself. Setting both produces double-easing jank.
+       The data-scroll-behavior attribute on <html> (app/layout.tsx) was the
+       Next 16 opt-in; it is kept for anchor fallback when JS is disabled. */
     scroll-padding-top: 5.5rem;
+    /* Silence the FOUC that can happen on initial anchor navigation */
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
   }
 
   @media (min-width: 768px) {
@@ -42,6 +42,8 @@
     color: var(--foreground);
     font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
+    /* Lenis — momentum scroll on iOS Safari (works alongside Lenis touch handling) */
+    overscroll-behavior: none;
   }
 }
 
