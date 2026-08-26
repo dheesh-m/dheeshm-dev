@@ -12,7 +12,7 @@ type ThemeOrigin = {
 
 type ThemeContextType = {
   isLightMode: boolean;
-  toggleTheme: (origin?: ThemeOrigin) => void;
+  toggleTheme: (origin?: ThemeOrigin) => Promise<void>;
 };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -31,10 +31,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleTheme = useCallback(
-    (origin?: ThemeOrigin) => {
+    async (origin?: ThemeOrigin) => {
       const toLight = !isLightMode;
 
-      // Calculate origin coordinates or default to star position / center
+      // Sample exact star coordinates
       const x = origin?.x ?? (typeof window !== "undefined" ? window.innerWidth - 120 : 0);
       const y = origin?.y ?? 40;
       const maxRadius =
@@ -43,14 +43,25 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           ? Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
           : 1200);
 
-      // Trigger the unified continuous physics explosion
+      // Single synchronized master duration (0ms delay)
+      const DURATION = 850;
+
+      // 1. Immediately trigger the physical canvas shockwave animation (0ms delay)
       burstRef.current?.trigger({
         x,
         y,
         maxRadius,
         toLight,
         starElement: origin?.starElement,
-        onThemeSwitch: () => {
+        duration: DURATION,
+      });
+
+      // 2. Immediately execute synchronized View Transition radial reveal (0ms delay)
+      const doc = typeof document !== "undefined" ? (document as any) : null;
+      if (doc && typeof doc.startViewTransition === "function") {
+        document.documentElement.classList.add("is-theme-transitioning");
+
+        const transition = doc.startViewTransition(() => {
           setIsLightMode(toLight);
           if (toLight) {
             document.body.classList.add("light-theme");
@@ -59,8 +70,44 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             document.body.classList.remove("light-theme");
             localStorage.setItem("theme", "dark");
           }
-        },
-      });
+        });
+
+        try {
+          await transition.ready;
+
+          // The new live theme expands directly from the star
+          const anim = document.documentElement.animate(
+            {
+              clipPath: [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${maxRadius}px at ${x}px ${y}px)`,
+              ],
+            },
+            {
+              duration: DURATION,
+              easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+              pseudoElement: "::view-transition-new(root)",
+              fill: "forwards",
+            }
+          );
+
+          await anim.finished;
+        } catch {
+          // Finished
+        } finally {
+          document.documentElement.classList.remove("is-theme-transitioning");
+        }
+      } else {
+        // Fallback for browsers without View Transitions API
+        setIsLightMode(toLight);
+        if (toLight) {
+          document.body.classList.add("light-theme");
+          localStorage.setItem("theme", "light");
+        } else {
+          document.body.classList.remove("light-theme");
+          localStorage.setItem("theme", "dark");
+        }
+      }
     },
     [isLightMode]
   );

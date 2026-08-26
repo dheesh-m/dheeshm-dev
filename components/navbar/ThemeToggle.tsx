@@ -14,7 +14,8 @@ export default function ThemeToggle() {
       return;
     }
 
-    const rect = buttonRef.current.getBoundingClientRect();
+    const targetEl = starRef.current || buttonRef.current;
+    const rect = targetEl.getBoundingClientRect();
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
     const maxRadius = Math.hypot(
