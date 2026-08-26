@@ -4,12 +4,9 @@ import { useMemo, useRef, useState } from "react";
 import { useInView } from "framer-motion";
 import { systemTechnologies, aiTechnologies, Technology } from "@/data/technologies";
 import SystemHub from "./SystemHub";
-import NetworkCanvas from "./NetworkCanvas";
 import TechnologyInfoCard from "../glossary/TechnologyInfoCard";
 
 export default function SystemCluster() {
-  // A single observer for the whole cluster gates 52 orbital animations,
-  // rather than each of the 26 nodes registering its own.
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { margin: "200px" });
 
@@ -40,15 +37,11 @@ export default function SystemCluster() {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full flex items-center justify-center mt-8 mb-12 overflow-x-clip">
-      
-      {/* Network Background Connections (Canvas) */}
-      <NetworkCanvas activeNode={activeNode} activeHub={activeHub} />
-
-      {/* 4 Main Hubs */}
-      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-4 sm:px-8 py-20 flex flex-col lg:grid lg:grid-cols-2 gap-y-32 lg:gap-y-16 lg:gap-x-12 items-center justify-items-center">
+    <div ref={containerRef} className="relative w-full flex items-center justify-center mt-2 mb-8">
+      {/* 4 Main Hubs - Expanded 2 sizes in a balanced quad formation */}
+      <div className="relative z-10 w-full max-w-[1300px] mx-auto px-2 sm:px-4 py-8 grid grid-cols-1 lg:grid-cols-2 gap-y-8 lg:gap-y-4 lg:gap-x-6 items-center justify-items-center">
         
-        <div className="w-full flex justify-center lg:justify-end lg:pr-8">
+        <div className="w-full flex justify-center">
           <SystemHub 
             category="AI / LLM Engineering"
             title="AI & LLM Infra"
@@ -62,7 +55,7 @@ export default function SystemCluster() {
           />
         </div>
         
-        <div className="w-full flex justify-center lg:justify-start lg:pl-8">
+        <div className="w-full flex justify-center">
           <SystemHub 
             category="Data & Cloud Infra"
             title="Data & Cloud"
@@ -76,7 +69,7 @@ export default function SystemCluster() {
           />
         </div>
 
-        <div className="w-full flex justify-center lg:justify-end lg:pr-8">
+        <div className="w-full flex justify-center">
           <SystemHub 
             category="Backend & APIs"
             title="Backend & APIs"
@@ -90,7 +83,7 @@ export default function SystemCluster() {
           />
         </div>
 
-        <div className="w-full flex justify-center lg:justify-start lg:pl-8">
+        <div className="w-full flex justify-center">
           <SystemHub 
             category="Full-Stack"
             title="Full-Stack"

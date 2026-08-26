@@ -1,14 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
-
-const RING_IDLE_BORDER = "rgba(147, 51, 234, 0.75)";
-const RING_IDLE_BG = "rgba(255, 255, 255, 0.12)";
-const RING_IDLE_SHADOW = "0 0 10px rgba(168, 85, 247, 0.6), 0 0 22px rgba(147, 51, 234, 0.35), inset 0 0 8px rgba(168, 85, 247, 0.25)";
-
-const RING_HOVER_BORDER = "rgba(192, 132, 252, 0.95)";
-const RING_HOVER_BG = "rgba(168, 85, 247, 0.22)";
-const RING_HOVER_SHADOW = "0 0 16px rgba(192, 132, 252, 0.9), 0 0 32px rgba(168, 85, 247, 0.6), inset 0 0 12px rgba(192, 132, 252, 0.4)";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 const FINE_POINTER = "(pointer: fine)";
 
@@ -19,6 +12,12 @@ function subscribeToPointer(onChange: () => void) {
 }
 
 export default function CustomCursor() {
+  const { isLightMode } = useTheme();
+  const isLightRef = useRef(isLightMode);
+  useEffect(() => {
+    isLightRef.current = isLightMode;
+  }, [isLightMode]);
+
   const enabled = useSyncExternalStore(
     subscribeToPointer,
     useCallback(() => window.matchMedia(FINE_POINTER).matches, []),
@@ -31,6 +30,7 @@ export default function CustomCursor() {
   const ring = useRef({ x: -100, y: -100 });
   const isHovering = useRef(false);
   const appliedHover = useRef<boolean | null>(null);
+  const appliedLight = useRef<boolean | null>(null);
   const visible = useRef(false);
 
   const dotRef = useRef<HTMLDivElement>(null);
@@ -78,16 +78,21 @@ export default function CustomCursor() {
       const m = mouse.current;
       const d = dot.current;
       const r = ring.current;
+      const light = isLightRef.current;
 
-      // Direct follow for dot = immediate zero-lag response
+      // Direct follow for dot
       d.x += (m.x - d.x) * 0.95;
       d.y += (m.y - d.y) * 0.95;
-      // Snappy smooth follow for outer ring
+      // Smooth follow for outer ring
       r.x += (m.x - r.x) * 0.45;
       r.y += (m.y - r.y) * 0.45;
 
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${d.x}px, ${d.y}px, 0) translate(-50%, -50%)`;
+        dotRef.current.style.backgroundColor = light ? "#1e1b4b" : "#ffffff";
+        dotRef.current.style.boxShadow = light
+          ? "0 0 5px rgba(147, 51, 234, 0.45), 0 0 1px #1e1b4b"
+          : "0 0 6px rgba(168, 85, 247, 0.8), 0 0 2px #ffffff";
       }
 
       if (ringRef.current) {
@@ -95,17 +100,32 @@ export default function CustomCursor() {
         const scale = hovering ? 1.4 : 1;
         ringRef.current.style.transform = `translate3d(${r.x}px, ${r.y}px, 0) translate(-50%, -50%) scale(${scale})`;
 
-        if (appliedHover.current !== hovering) {
+        if (appliedHover.current !== hovering || appliedLight.current !== light) {
           appliedHover.current = hovering;
-          ringRef.current.style.borderColor = hovering
-            ? RING_HOVER_BORDER
-            : RING_IDLE_BORDER;
-          ringRef.current.style.backgroundColor = hovering
-            ? RING_HOVER_BG
-            : RING_IDLE_BG;
-          ringRef.current.style.boxShadow = hovering
-            ? RING_HOVER_SHADOW
-            : RING_IDLE_SHADOW;
+          appliedLight.current = light;
+
+          if (light) {
+            ringRef.current.style.borderColor = hovering
+              ? "rgba(147, 51, 234, 0.75)"
+              : "rgba(147, 51, 234, 0.35)";
+            ringRef.current.style.backgroundColor = hovering
+              ? "rgba(147, 51, 234, 0.10)"
+              : "rgba(147, 51, 234, 0.03)";
+            ringRef.current.style.boxShadow = hovering
+              ? "0 0 12px rgba(147, 51, 234, 0.4)"
+              : "0 0 6px rgba(147, 51, 234, 0.15)";
+          } else {
+            // Dark mode (visible white / purple glow ring)
+            ringRef.current.style.borderColor = hovering
+              ? "rgba(168, 85, 247, 0.9)"
+              : "rgba(255, 255, 255, 0.35)";
+            ringRef.current.style.backgroundColor = hovering
+              ? "rgba(168, 85, 247, 0.15)"
+              : "rgba(255, 255, 255, 0.04)";
+            ringRef.current.style.boxShadow = hovering
+              ? "0 0 14px rgba(168, 85, 247, 0.65)"
+              : "0 0 8px rgba(255, 255, 255, 0.2)";
+          }
         }
       }
 
@@ -145,26 +165,21 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Outer Ring: neon purple aura + dark charcoal/black border */}
+      {/* Outer Ring */}
       <div
         ref={ringRef}
         aria-hidden="true"
         style={{
           opacity: 0,
-          border: `1.5px solid ${RING_IDLE_BORDER}`,
-          backgroundColor: RING_IDLE_BG,
-          boxShadow: RING_IDLE_SHADOW,
         }}
-        className="fixed top-0 left-0 w-7 h-7 rounded-full pointer-events-none z-[99999] backdrop-blur-[1px] transition-[background-color,border-color,box-shadow,opacity,transform] duration-200 ease-out will-change-transform"
+        className="fixed top-0 left-0 w-7 h-7 rounded-full pointer-events-none z-[99999] backdrop-blur-[1px] transition-[background-color,border-color,box-shadow,opacity,transform] duration-200 ease-out will-change-transform border-[1.5px]"
       />
-      {/* Inner Dot: electric neon purple (#A855F7) + intense multi-layer neon glow */}
+      {/* Inner Dot */}
       <div
         ref={dotRef}
         aria-hidden="true"
         style={{
           opacity: 0,
-          backgroundColor: "#C084FC",
-          boxShadow: "0 0 6px #C084FC, 0 0 12px #A855F7, 0 0 20px #9333EA, 0 0 32px rgba(147, 51, 234, 0.85)",
         }}
         className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[99999] will-change-transform transition-opacity duration-200"
       />

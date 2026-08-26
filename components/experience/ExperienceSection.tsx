@@ -18,7 +18,7 @@ export default function ExperienceSection() {
           className="text-center mb-16 md:mb-24"
         >
           <SectionLabel number="06" text="EXPERIENCE" />
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white leading-tight">
+          <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] text-white font-display mb-6">
             Professional<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">
               Experience

@@ -138,7 +138,15 @@ export const systemTechnologies: Technology[] = [
     category: "Backend & APIs",
     description: "Full-duplex communication channels over a single TCP connection for real-time applications.",
     useCases: ["Live updates", "Chat systems", "Streaming AI responses"],
-    related: ["fastapi"]
+    related: ["fastapi", "nodejs"]
+  },
+  {
+    id: "nodejs",
+    name: "Node.js",
+    category: "Backend & APIs",
+    description: "Asynchronous event-driven JavaScript runtime designed to build scalable network applications.",
+    useCases: ["Microservices", "Real-time APIs", "Tooling"],
+    related: ["fastapi", "websockets", "rest-apis"]
   },
 
   // Data & Cloud Infra

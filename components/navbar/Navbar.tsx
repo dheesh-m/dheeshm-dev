@@ -4,36 +4,24 @@ import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import MobileMenu from "./MobileMenu";
-import NavbarGlow from "./NavbarGlow";
 import NavItem from "./NavItem";
 import ThemeToggle from "./ThemeToggle";
 import { NAV_ITEMS, SECTION_IDS } from "./navItems";
 
 const MOBILE_MENU_ID = "primary-mobile-menu";
 
-// A spring reads as settling rather than sliding to a stop, which is what the
-// old fixed-duration CSS ease on max-width/height felt mechanical doing.
-const BAR_SPRING = {
-  type: "spring",
-  stiffness: 320,
-  damping: 34,
-  mass: 0.9,
-} as const;
-
 export default function Navbar() {
   const [active, setActive] = useState("HOME");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Only flips state when crossing the threshold, so scrolling causes no
-  // continuous re-renders.
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
       if (ticking) return;
       ticking = true;
       window.requestAnimationFrame(() => {
-        setIsScrolled(window.scrollY > 60);
+        setIsScrolled(window.scrollY > 40);
         ticking = false;
       });
     };
@@ -43,9 +31,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Scroll spy. Ratios persist across callbacks because IntersectionObserver
-  // only reports the entries that changed, so the winner has to be chosen
-  // against the full picture rather than whatever fired last.
+  // Scroll spy
   useEffect(() => {
     const ratios = new Map<string, number>();
     const labelById = new Map(
@@ -65,7 +51,6 @@ export default function Navbar() {
         let bestRatio = 0;
         for (const id of SECTION_IDS) {
           const ratio = ratios.get(id) ?? 0;
-          // Strict `>` keeps the earlier (topmost) section on a tie.
           if (ratio > bestRatio) {
             bestRatio = ratio;
             bestId = id;
@@ -76,7 +61,7 @@ export default function Navbar() {
         if (label) setActive(label);
       },
       {
-        rootMargin: "-40% 0px -55% 0px",
+        rootMargin: "-30% 0px -60% 0px",
         threshold: [0, 0.25, 0.5, 0.75, 1],
       }
     );
@@ -88,115 +73,146 @@ export default function Navbar() {
     return () => observer.disconnect();
   }, []);
 
-  // Anchors navigate natively, so this is only optimistic feedback ahead of
-  // the observer catching up.
-  const handleNavClick = useCallback((label: string) => {
+  const handleNavClick = useCallback((label: string, href?: string) => {
     setActive(label);
     setMobileOpen(false);
+    if (href && href.startsWith("#")) {
+      const targetId = href.slice(1);
+      const el = document.getElementById(targetId);
+      if (el) {
+        if ((window as any).__lenis) {
+          (window as any).__lenis.scrollTo(el, { offset: -70 });
+        } else {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }
   }, []);
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 
   return (
     <>
-      <header className="fixed top-4 md:top-6 left-0 right-0 z-[100] flex justify-center px-4 md:px-8 pointer-events-none">
+      <header className="fixed top-4 md:top-6 left-0 right-0 z-[100] flex justify-center px-4 sm:px-8 pointer-events-none">
         <motion.div
-          // The pill hugs its own content on desktop (`lg:w-auto`) instead of
-          // being pinned to a max-width. A fixed max-width could not shrink
-          // below the nav's min-content, so the bar overflowed and left a dead
-          // gap at wide sizes. Height/padding/gap animate on a spring; the
-          // background cross-fades in CSS.
+          layout
           initial={false}
           animate={{
-            height: isScrolled ? 56 : 66,
-            paddingLeft: isScrolled ? 22 : 30,
-            paddingRight: isScrolled ? 22 : 30,
+            maxWidth: isScrolled ? "980px" : "1200px",
+            paddingLeft: isScrolled ? "18px" : "24px",
+            paddingRight: isScrolled ? "18px" : "24px",
+            paddingTop: isScrolled ? "8px" : "10px",
+            paddingBottom: isScrolled ? "8px" : "10px",
           }}
-          transition={BAR_SPRING}
+          transition={{
+            duration: 0.35,
+            ease: [0.16, 1, 0.3, 1],
+          }}
           className={cn(
-            "ios-glass-nav relative flex w-full max-w-full lg:w-auto items-center justify-between lg:justify-start gap-6 lg:gap-10",
-            "overflow-hidden rounded-full border pointer-events-auto",
-            "backdrop-blur-3xl backdrop-saturate-[190%]",
-            "transition-[background-color,border-color,box-shadow] duration-500 ease-out",
+            "relative flex w-full items-center justify-between pointer-events-auto rounded-full transition-all duration-300",
             isScrolled
-              ? "bg-[rgba(16,16,20,0.85)] border-white/20 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.65)]"
-              : "bg-[rgba(16,16,20,0.65)] border-white/10 shadow-[0_8px_32px_-6px_rgba(0,0,0,0.4)]"
+              ? "bg-white/40 dark:bg-[#0f0f16]/65 backdrop-blur-2xl backdrop-saturate-[190%] border border-white/50 dark:border-white/15 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12),0_2px_10px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_48px_-8px_rgba(0,0,0,0.6)]"
+              : "bg-transparent border border-transparent shadow-none"
           )}
         >
-          <NavbarGlow />
-
-          <div className="relative z-10 flex items-center">
+          {/* ── 1. Left: Brand / Logo ────────────────────────────────────────── */}
+          <div className="flex items-center">
             <a
               href="#home"
-              onClick={() => handleNavClick("HOME")}
-              className="flex items-center whitespace-nowrap rounded-full outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavClick("HOME", "#home");
+              }}
+              className="flex items-center group outline-none select-none"
             >
-              <motion.span
-                initial={false}
-                animate={{ scale: isScrolled ? 0.88 : 1 }}
-                transition={BAR_SPRING}
-                className="origin-left font-display text-xl font-bold tracking-tight text-white md:text-2xl"
+              {/* Brand Name */}
+              <span
+                className={cn(
+                  "font-display text-base sm:text-lg font-bold tracking-tight transition-colors duration-300",
+                  isScrolled
+                    ? "text-[#0f172a] dark:text-white"
+                    : "text-white"
+                )}
               >
-                DM<span className="text-zinc-400">._</span>
-              </motion.span>
+                dhees_h
+              </span>
             </a>
           </div>
 
-          {/* Desktop nav */}
-          <motion.nav
+          {/* ── 2. Center: Compact Navigation Pill ──────────────────────────── */}
+          <nav
             aria-label="Primary"
-            initial={false}
-            animate={{ gap: isScrolled ? 16 : 26 }}
-            transition={BAR_SPRING}
-            className="relative z-10 hidden items-center lg:flex"
+            className={cn(
+              "hidden md:flex items-center rounded-full transition-all duration-300",
+              isScrolled
+                ? "bg-white/35 dark:bg-white/10 backdrop-blur-xl backdrop-saturate-[180%] border border-white/45 dark:border-white/15 px-1.5 py-1 shadow-inner gap-0.5"
+                : "bg-white/15 dark:bg-white/10 backdrop-blur-2xl backdrop-saturate-[180%] border border-white/35 dark:border-white/20 px-2 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)] gap-1"
+            )}
           >
             {NAV_ITEMS.map((item) => (
               <NavItem
                 key={item.id}
                 id={item.id}
                 label={item.label}
+                title={item.title}
                 href={item.href}
                 isActive={active === item.label}
-                onClick={() => handleNavClick(item.label)}
+                onClick={() => handleNavClick(item.label, item.href)}
                 isScrolled={isScrolled}
               />
             ))}
-          </motion.nav>
+          </nav>
 
-          <div className="relative z-10 flex items-center gap-2 lg:ml-2">
+          {/* ── 3. Right: CTA & Controls ────────────────────────────────────── */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
-            
-            {/* Mobile / tablet menu button */}
+
+            {/* iOS 26 Glass CTA Pill */}
+            <a
+              href="#contact"
+              className={cn(
+                "hidden sm:inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[13px] font-semibold transition-all duration-300 whitespace-nowrap outline-none",
+                isScrolled
+                  ? "bg-white/75 dark:bg-white/15 text-[#0f172a] dark:text-white border border-white/50 dark:border-white/20 shadow-sm hover:bg-white dark:hover:bg-white/25 hover:shadow"
+                  : "bg-white/20 dark:bg-white/10 backdrop-blur-xl text-white border border-white/35 dark:border-white/20 shadow-sm hover:bg-white/30"
+              )}
+            >
+              Resume
+            </a>
+
+            {/* Mobile / Tablet Menu Button */}
             <button
               type="button"
               onClick={() => setMobileOpen((open) => !open)}
-              className="flex h-10 w-10 flex-col items-center justify-center lg:hidden group/burger ml-1"
+              className={cn(
+                "flex h-9 w-9 flex-col items-center justify-center md:hidden rounded-full border transition-all duration-300",
+                isScrolled
+                  ? "bg-white/40 dark:bg-white/10 border-white/40 dark:border-white/20 text-[#0f172a] dark:text-white"
+                  : "bg-white/15 dark:bg-white/10 backdrop-blur-md border-white/30 dark:border-white/20 text-white"
+              )}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
               aria-controls={MOBILE_MENU_ID}
             >
               <span
                 className={cn(
-                  "navbar-burger-line block h-[1.5px] w-5 bg-white transition-transform duration-300 rounded-full",
-                  mobileOpen
-                    ? "translate-y-1 rotate-45"
-                    : "-translate-y-1 group-hover/burger:bg-white"
+                  "block h-[1.5px] w-4.5 rounded-full transition-transform duration-300",
+                  isScrolled ? "bg-[#0f172a] dark:bg-white" : "bg-white",
+                  mobileOpen ? "translate-y-1 rotate-45" : "-translate-y-1"
                 )}
               />
               <span
                 className={cn(
-                  "navbar-burger-line absolute block h-[1.5px] w-5 bg-white transition-opacity duration-300 rounded-full",
-                  mobileOpen
-                    ? "opacity-0"
-                    : "opacity-100 group-hover/burger:bg-white"
+                  "block h-[1.5px] w-4.5 rounded-full transition-opacity duration-300",
+                  isScrolled ? "bg-[#0f172a] dark:bg-white" : "bg-white",
+                  mobileOpen ? "opacity-0" : "opacity-100"
                 )}
               />
               <span
                 className={cn(
-                  "navbar-burger-line block h-[1.5px] w-5 bg-white transition-transform duration-300 rounded-full",
-                  mobileOpen
-                    ? "-translate-y-px -rotate-45"
-                    : "translate-y-1 group-hover/burger:bg-white"
+                  "block h-[1.5px] w-4.5 rounded-full transition-transform duration-300",
+                  isScrolled ? "bg-[#0f172a] dark:bg-white" : "bg-white",
+                  mobileOpen ? "-translate-y-px -rotate-45" : "translate-y-1"
                 )}
               />
             </button>

@@ -142,17 +142,17 @@ export default function NetworkCanvas({
           (pair.catA === activeHubNow || pair.catB === activeHubNow);
 
         if (isActiveLine) {
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = "rgba(100, 65, 220, 0.65)";
+          ctx.lineWidth = 2.0;
         } else if (isRelatedToHub) {
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
-          ctx.lineWidth = 1;
+          ctx.strokeStyle = "rgba(100, 65, 220, 0.45)";
+          ctx.lineWidth = 1.5;
         } else if (activeNodeNow || activeHubNow) {
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.02)";
+          ctx.strokeStyle = "rgba(110, 75, 220, 0.15)";
           ctx.lineWidth = 1;
         } else {
-          ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
-          ctx.lineWidth = 1;
+          ctx.strokeStyle = "rgba(110, 75, 220, 0.35)";
+          ctx.lineWidth = 1.2;
         }
 
         ctx.beginPath();

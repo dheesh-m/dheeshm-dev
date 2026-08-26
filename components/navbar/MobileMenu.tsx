@@ -10,7 +10,7 @@ interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
   activeItem: string;
-  onNavigate: (label: string) => void;
+  onNavigate: (label: string, href?: string) => void;
 }
 
 const FOCUSABLE = 'a[href], button:not([disabled])';
@@ -76,7 +76,7 @@ export default function MobileMenu({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[90] bg-[#050505]/95 backdrop-blur-xl lg:hidden flex flex-col justify-center items-center"
+          className="fixed inset-0 z-[90] bg-[#050505]/95 dark:bg-[#050505]/95 backdrop-blur-xl md:hidden flex flex-col justify-center items-center"
         >
           <nav
             aria-label="Mobile"
@@ -87,32 +87,35 @@ export default function MobileMenu({
                 key={item.label}
                 href={item.href}
                 aria-current={activeItem === item.label ? "true" : undefined}
-                onClick={() => onNavigate(item.label)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigate(item.label, item.href);
+                }}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className="group relative flex items-center gap-4 w-full rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-4 focus-visible:ring-offset-[#030712]"
+                className="group relative flex items-center gap-4 w-full rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-white/60"
               >
                 <span
                   className={cn(
-                    "text-sm font-sans font-medium transition-colors",
+                    "text-xs font-mono font-medium transition-colors",
                     activeItem === item.label
-                      ? "text-white"
-                      : "text-gray-500 group-hover:text-white"
+                      ? "text-purple-400 font-bold"
+                      : "text-gray-400 group-hover:text-white"
                   )}
                 >
                   {item.id}
                 </span>
                 <span
                   className={cn(
-                    "text-2xl font-display font-bold tracking-tight transition-colors",
+                    "text-xl font-display font-bold tracking-tight transition-colors",
                     activeItem === item.label
                       ? "text-white font-bold"
-                      : "text-gray-400 group-hover:text-white"
+                      : "text-gray-300 group-hover:text-white"
                   )}
                 >
-                  {"// " + item.label}
+                  {item.title}
                 </span>
 
                 {activeItem === item.label && (

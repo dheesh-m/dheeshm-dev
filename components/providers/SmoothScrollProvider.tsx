@@ -28,15 +28,16 @@ export default function SmoothScrollProvider({
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const lenis = new Lenis({
-      // Vercel uses ~1.2–1.4 duration with the default exponential ease
-      duration: prefersReduced ? 0 : 1.25,
+      // Increased duration for a "very smooth", floating scroll feel
+      duration: prefersReduced ? 0 : 2.5,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // exponential ease-out
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      // touchMultiplier: 1 — keep native on touch so iOS rubber-band works
-      touchMultiplier: prefersReduced ? 0 : 1,
-      wheelMultiplier: 1,
+      // Slightly amplified touch multiplier for better flow on mobile
+      touchMultiplier: prefersReduced ? 0 : 1.5,
+      // Softer wheel multiplier to reduce jarring jumps
+      wheelMultiplier: 0.8,
       infinite: false,
       autoResize: true,
     });

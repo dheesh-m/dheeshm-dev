@@ -28,7 +28,7 @@ export default function SystemsSection() {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="mb-12 text-center"
         >
-          <h2 className="text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-tight text-white leading-none mb-6">
+          <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] text-white font-display mb-6">
             Production <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">Stack</span>
           </h2>
           <p className="text-gray-400 font-sans max-w-2xl mx-auto text-lg">

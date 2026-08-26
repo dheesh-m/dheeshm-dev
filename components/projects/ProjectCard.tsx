@@ -7,24 +7,35 @@ import SweepCard from "../ui/SweepCard";
 import { ExternalLink } from "lucide-react";
 
 const HumanoidVisual = ({ on }: { on: boolean }) => (
-  <div className="absolute inset-0 flex items-center justify-center bg-[#101010] overflow-hidden">
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.05),transparent_70%)]" />
-    <svg className="w-full h-full opacity-60" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <motion.circle cx="50" cy="30" r="8" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" 
-        animate={on ? { scale: [1, 1.1, 1] } : { scale: 1 }} transition={on ? { duration: 4, repeat: Infinity } : { duration: 0 }} />
-      <circle cx="50" cy="30" r="2" fill="rgba(255,255,255,0.8)" />
-      
-      <motion.path d="M 50 38 L 50 60" stroke="rgba(255,255,255,0.15)" strokeWidth="1" 
-        strokeDasharray="2 2" animate={on ? { strokeDashoffset: [0, 10] } : { strokeDashoffset: 0 }} transition={on ? { duration: 5, repeat: Infinity, ease: "linear" } : { duration: 0 }} />
-      
-      <circle cx="35" cy="55" r="4" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
-      <circle cx="65" cy="55" r="4" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
-      
-      <path d="M 50 45 L 35 55 M 50 45 L 65 55" stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
-      
-      <motion.circle cx="50" cy="75" r="15" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" 
-        animate={on ? { rotate: 360 } : { rotate: 0 }} transition={on ? { duration: 15, repeat: Infinity, ease: "linear" } : { duration: 0 }} strokeDasharray="4 4" />
-    </svg>
+  <div className="absolute inset-0 flex items-center justify-center bg-[#09090b] overflow-hidden group/humanoid">
+    {/* Background subtle radial glow */}
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.15),transparent_70%)] z-10 pointer-events-none" />
+    
+    {/* High-res Humanoid Robot Head */}
+    <motion.img
+      src="/humanoid-head.jpg"
+      alt="Humanoid Autonomous Robotics System"
+      className="w-full h-full object-cover object-center filter brightness-95 contrast-105 transition-transform duration-700 ease-out group-hover/humanoid:scale-105"
+      initial={{ scale: 1 }}
+      animate={on ? { scale: [1, 1.03, 1] } : { scale: 1 }}
+      transition={on ? { duration: 8, repeat: Infinity, ease: "easeInOut" } : { duration: 0 }}
+    />
+
+    {/* Vignette border and subtle overlay */}
+    <div className="absolute inset-0 bg-gradient-to-t from-[#101015]/80 via-transparent to-black/20 pointer-events-none z-10" />
+
+    {/* Subtle futuristic scanline effect on hover/active */}
+    <motion.div
+      className="absolute inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-purple-400/40 to-transparent z-20 pointer-events-none"
+      animate={on ? { top: ["0%", "100%", "0%"] } : { top: "0%" }}
+      transition={on ? { duration: 6, repeat: Infinity, ease: "linear" } : { duration: 0 }}
+    />
+
+    {/* High-tech diagnostic badge */}
+    <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-mono text-purple-300">
+      <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+      <span>AUTONOMOUS_CORE</span>
+    </div>
   </div>
 );
 
@@ -49,26 +60,34 @@ const APTVisual = ({ on }: { on: boolean }) => (
 );
 
 const APTDemoVisual = ({ on }: { on: boolean }) => (
-  <div className="absolute inset-0 flex items-center justify-center bg-[#101010] overflow-hidden">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent_60%)]" />
+  <div className="absolute inset-0 flex items-center justify-center bg-[#0d091a] overflow-hidden group/movie">
+    {/* Background subtle radial glow */}
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.12),transparent_70%)] z-10 pointer-events-none" />
     
-    <div className="flex gap-2 opacity-40 transform -skew-x-12">
-      {[...Array(5)].map((_, i) => (
-        <motion.div 
-          key={i}
-          className="w-8 h-24 border border-white/10 rounded-sm relative overflow-hidden"
-          animate={on ? { y: [0, -20, 0] } : { y: 0 }}
-          transition={on ? { duration: 4, repeat: Infinity, delay: i * 0.2, ease: "easeInOut" } : { duration: 0 }}
-        >
-          <div className="absolute inset-x-0 top-1 h-2 border-y border-white/5" />
-          <div className="absolute inset-x-0 bottom-1 h-2 border-y border-white/5" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-4 h-4 rounded-full border border-white/10 flex items-center justify-center">
-              <div className="w-1 h-1 bg-white rounded-full" />
-            </div>
-          </div>
-        </motion.div>
-      ))}
+    {/* High-res TicketLoJao Screenshot */}
+    <motion.img
+      src="/ticketlojao.png"
+      alt="AI-Powered Movie Ticket Booking Platform — TicketLoJao"
+      className="w-full h-full object-cover object-top filter brightness-95 contrast-105 transition-transform duration-700 ease-out group-hover/movie:scale-105"
+      initial={{ scale: 1 }}
+      animate={on ? { scale: [1, 1.025, 1] } : { scale: 1 }}
+      transition={on ? { duration: 8, repeat: Infinity, ease: "easeInOut" } : { duration: 0 }}
+    />
+
+    {/* Vignette border and subtle overlay */}
+    <div className="absolute inset-0 bg-gradient-to-t from-[#101015]/80 via-transparent to-black/20 pointer-events-none z-10" />
+
+    {/* Subtle futuristic scanline effect */}
+    <motion.div
+      className="absolute inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-purple-400/40 to-transparent z-20 pointer-events-none"
+      animate={on ? { top: ["0%", "100%", "0%"] } : { top: "0%" }}
+      transition={on ? { duration: 6, repeat: Infinity, ease: "linear" } : { duration: 0 }}
+    />
+
+    {/* Live Web App badge */}
+    <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[9px] font-mono text-purple-300">
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+      <span>TICKETLOJAO_LIVE</span>
     </div>
   </div>
 );

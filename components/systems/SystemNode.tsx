@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { motion } from "framer-motion";
+import { motion, useAnimationFrame, useMotionValue, useTransform, useMotionTemplate, MotionValue } from "framer-motion";
 import { Technology } from "@/data/technologies";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +18,9 @@ interface SystemNodeProps {
   /** Orbits only run while the section is on screen. */
   isAnimating: boolean;
   onHover: (tech: Technology | null, rect: DOMRect | null) => void;
+  rotX: MotionValue<number>;
+  rotY: MotionValue<number>;
+  rotZ: MotionValue<number>;
 }
 
 function SystemNode({
@@ -31,7 +34,10 @@ function SystemNode({
   isDimmed,
   isHubActive,
   isAnimating,
-  onHover
+  onHover,
+  rotX,
+  rotY,
+  rotZ
 }: SystemNodeProps) {
   
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -42,28 +48,56 @@ function SystemNode({
     onHover(null, null);
   };
 
-  const direction = isClockwise ? 1 : -1;
-  const duration = speed * (isActive || isHubActive ? 0.5 : 1); // Speed up when active
-  // `initial={false}` keeps the server and first client render identical
-  // (a static angle), which also removes the hydration mismatch these
-  // infinite rotations used to produce.
-  const spin = isAnimating
-    ? ({ duration, repeat: Infinity, ease: "linear" } as const)
-    : ({ duration: 0 } as const);
+  const currentAngle = useMotionValue(angleOffset);
+  const invAngle = useTransform(currentAngle, a => -a);
+
+  const invX = useTransform(rotX, x => -x);
+  const invY = useTransform(rotY, y => -y);
+  const invZ = useTransform(rotZ, z => -z);
+  const counterRotate = useMotionTemplate`rotateY(${invAngle}deg) rotateZ(${invZ}deg) rotateY(${invY}deg) rotateX(${invX}deg)`;
+
+  const opacity = useMotionValue(1);
+
+  useAnimationFrame((time, delta) => {
+    if (!isAnimating) return;
+    
+    // Update local orbit angle
+    const direction = isClockwise ? 1 : -1;
+    const speedMult = (isActive || isHubActive ? 1.5 : 1) * speed * 0.001; 
+    currentAngle.set(currentAngle.get() + (delta * speedMult * direction));
+
+    // Calculate global Z depth to set opacity
+    const angleRad = (currentAngle.get() * Math.PI) / 180;
+    const localX = Math.cos(angleRad) * radius;
+    const localZ = Math.sin(angleRad) * radius;
+
+    const rx = (rotX.get() * Math.PI) / 180;
+    const ry = (rotY.get() * Math.PI) / 180;
+    
+    const z1 = localZ * Math.cos(rx);
+    const x1 = localX;
+    const globalZ = z1 * Math.cos(ry) - x1 * Math.sin(ry);
+    
+    const depth = (globalZ + radius) / (radius * 2); // 0 to 1
+    opacity.set(0.60 + depth * 0.40); // 0.60 to 1.0 based on depth
+  });
+
+  const nodeTransform = useMotionTemplate`translate(-50%, -50%) rotateY(${currentAngle}deg) translateZ(${radius}px)`;
 
   return (
     <motion.div
-      className="absolute top-1/2 left-1/2 w-0 h-0"
-      initial={false}
-      animate={{ rotate: isAnimating ? angleOffset + 360 * direction : angleOffset }}
-      transition={spin}
+      className="absolute top-1/2 left-1/2"
+      style={{ 
+        transformStyle: "preserve-3d",
+        transform: nodeTransform
+      }}
     >
       <motion.div
-        className="absolute"
-        style={{ x: radius, y: "-50%", top: "50%" }}
-        initial={false}
-        animate={{ rotate: isAnimating ? -(angleOffset + 360 * direction) : -angleOffset }}
-        transition={spin}
+        style={{
+          transform: counterRotate,
+          opacity: opacity
+        }}
+        className="flex items-center justify-center"
       >
         <div
           id={`node-${technology.id}`}
@@ -79,21 +113,33 @@ function SystemNode({
           {(isActive || isRelated) && (
             <motion.div
               layoutId={`sys-glow-${technology.id}`}
-              className="absolute inset-0 rounded-full bg-white/10 blur-md pointer-events-none"
+              className="absolute inset-0 rounded-full bg-[rgba(120,90,220,0.35)] blur-md pointer-events-none"
             />
           )}
 
           {/* Node body */}
-          <div className={cn(
-            "px-2.5 py-1 md:px-3 md:py-1.5 rounded-full border bg-[rgba(255,255,255,0.035)] backdrop-blur-md transition-colors duration-500",
-            isActive ? "border-white/40 shadow-[0_0_15px_rgba(255,255,255,0.2)] bg-white/10" : 
-            isRelated ? "border-white/20 bg-white/5" : 
-            "border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.06)]"
-          )}>
+          <div className="flex flex-col items-center gap-1.5 select-none">
+            {/* Small 3D Purple Sphere */}
+            <div className={cn(
+              "w-4.5 h-4.5 md:w-5 md:h-5 rounded-full bg-gradient-to-br from-[#e9d5ff] via-[#8b5cf6] to-[#5b21b6] relative transition-all duration-500",
+              isActive 
+                ? "scale-125 shadow-[0_0_20px_rgba(139,92,246,0.9)]" 
+                : isRelated 
+                ? "scale-110 shadow-[0_0_15px_rgba(139,92,246,0.7)]" 
+                : "shadow-[0_0_8px_rgba(139,92,246,0.35)] hover:scale-110"
+            )}>
+              {/* Specular highlight */}
+              <div className="absolute top-[12%] left-[12%] w-[25%] h-[25%] rounded-full bg-white/70 blur-[0.5px]" />
+            </div>
+
+            {/* Label floating below */}
             <span className={cn(
-              "whitespace-nowrap text-[9px] md:text-[10px] font-mono tracking-widest transition-colors duration-500",
-              isActive ? "text-white font-bold" : 
-              isRelated ? "text-[#F5F5F5]" : "text-[#A1A1AA]"
+              "whitespace-nowrap text-[9px] md:text-[10px] font-bold font-mono tracking-widest uppercase transition-all duration-500",
+              isActive 
+                ? "text-white drop-shadow-[0_0_6px_rgba(139,92,246,0.8)]" 
+                : isRelated 
+                ? "text-[#f3e8ff]" 
+                : "text-gray-300/90"
             )}>
               {technology.name}
             </span>

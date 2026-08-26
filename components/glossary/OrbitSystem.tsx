@@ -23,7 +23,7 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
   // Pre-calculate orbital properties for each node so they don't change on render
   const orbitalNodes = useMemo(() => {
     return technologies.map((tech, index) => {
-      // Distribute nodes across 3 concentric rings (e.g. radii 120, 200, 280)
+      // Distribute nodes across 3 concentric rings (e.g. radii 140, 210, 280)
       const ringIndex = index % 3;
       const radius = 140 + (ringIndex * 70); 
       
@@ -56,22 +56,23 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
   const activeRelated = activeNode?.related || [];
 
   return (
-    <div ref={containerRef} className="relative w-full aspect-square max-w-[800px] mx-auto flex items-center justify-center">
+    <div ref={containerRef} className="relative w-full aspect-square max-w-[800px] mx-auto flex items-center justify-center select-none">
       
-      {/* Central Core */}
-      <div className="relative z-30 flex items-center justify-center w-32 h-32 rounded-full border border-white/10 bg-[#050505]/80 backdrop-blur-md shadow-[0_0_30px_rgba(255,255,255,0.05)] group">
-        <div className="absolute inset-0 rounded-full border border-white/10 animate-[spin_10s_linear_infinite]" />
-        <div className="absolute inset-2 rounded-full border border-dashed border-white/20 animate-[spin_15s_linear_infinite_reverse]" />
-        <span className="text-white text-xs font-mono font-bold text-center px-4 leading-tight">
+      {/* Central Core - High-contrast, clearly visible */}
+      <div className="relative z-30 flex items-center justify-center w-36 h-36 rounded-full border border-purple-400/40 dark:border-white/20 bg-white/95 dark:bg-[#0c0c14]/90 backdrop-blur-md shadow-[0_8px_32px_rgba(147,51,234,0.18)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)] group">
+        <div className="absolute inset-0 rounded-full border border-purple-400/30 dark:border-white/15 animate-[spin_10s_linear_infinite]" />
+        <div className="absolute inset-2 rounded-full border border-dashed border-purple-500/40 dark:border-white/25 animate-[spin_15s_linear_infinite_reverse]" />
+        <div className="absolute inset-4 rounded-full bg-purple-500/10 dark:bg-white/5 blur-sm" />
+        <span className="relative z-10 text-[#1e1b4b] dark:text-white text-xs font-mono font-bold text-center px-4 leading-tight">
           {centerLabel}
         </span>
       </div>
 
-      {/* Orbit Rings (Visual only) */}
+      {/* Orbit Rings - Clearly visible dashed rings */}
       {[140, 210, 280].map((r, i) => (
         <div
           key={`ring-${i}`}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5 pointer-events-none"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-purple-400/35 dark:border-white/15 pointer-events-none"
           style={{ width: r * 2, height: r * 2 }}
         />
       ))}

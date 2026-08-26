@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 interface NavItemProps {
   id: string;
   label: string;
+  title: string;
   href: string;
   isActive: boolean;
   onClick: () => void;
@@ -12,8 +13,7 @@ interface NavItemProps {
 }
 
 export default function NavItem({
-  id,
-  label,
+  title,
   href,
   isActive,
   onClick,
@@ -22,45 +22,24 @@ export default function NavItem({
   return (
     <a
       href={href}
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
       aria-current={isActive ? "true" : undefined}
       className={cn(
-        "relative flex flex-col items-center justify-center group rounded-full",
-        "outline-none focus-visible:ring-2 focus-visible:ring-white/60",
-        "transition-[padding] duration-[400ms] ease-out",
-        isScrolled ? "py-1.5 px-3" : "py-2 px-3.5"
+        "relative flex items-center justify-center px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-300 whitespace-nowrap outline-none select-none",
+        "focus-visible:ring-2 focus-visible:ring-purple-400/60",
+        isActive
+          ? isScrolled
+            ? "text-blue-600 dark:text-purple-300 font-semibold bg-white/60 dark:bg-white/15 shadow-sm"
+            : "text-white font-semibold bg-white/20 shadow-sm"
+          : isScrolled
+          ? "text-[#1e293b] dark:text-zinc-300 hover:text-blue-600 dark:hover:text-purple-300 hover:bg-white/50 dark:hover:bg-white/15 hover:shadow-sm"
+          : "text-white/85 hover:text-white hover:bg-white/20 hover:shadow-sm"
       )}
     >
-      <span
-        className={cn(
-          "text-[10px] md:text-[11px] font-sans font-medium mb-0.5 transition-colors duration-300 whitespace-nowrap",
-          isActive ? "text-white font-semibold" : "text-zinc-500 group-hover:text-white"
-        )}
-      >
-        {id}
-      </span>
-
-      <span
-        className={cn(
-          "text-[12.5px] md:text-[14px] font-display font-semibold tracking-wide transition-colors duration-300 whitespace-nowrap",
-          isActive
-            ? "text-[#F5F5F5] font-bold"
-            : "text-zinc-400 group-hover:text-[#F5F5F5]"
-        )}
-      >
-        {"// " + label}
-      </span>
-
-      {/* Underline indicator */}
-      <span
-        aria-hidden="true"
-        className={cn(
-          "nav-active-indicator absolute -bottom-1 left-1/2 h-[2px] w-5 -translate-x-1/2 rounded-full bg-white origin-center transition-all duration-300",
-          isActive
-            ? "scale-x-100 opacity-100 shadow-[0_0_8px_rgba(255,255,255,0.7)]"
-            : "scale-x-0 opacity-0 group-hover:scale-x-75 group-hover:opacity-40"
-        )}
-      />
+      {title}
     </a>
   );
 }
