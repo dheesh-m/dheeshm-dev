@@ -31,7 +31,7 @@ function TechnologyNode({
   isAnimating,
   onHover
 }: TechnologyNodeProps) {
-  
+
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     onHover(technology, e.currentTarget.getBoundingClientRect());
   };
@@ -86,8 +86,8 @@ function TechnologyNode({
             isActive
               ? "bg-purple-600 dark:bg-purple-400 ring-4 ring-purple-400/50 shadow-[0_0_12px_rgba(147,51,234,0.8)] scale-125"
               : isRelated
-              ? "bg-purple-500 dark:bg-purple-300 ring-2 ring-purple-400/40 shadow-[0_0_8px_rgba(147,51,234,0.5)]"
-              : "bg-purple-600/85 dark:bg-white/85 ring-2 ring-purple-400/30 dark:ring-white/20 shadow-[0_0_6px_rgba(147,51,234,0.35)]"
+                ? "bg-purple-500 dark:bg-purple-300 ring-2 ring-purple-400/40 shadow-[0_0_8px_rgba(147,51,234,0.5)]"
+                : "bg-purple-600/85 dark:bg-white/85 ring-2 ring-purple-400/30 dark:ring-white/20 shadow-[0_0_6px_rgba(147,51,234,0.35)]"
           )}>
             <div className="w-1 h-1 rounded-full bg-white" />
           </div>
@@ -98,8 +98,8 @@ function TechnologyNode({
             isActive
               ? "text-purple-950 dark:text-white bg-white/95 dark:bg-purple-950/80 shadow-md border border-purple-300 dark:border-purple-600 scale-105"
               : isRelated
-              ? "text-purple-900 dark:text-purple-200 bg-white/85 dark:bg-black/60 shadow-sm border border-purple-200/60 dark:border-purple-800/40"
-              : "text-[#29213f] dark:text-white/90 bg-white/75 dark:bg-black/40 shadow-[0_1px_4px_rgba(0,0,0,0.06)] border border-purple-200/40 dark:border-white/10 hover:text-purple-600 dark:hover:text-white"
+                ? "text-purple-900 dark:text-purple-200 bg-white/85 dark:bg-black/60 shadow-sm border border-purple-200/60 dark:border-purple-800/40"
+                : "text-[#29213f] dark:text-white/90 bg-white/75 dark:bg-black/40 shadow-[0_1px_4px_rgba(0,0,0,0.06)] border border-purple-200/40 dark:border-white/10 hover:text-purple-600 dark:hover:text-white"
           )}>
             {technology.name}
           </span>

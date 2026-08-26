@@ -59,17 +59,21 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
   }
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.15);
     border-radius: 3px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.25);
   }
@@ -82,6 +86,7 @@ html.has-custom-cursor,
 html.has-custom-cursor * {
   cursor: none;
 }
+
 html.has-custom-cursor input,
 html.has-custom-cursor textarea,
 html.has-custom-cursor select,
@@ -96,13 +101,25 @@ html.has-custom-cursor [contenteditable="true"] {
 }
 
 @keyframes sweep {
-  0% { --sweep-angle: 0deg; }
-  100% { --sweep-angle: 360deg; }
+  0% {
+    --sweep-angle: 0deg;
+  }
+
+  100% {
+    --sweep-angle: 360deg;
+  }
 }
 
 @keyframes reveal-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Above-the-fold entry animation. Deliberately CSS rather than framer-motion:
@@ -115,13 +132,27 @@ html.has-custom-cursor [contenteditable="true"] {
 }
 
 @keyframes ring-pulse {
-  0%, 100% { opacity: 0.45; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
+
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
 }
 
 @keyframes particle-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .animate-particle-fade {
@@ -136,13 +167,16 @@ html.has-custom-cursor [contenteditable="true"] {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--background);
 }
+
 ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
@@ -151,14 +185,17 @@ html.has-custom-cursor [contenteditable="true"] {
   html {
     scroll-behavior: auto;
   }
+
   .animate-sweep,
   .animate-particle-fade,
   [class*="ring-pulse"] {
     animation: none;
   }
+
   .reveal-up {
     animation-delay: 0s;
   }
+
   *,
   *::before,
   *::after {
@@ -181,12 +218,13 @@ html.has-custom-cursor [contenteditable="true"] {
    .light-theme class is active on the <body> tag.
    ======================================================================= */
 
-body, body * {
+body,
+body * {
   /* Exclude transform and opacity so Framer Motion is untouched */
-  transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-              color 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-              border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Base Light Theme Backgrounds */
@@ -194,8 +232,15 @@ body.light-theme,
 body.light-theme .neural-bg-root,
 body.light-theme .bg-\[\#050505\],
 body.light-theme .bg-zinc-950,
-body.light-theme .bg-black {
+body.light-theme div.bg-black:not(.contact-status-dot) {
   background: linear-gradient(135deg, #F7F6FB 0%, #F3F2F8 100%) !important;
+}
+
+body.light-theme .contact-status-dot {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  box-shadow: none !important;
 }
 
 /* Hide dark mode ambient elements */
@@ -215,7 +260,7 @@ body.light-theme .light-ambient-glow {
 body.light-theme .light-grid-overlay {
   display: block !important;
   opacity: 1 !important;
-  background-image: 
+  background-image:
     linear-gradient(rgba(120, 120, 135, 0.14) 1px, transparent 1px),
     linear-gradient(90deg, rgba(120, 120, 135, 0.14) 1px, transparent 1px),
     linear-gradient(rgba(148, 142, 176, 0.08) 1px, transparent 1px),
@@ -251,13 +296,16 @@ body.light-theme .glass-panel .text-gray-500 {
   color: #4B5563 !important;
   font-weight: 600 !important;
 }
+
 body.light-theme .glass-panel .text-gray-300 {
   color: #111827 !important;
   font-weight: 600 !important;
 }
+
 body.light-theme .glass-panel .bg-white\/20 {
   background-color: rgba(139, 92, 246, 0.35) !important;
 }
+
 body.light-theme .glass-panel .bg-white {
   background-color: #8B5CF6 !important;
   box-shadow: 0 0 8px rgba(139, 92, 246, 0.7) !important;
@@ -302,7 +350,7 @@ body.light-theme [class*="bg-[rgba(255,255,255,0.04)"] {
 header .ios-glass-nav {
   background: linear-gradient(135deg, rgba(22, 22, 28, 0.72) 0%, rgba(12, 12, 16, 0.65) 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 
+  box-shadow:
     inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.2),
     inset 0 -1px 1px 0 rgba(0, 0, 0, 0.3),
     0 20px 48px -8px rgba(0, 0, 0, 0.65),
@@ -313,7 +361,7 @@ header .ios-glass-nav {
 body.light-theme header .ios-glass-nav {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(247, 245, 255, 0.68) 100%) !important;
   border: 1px solid rgba(255, 255, 255, 0.65) !important;
-  box-shadow: 
+  box-shadow:
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
     inset 0 -1px 1px 0 rgba(160, 150, 210, 0.15),
     0 18px 48px -8px rgba(139, 92, 246, 0.12),
@@ -346,7 +394,8 @@ body.light-theme .text-\[\#F5F5F5\],
 body.light-theme .text-\[\#EAEAEA\],
 body.light-theme .text-white\/90,
 body.light-theme .text-white\/80 {
-  color: #111827 !important; /* near-black / deep charcoal */
+  color: #111827 !important;
+  /* near-black / deep charcoal */
 }
 
 body.light-theme .text-gray-400,
@@ -356,7 +405,8 @@ body.light-theme .text-\[\#B5B5B5\],
 body.light-theme .text-\[\#A5A5A5\],
 body.light-theme .text-\[\#8A8A8A\],
 body.light-theme .text-white\/60 {
-  color: #4B5563 !important; /* dark grey */
+  color: #4B5563 !important;
+  /* dark grey */
 }
 
 body.light-theme .text-\[\#D4D4D4\] {
@@ -395,6 +445,7 @@ body.light-theme button.bg-white.text-\[\#050505\] {
   background-color: #111827 !important;
   color: #FFFFFF !important;
 }
+
 body.light-theme .hero-btn-primary:hover,
 body.light-theme .contact-btn-primary:hover,
 body.light-theme a.bg-white.text-\[\#050505\]:hover,
@@ -411,6 +462,7 @@ body.light-theme button.border-white\/10.text-white {
   border-color: rgba(160, 150, 210, 0.4) !important;
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.08) !important;
 }
+
 body.light-theme .contact-btn-secondary:hover {
   background-color: #FFFFFF !important;
   border-color: rgba(168, 85, 247, 0.5) !important;
@@ -421,44 +473,45 @@ body.light-theme .contact-email-btn {
   color: #374151 !important;
   border-color: rgba(160, 150, 210, 0.35) !important;
 }
+
 body.light-theme .contact-email-btn:hover {
   background-color: #FFFFFF !important;
   color: #111827 !important;
 }
 
-/* Mobile Navbar Elements in Light Mode */
-body.light-theme .navbar-burger-line {
-  background-color: #111827 !important;
+/* Navbar Navigation Text in Light Mode */
+body.light-theme header nav a,
+body.light-theme header .brand-logo,
+body.light-theme header .navbar-cta-resume {
+  color: #000000 !important;
 }
 
-body.light-theme .theme-toggle-star {
-  color: #374151 !important;
-}
-body.light-theme .theme-toggle-star:hover {
-  color: #111827 !important;
+/* Mobile Navbar Elements in Light Mode */
+body.light-theme .navbar-burger-line {
+  background-color: #000000 !important;
 }
 
 /* Mobile Drawer Menu in Light Mode */
+body.light-theme #primary-mobile-menu,
 body.light-theme #mobile-menu {
   background-color: rgba(247, 246, 251, 0.98) !important;
 }
 
+body.light-theme #primary-mobile-menu nav a span,
 body.light-theme #mobile-menu nav a span {
-  color: #4B5563 !important;
+  color: #000000 !important;
 }
 
+body.light-theme #primary-mobile-menu nav a[aria-current="true"] span,
 body.light-theme #mobile-menu nav a[aria-current="true"] span {
-  color: #111827 !important;
-  font-weight: 800 !important;
+  color: #000000 !important;
+  font-weight: 700 !important;
 }
 
-body.light-theme #mobile-menu nav a span.font-sans {
-  color: #6B7280 !important;
-}
-
-body.light-theme #mobile-menu div[class*="rounded-full bg-white"] {
-  background-color: #8B5CF6 !important;
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.75) !important;
+body.light-theme #primary-mobile-menu div[class*="rounded-full"],
+body.light-theme #mobile-menu div[class*="rounded-full"] {
+  background-color: #000000 !important;
+  box-shadow: none !important;
 }
 
 /* Border Overrides */
@@ -497,6 +550,7 @@ body.light-theme footer p {
 .theme-toggle-bg {
   background-color: transparent;
 }
+
 .theme-toggle-glow {
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
 }
@@ -504,6 +558,7 @@ body.light-theme footer p {
 body.light-theme .theme-toggle-bg {
   background-color: rgba(0, 0, 0, 0.05);
 }
+
 body.light-theme .theme-toggle-glow {
   box-shadow: 0 0 12px rgba(180, 150, 255, 0.4);
 }
@@ -511,6 +566,7 @@ body.light-theme .theme-toggle-glow {
 body.light-theme .custom-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.15);
 }
+
 body.light-theme .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.25);
 }

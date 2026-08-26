@@ -7,10 +7,12 @@ import MobileMenu from "./MobileMenu";
 import NavItem from "./NavItem";
 import ThemeToggle from "./ThemeToggle";
 import { NAV_ITEMS, SECTION_IDS } from "./navItems";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 const MOBILE_MENU_ID = "primary-mobile-menu";
 
 export default function Navbar() {
+  const { isLightMode } = useTheme();
   const [active, setActive] = useState("HOME");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -111,7 +113,9 @@ export default function Navbar() {
           className={cn(
             "relative flex w-full items-center justify-between pointer-events-auto rounded-full transition-all duration-300",
             isScrolled
-              ? "bg-white/40 dark:bg-[#0f0f16]/65 backdrop-blur-2xl backdrop-saturate-[190%] border border-white/50 dark:border-white/15 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12),0_2px_10px_rgba(0,0,0,0.04)] dark:shadow-[0_20px_48px_-8px_rgba(0,0,0,0.6)]"
+              ? isLightMode
+                ? "bg-white/40 backdrop-blur-2xl backdrop-saturate-[190%] border border-white/50 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12),0_2px_10px_rgba(0,0,0,0.04)]"
+                : "bg-[#0f0f16]/65 backdrop-blur-2xl backdrop-saturate-[190%] border border-white/15 shadow-[0_20px_48px_-8px_rgba(0,0,0,0.6)]"
               : "bg-transparent border border-transparent shadow-none"
           )}
         >
@@ -128,10 +132,8 @@ export default function Navbar() {
               {/* Brand Name */}
               <span
                 className={cn(
-                  "font-display text-base sm:text-lg font-bold tracking-tight transition-colors duration-300",
-                  isScrolled
-                    ? "text-[#0f172a] dark:text-white"
-                    : "text-white"
+                  "brand-logo font-display text-base sm:text-lg font-bold tracking-tight transition-colors duration-300",
+                  isLightMode ? "text-[#000000]" : "text-[#ffffff]"
                 )}
               >
                 dhees_h
@@ -145,8 +147,12 @@ export default function Navbar() {
             className={cn(
               "hidden md:flex items-center rounded-full transition-all duration-300",
               isScrolled
-                ? "bg-white/35 dark:bg-white/10 backdrop-blur-xl backdrop-saturate-[180%] border border-white/45 dark:border-white/15 px-1.5 py-1 shadow-inner gap-0.5"
-                : "bg-white/15 dark:bg-white/10 backdrop-blur-2xl backdrop-saturate-[180%] border border-white/35 dark:border-white/20 px-2 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)] gap-1"
+                ? isLightMode
+                  ? "bg-white/35 backdrop-blur-xl backdrop-saturate-[180%] border border-white/45 px-1.5 py-1 shadow-inner gap-0.5"
+                  : "bg-white/10 backdrop-blur-xl backdrop-saturate-[180%] border border-white/15 px-1.5 py-1 shadow-inner gap-0.5"
+                : isLightMode
+                  ? "bg-white/15 backdrop-blur-2xl backdrop-saturate-[180%] border border-white/35 px-2 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.06)] gap-1"
+                  : "bg-white/10 backdrop-blur-2xl backdrop-saturate-[180%] border border-white/20 px-2 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.3)] gap-1"
             )}
           >
             {NAV_ITEMS.map((item) => (
@@ -171,10 +177,14 @@ export default function Navbar() {
             <a
               href="#contact"
               className={cn(
-                "hidden sm:inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[13px] font-semibold transition-all duration-300 whitespace-nowrap outline-none",
-                isScrolled
-                  ? "bg-white/75 dark:bg-white/15 text-[#0f172a] dark:text-white border border-white/50 dark:border-white/20 shadow-sm hover:bg-white dark:hover:bg-white/25 hover:shadow"
-                  : "bg-white/20 dark:bg-white/10 backdrop-blur-xl text-white border border-white/35 dark:border-white/20 shadow-sm hover:bg-white/30"
+                "navbar-cta-resume hidden sm:inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[13px] font-sans font-medium transition-all duration-300 whitespace-nowrap outline-none",
+                isLightMode
+                  ? isScrolled
+                    ? "bg-white/75 text-[#000000] border border-white/50 shadow-sm hover:bg-white hover:shadow"
+                    : "bg-white/30 backdrop-blur-xl text-[#000000] border border-white/35 shadow-sm hover:bg-white/40"
+                  : isScrolled
+                    ? "bg-white/15 text-[#ffffff] border border-white/20 shadow-sm hover:bg-white/25 hover:shadow"
+                    : "bg-white/10 backdrop-blur-xl text-[#ffffff] border border-white/20 shadow-sm hover:bg-white/20"
               )}
             >
               Resume
@@ -186,9 +196,13 @@ export default function Navbar() {
               onClick={() => setMobileOpen((open) => !open)}
               className={cn(
                 "flex h-9 w-9 flex-col items-center justify-center md:hidden rounded-full border transition-all duration-300",
-                isScrolled
-                  ? "bg-white/40 dark:bg-white/10 border-white/40 dark:border-white/20 text-[#0f172a] dark:text-white"
-                  : "bg-white/15 dark:bg-white/10 backdrop-blur-md border-white/30 dark:border-white/20 text-white"
+                isLightMode
+                  ? isScrolled
+                    ? "bg-white/40 border-white/40 text-[#000000]"
+                    : "bg-white/20 backdrop-blur-md border-white/30 text-[#000000]"
+                  : isScrolled
+                    ? "bg-white/10 border-white/20 text-[#ffffff]"
+                    : "bg-white/10 backdrop-blur-md border-white/20 text-[#ffffff]"
               )}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
@@ -197,21 +211,21 @@ export default function Navbar() {
               <span
                 className={cn(
                   "block h-[1.5px] w-4.5 rounded-full transition-transform duration-300",
-                  isScrolled ? "bg-[#0f172a] dark:bg-white" : "bg-white",
+                  isLightMode ? "bg-[#000000]" : "bg-[#ffffff]",
                   mobileOpen ? "translate-y-1 rotate-45" : "-translate-y-1"
                 )}
               />
               <span
                 className={cn(
                   "block h-[1.5px] w-4.5 rounded-full transition-opacity duration-300",
-                  isScrolled ? "bg-[#0f172a] dark:bg-white" : "bg-white",
+                  isLightMode ? "bg-[#000000]" : "bg-[#ffffff]",
                   mobileOpen ? "opacity-0" : "opacity-100"
                 )}
               />
               <span
                 className={cn(
                   "block h-[1.5px] w-4.5 rounded-full transition-transform duration-300",
-                  isScrolled ? "bg-[#0f172a] dark:bg-white" : "bg-white",
+                  isLightMode ? "bg-[#000000]" : "bg-[#ffffff]",
                   mobileOpen ? "-translate-y-px -rotate-45" : "translate-y-1"
                 )}
               />

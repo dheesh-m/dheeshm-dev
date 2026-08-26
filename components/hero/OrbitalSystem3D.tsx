@@ -25,25 +25,25 @@ type Mat3 = [number, number, number, number, number, number, number, number, num
 
 function rotateX(angle: number): Mat3 {
   const c = Math.cos(angle), s = Math.sin(angle);
-  return [1,0,0, 0,c,-s, 0,s,c];
+  return [1, 0, 0, 0, c, -s, 0, s, c];
 }
 function rotateY(angle: number): Mat3 {
   const c = Math.cos(angle), s = Math.sin(angle);
-  return [c,0,s, 0,1,0, -s,0,c];
+  return [c, 0, s, 0, 1, 0, -s, 0, c];
 }
 function rotateZ(angle: number): Mat3 {
   const c = Math.cos(angle), s = Math.sin(angle);
-  return [c,-s,0, s,c,0, 0,0,1];
+  return [c, -s, 0, s, c, 0, 0, 0, 1];
 }
 function mulMat(a: Mat3, b: Mat3): Mat3 {
   return [
-    a[0]*b[0]+a[1]*b[3]+a[2]*b[6], a[0]*b[1]+a[1]*b[4]+a[2]*b[7], a[0]*b[2]+a[1]*b[5]+a[2]*b[8],
-    a[3]*b[0]+a[4]*b[3]+a[5]*b[6], a[3]*b[1]+a[4]*b[4]+a[5]*b[7], a[3]*b[2]+a[4]*b[5]+a[5]*b[8],
-    a[6]*b[0]+a[7]*b[3]+a[8]*b[6], a[6]*b[1]+a[7]*b[4]+a[8]*b[7], a[6]*b[2]+a[7]*b[5]+a[8]*b[8],
+    a[0] * b[0] + a[1] * b[3] + a[2] * b[6], a[0] * b[1] + a[1] * b[4] + a[2] * b[7], a[0] * b[2] + a[1] * b[5] + a[2] * b[8],
+    a[3] * b[0] + a[4] * b[3] + a[5] * b[6], a[3] * b[1] + a[4] * b[4] + a[5] * b[7], a[3] * b[2] + a[4] * b[5] + a[5] * b[8],
+    a[6] * b[0] + a[7] * b[3] + a[8] * b[6], a[6] * b[1] + a[7] * b[4] + a[8] * b[7], a[6] * b[2] + a[7] * b[5] + a[8] * b[8],
   ];
 }
 function applyMat(m: Mat3, v: Vec3): Vec3 {
-  return { x: m[0]*v.x+m[1]*v.y+m[2]*v.z, y: m[3]*v.x+m[4]*v.y+m[5]*v.z, z: m[6]*v.x+m[7]*v.y+m[8]*v.z };
+  return { x: m[0] * v.x + m[1] * v.y + m[2] * v.z, y: m[3] * v.x + m[4] * v.y + m[5] * v.z, z: m[6] * v.x + m[7] * v.y + m[8] * v.z };
 }
 
 // 3 orbital plane orientations
@@ -55,12 +55,12 @@ const PLANE_MATS: Mat3[] = [
 
 // Nodes mapped to 3 orbital tiers
 const NODES: Node3D[] = [
-  { label: "RAG",       orbit: 0, startAngle: 0,             speed: 0.28 },
-  { label: "TOOLS",     orbit: 1, startAngle: Math.PI * 0.6, speed: 0.22 },
-  { label: "MEMORY",    orbit: 2, startAngle: Math.PI * 1.2, speed: 0.19 },
-  { label: "AGENTS",    orbit: 0, startAngle: Math.PI,       speed: 0.25 },
+  { label: "RAG", orbit: 0, startAngle: 0, speed: 0.28 },
+  { label: "TOOLS", orbit: 1, startAngle: Math.PI * 0.6, speed: 0.22 },
+  { label: "MEMORY", orbit: 2, startAngle: Math.PI * 1.2, speed: 0.19 },
+  { label: "AGENTS", orbit: 0, startAngle: Math.PI, speed: 0.25 },
   { label: "VECTOR DB", orbit: 1, startAngle: Math.PI * 1.6, speed: 0.30 },
-  { label: "API",       orbit: 2, startAngle: Math.PI * 0.4, speed: 0.17 },
+  { label: "API", orbit: 2, startAngle: Math.PI * 0.4, speed: 0.17 },
 ];
 
 // Perspective projection parameters
@@ -187,12 +187,12 @@ export default function OrbitalSystem3D() {
     const glowR = Math.min(W, H) * 0.40;
     const atmosGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
     if (light) {
-      atmosGrd.addColorStop(0,   "rgba(147,51,234,0.08)");
+      atmosGrd.addColorStop(0, "rgba(147,51,234,0.08)");
       atmosGrd.addColorStop(0.5, "rgba(168,85,247,0.03)");
-      atmosGrd.addColorStop(1,   "transparent");
+      atmosGrd.addColorStop(1, "transparent");
     } else {
-      atmosGrd.addColorStop(0,   "rgba(180,180,190,0.03)");
-      atmosGrd.addColorStop(1,   "transparent");
+      atmosGrd.addColorStop(0, "rgba(180,180,190,0.03)");
+      atmosGrd.addColorStop(1, "transparent");
     }
     ctx.fillStyle = atmosGrd;
     ctx.beginPath();
@@ -292,8 +292,8 @@ export default function OrbitalSystem3D() {
     sorted.forEach(node => {
       const { sx, sy, r, alpha, label } = node;
       const sphereColor = light ? "#a855f7" : "#374151";
-      const glowCol     = light ? "#7c3aed" : "#9ca3af";
-      const textCol     = light ? "#ffffff" : "#e5e7eb";
+      const glowCol = light ? "#7c3aed" : "#9ca3af";
+      const textCol = light ? "#ffffff" : "#e5e7eb";
       drawSphere(ctx, sx, sy, r, sphereColor, glowCol, alpha);
       drawLabel(ctx, label, sx, sy, r, textCol, alpha);
     });
@@ -305,7 +305,7 @@ export default function OrbitalSystem3D() {
     ctx.save();
     ctx.globalAlpha = light ? 0.12 : 0.06;
     const haloGrd = ctx.createRadialGradient(cx, cy, llmR * 0.5, cx, cy, llmR * 2.0 * pulse);
-    haloGrd.addColorStop(0, light ? "rgba(147,51,234,0.4)"  : "rgba(200,200,210,0.25)");
+    haloGrd.addColorStop(0, light ? "rgba(147,51,234,0.4)" : "rgba(200,200,210,0.25)");
     haloGrd.addColorStop(1, "transparent");
     ctx.fillStyle = haloGrd;
     ctx.beginPath();

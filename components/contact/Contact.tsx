@@ -4,6 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import MagneticButton from "../ui/MagneticButton";
 import { EMAIL, SOCIALS } from "@/data/socials";
+import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 const ArrowIcon = ({ className = "" }: { className?: string }) => (
   <svg
@@ -23,6 +25,7 @@ const ArrowIcon = ({ className = "" }: { className?: string }) => (
 );
 
 export default function Contact() {
+  const { isLightMode } = useTheme();
   const ref = useRef<HTMLElement>(null);
   const isInView = useInView(ref, { margin: "200px" });
   const [copied, setCopied] = useState(false);
@@ -68,11 +71,11 @@ export default function Contact() {
             transition={
               isInView
                 ? {
-                    duration: 10 + i * 2,
-                    repeat: Infinity,
-                    ease: "linear",
-                    delay: i * 0.5,
-                  }
+                  duration: 10 + i * 2,
+                  repeat: Infinity,
+                  ease: "linear",
+                  delay: i * 0.5,
+                }
                 : { duration: 0 }
             }
           />
@@ -105,10 +108,12 @@ export default function Contact() {
 
           {/* Availability */}
           <p className="flex items-center justify-center gap-2.5 font-mono text-[11px] tracking-[0.2em] text-zinc-500 uppercase mb-10 sm:mb-12">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400/70 motion-safe:animate-ping" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            </span>
+            <span
+              className={cn(
+                "contact-status-dot h-1.5 w-1.5 rounded-full inline-block shrink-0",
+                isLightMode ? "bg-[#000000]" : "bg-[#ffffff]"
+              )}
+            />
             Open to new opportunities
           </p>
 

@@ -10,7 +10,7 @@ const HumanoidVisual = ({ on }: { on: boolean }) => (
   <div className="absolute inset-0 flex items-center justify-center bg-[#09090b] overflow-hidden group/humanoid">
     {/* Background subtle radial glow */}
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.15),transparent_70%)] z-10 pointer-events-none" />
-    
+
     {/* High-res Humanoid Robot Head */}
     <motion.img
       src="/humanoid-head.jpg"
@@ -43,7 +43,7 @@ const APTVisual = ({ on }: { on: boolean }) => (
   <div className="absolute inset-0 flex items-center justify-center bg-[#09090b] overflow-hidden group/transit">
     {/* Background subtle radial glow */}
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.12),transparent_70%)] z-10 pointer-events-none" />
-    
+
     {/* High-res APT Hardware Prototype & Architecture */}
     <motion.img
       src="/apt-transit.jpg"
@@ -76,7 +76,7 @@ const APTDemoVisual = ({ on }: { on: boolean }) => (
   <div className="absolute inset-0 flex items-center justify-center bg-[#0d091a] overflow-hidden group/movie">
     {/* Background subtle radial glow */}
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.12),transparent_70%)] z-10 pointer-events-none" />
-    
+
     {/* High-res TicketLoJao Screenshot */}
     <motion.img
       src="/ticketlojao.png"
@@ -108,9 +108,9 @@ const APTDemoVisual = ({ on }: { on: boolean }) => (
 const FarmLensVisual = ({ on }: { on: boolean }) => (
   <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0d0d12] overflow-hidden p-2.5 sm:p-4 gap-2 sm:gap-3">
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(168,85,247,0.06),transparent_70%)]" />
-    
+
     {/* 01 Leaf Upload Step */}
-    <motion.div 
+    <motion.div
       className="w-full max-w-[175px] sm:max-w-[200px] border border-white/10 rounded-md sm:rounded-lg p-2 sm:p-2.5 bg-white/[0.03] backdrop-blur-sm relative overflow-hidden"
       animate={on ? { borderColor: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.1)'] } : {}}
       transition={{ duration: 4, repeat: Infinity }}
@@ -123,9 +123,9 @@ const FarmLensVisual = ({ on }: { on: boolean }) => (
         <span className="text-zinc-600">→</span>
         <span className="text-purple-300">Infer</span>
       </div>
-      
+
       {/* Scanning effect */}
-      <motion.div 
+      <motion.div
         className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-400/10 to-transparent h-[200%] w-full"
         animate={on ? { top: ['-100%', '100%'] } : {}}
         transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
@@ -136,14 +136,14 @@ const FarmLensVisual = ({ on }: { on: boolean }) => (
     <div className="w-px h-2.5 sm:h-3 bg-gradient-to-b from-white/20 to-white/5" />
 
     {/* 02 Prediction Record */}
-    <motion.div 
+    <motion.div
       className="w-full max-w-[205px] sm:max-w-[230px] border border-white/10 rounded-md sm:rounded-lg p-2 sm:p-2.5 bg-white/[0.03] backdrop-blur-sm"
       initial={{ opacity: 0.7 }}
       animate={on ? { opacity: [0.7, 1, 0.7] } : {}}
       transition={{ duration: 4, repeat: Infinity, delay: 1 }}
     >
       <div className="text-[8px] sm:text-[9px] font-mono uppercase tracking-widest text-zinc-400 mb-1 sm:mb-1.5">02 · Prediction Record</div>
-      
+
       <div className="flex justify-between items-end mb-1 sm:mb-1.5">
         <div className="flex flex-col">
           <span className="text-[8px] sm:text-[9px] text-zinc-500 uppercase tracking-widest">Condition</span>
@@ -154,7 +154,7 @@ const FarmLensVisual = ({ on }: { on: boolean }) => (
           <span className="text-[11px] sm:text-xs text-emerald-400 font-mono">91.4%</span>
         </div>
       </div>
-      
+
       <div className="text-[8px] sm:text-[9px] font-mono text-zinc-500 border-t border-white/10 pt-1 mt-1">
         Treatment recommended · logged
       </div>
@@ -179,9 +179,9 @@ export default function ProjectCard({ project, index }: { project: Project; inde
   const [isExpanded, setIsExpanded] = useState(false);
 
   const hasExtraContent = !!(
-    project.problem || 
-    project.outcome || 
-    project.architecture || 
+    project.problem ||
+    project.outcome ||
+    project.architecture ||
     project.engineeringFocus
   );
 
@@ -195,17 +195,17 @@ export default function ProjectCard({ project, index }: { project: Project; inde
       className="group-hover/grid:opacity-40 hover:!opacity-100 transition-opacity duration-500 ease-out h-full"
     >
       <SweepCard className="h-full flex flex-col group/card !max-w-none transition-all duration-500 rounded-[18px] sm:rounded-[24px]">
-        
+
         {/* Abstract Visual Area */}
         <div className="w-full aspect-[16/10] sm:aspect-[16/9] relative border-b border-white/10 overflow-hidden rounded-t-[18px] sm:rounded-t-[24px]">
-          <motion.div 
+          <motion.div
             className="w-full h-full"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.7, ease: "easeOut" }}
           >
             {getProjectVisual(project.id, isInView)}
           </motion.div>
-          
+
           <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-20">
             <span className="px-2 py-0.5 sm:py-1 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest text-[#F5F5F5] bg-black/60 backdrop-blur-md rounded border border-white/10">
               0{index + 1}
@@ -215,7 +215,7 @@ export default function ProjectCard({ project, index }: { project: Project; inde
 
         {/* Content Area */}
         <div className="p-4 sm:p-6 md:p-8 flex flex-col flex-grow">
-          <motion.h3 
+          <motion.h3
             className="text-lg sm:text-xl md:text-2xl font-light text-[#F5F5F5] tracking-tight mb-1.5 sm:mb-3 group-hover/card:text-white transition-colors font-display"
           >
             {project.title}
@@ -295,7 +295,7 @@ export default function ProjectCard({ project, index }: { project: Project; inde
                 <span>Source</span>
               </a>
             )}
-            
+
             {project.githubUrl === "private" && (
               <div className="flex items-center gap-1.5 text-xs font-semibold text-zinc-600 py-1 min-h-[36px]">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5 sm:w-4 sm:h-4">
@@ -308,7 +308,7 @@ export default function ProjectCard({ project, index }: { project: Project; inde
 
             <div className="flex items-center gap-3 sm:gap-4 ml-auto">
               {hasExtraContent && (
-                <button 
+                <button
                   onClick={() => setIsExpanded(!isExpanded)}
                   className="text-xs font-semibold text-white hover:text-zinc-300 transition-colors py-1 min-h-[36px]"
                 >

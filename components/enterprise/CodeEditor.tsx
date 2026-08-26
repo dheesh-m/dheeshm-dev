@@ -90,7 +90,7 @@ function CodeLine({ line }: { line: string }) {
     <>
       {tokens.map((token, i) => {
         let colorClass = "text-[#d4d4d4]";
-        
+
         if (/^\s+$/.test(token)) {
           return <span key={i}>{token}</span>;
         }

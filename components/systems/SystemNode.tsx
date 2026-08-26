@@ -39,7 +39,7 @@ function SystemNode({
   rotY,
   rotZ
 }: SystemNodeProps) {
-  
+
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     onHover(technology, e.currentTarget.getBoundingClientRect());
   };
@@ -60,10 +60,10 @@ function SystemNode({
 
   useAnimationFrame((time, delta) => {
     if (!isAnimating) return;
-    
+
     // Update local orbit angle
     const direction = isClockwise ? 1 : -1;
-    const speedMult = (isActive || isHubActive ? 1.5 : 1) * speed * 0.001; 
+    const speedMult = (isActive || isHubActive ? 1.5 : 1) * speed * 0.001;
     currentAngle.set(currentAngle.get() + (delta * speedMult * direction));
 
     // Calculate global Z depth to set opacity
@@ -73,11 +73,11 @@ function SystemNode({
 
     const rx = (rotX.get() * Math.PI) / 180;
     const ry = (rotY.get() * Math.PI) / 180;
-    
+
     const z1 = localZ * Math.cos(rx);
     const x1 = localX;
     const globalZ = z1 * Math.cos(ry) - x1 * Math.sin(ry);
-    
+
     const depth = (globalZ + radius) / (radius * 2); // 0 to 1
     opacity.set(0.60 + depth * 0.40); // 0.60 to 1.0 based on depth
   });
@@ -87,7 +87,7 @@ function SystemNode({
   return (
     <motion.div
       className="absolute top-1/2 left-1/2"
-      style={{ 
+      style={{
         transformStyle: "preserve-3d",
         transform: nodeTransform
       }}
@@ -122,11 +122,11 @@ function SystemNode({
             {/* Small 3D Purple Sphere */}
             <div className={cn(
               "w-4.5 h-4.5 md:w-5 md:h-5 rounded-full bg-gradient-to-br from-[#e9d5ff] via-[#8b5cf6] to-[#5b21b6] relative transition-all duration-500",
-              isActive 
-                ? "scale-125 shadow-[0_0_20px_rgba(139,92,246,0.9)]" 
-                : isRelated 
-                ? "scale-110 shadow-[0_0_15px_rgba(139,92,246,0.7)]" 
-                : "shadow-[0_0_8px_rgba(139,92,246,0.35)] hover:scale-110"
+              isActive
+                ? "scale-125 shadow-[0_0_20px_rgba(139,92,246,0.9)]"
+                : isRelated
+                  ? "scale-110 shadow-[0_0_15px_rgba(139,92,246,0.7)]"
+                  : "shadow-[0_0_8px_rgba(139,92,246,0.35)] hover:scale-110"
             )}>
               {/* Specular highlight */}
               <div className="absolute top-[12%] left-[12%] w-[25%] h-[25%] rounded-full bg-white/70 blur-[0.5px]" />
@@ -135,11 +135,11 @@ function SystemNode({
             {/* Label floating below */}
             <span className={cn(
               "whitespace-nowrap text-[9px] md:text-[10px] font-bold font-mono tracking-widest uppercase transition-all duration-500",
-              isActive 
-                ? "text-white drop-shadow-[0_0_6px_rgba(139,92,246,0.8)]" 
-                : isRelated 
-                ? "text-[#f3e8ff]" 
-                : "text-gray-300/90"
+              isActive
+                ? "text-white drop-shadow-[0_0_6px_rgba(139,92,246,0.8)]"
+                : isRelated
+                  ? "text-[#f3e8ff]"
+                  : "text-gray-300/90"
             )}>
               {technology.name}
             </span>

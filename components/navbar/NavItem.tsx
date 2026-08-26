@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 interface NavItemProps {
   id: string;
@@ -19,6 +20,8 @@ export default function NavItem({
   onClick,
   isScrolled,
 }: NavItemProps) {
+  const { isLightMode } = useTheme();
+
   return (
     <a
       href={href}
@@ -28,15 +31,31 @@ export default function NavItem({
       }}
       aria-current={isActive ? "true" : undefined}
       className={cn(
-        "relative flex items-center justify-center px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all duration-300 whitespace-nowrap outline-none select-none",
-        "focus-visible:ring-2 focus-visible:ring-purple-400/60",
-        isActive
-          ? isScrolled
-            ? "text-blue-600 dark:text-purple-300 font-semibold bg-white/60 dark:bg-white/15 shadow-sm"
-            : "text-white font-semibold bg-white/20 shadow-sm"
-          : isScrolled
-          ? "text-[#1e293b] dark:text-zinc-300 hover:text-blue-600 dark:hover:text-purple-300 hover:bg-white/50 dark:hover:bg-white/15 hover:shadow-sm"
-          : "text-white/85 hover:text-white hover:bg-white/20 hover:shadow-sm"
+        "relative flex items-center justify-center px-3.5 py-1.5 rounded-full text-[13px] font-sans transition-all duration-300 whitespace-nowrap outline-none select-none",
+        "focus-visible:ring-2 focus-visible:ring-black/40 dark:focus-visible:ring-white/40",
+        isLightMode
+          ? isActive
+            ? cn(
+                "text-[#000000] font-semibold",
+                isScrolled ? "bg-white/80 shadow-sm" : "bg-white/45 shadow-sm"
+              )
+            : cn(
+                "text-[#000000] font-medium",
+                isScrolled
+                  ? "hover:text-[#000000] hover:bg-white/50 hover:shadow-sm"
+                  : "hover:text-[#000000] hover:bg-white/30 hover:shadow-sm"
+              )
+          : isActive
+            ? cn(
+                "text-[#ffffff] font-semibold",
+                isScrolled ? "bg-white/15 shadow-sm" : "bg-white/20 shadow-sm"
+              )
+            : cn(
+                "text-[#f4f4f5] font-medium",
+                isScrolled
+                  ? "hover:text-[#ffffff] hover:bg-white/15 hover:shadow-sm"
+                  : "hover:text-[#ffffff] hover:bg-white/20 hover:shadow-sm"
+              )
       )}
     >
       {title}

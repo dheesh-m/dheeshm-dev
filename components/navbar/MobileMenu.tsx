@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { NAV_ITEMS } from "./navItems";
+import { useTheme } from "@/components/providers/ThemeProvider";
 
 interface MobileMenuProps {
   id: string;
@@ -23,45 +24,43 @@ export default function MobileMenu({
   onNavigate,
 }: MobileMenuProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const { isLightMode } = useTheme();
 
-  // Escape to close, focus trapped inside the panel, and the page behind it
-  // locked so it cannot scroll under the overlay.
+  // Escape key & focus trapping
   useEffect(() => {
     if (!isOpen) return;
 
-    const { body } = document;
-    const previousOverflow = body.style.overflow;
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-    body.style.overflow = "hidden";
-
-    panelRef.current?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
         onClose();
         return;
       }
-      if (event.key !== "Tab") return;
-
-      const nodes = panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE);
-      if (!nodes || nodes.length === 0) return;
-
-      const first = nodes[0];
-      const last = nodes[nodes.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
+      if (e.key === "Tab") {
+        const focusable = panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE);
+        if (!focusable || focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Auto focus first link
+    const firstLink = panelRef.current?.querySelector<HTMLElement>("a");
+    firstLink?.focus();
+
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      body.style.overflow = previousOverflow;
-      previouslyFocused?.focus?.();
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
 
@@ -76,7 +75,10 @@ export default function MobileMenu({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[90] bg-[#050505]/95 dark:bg-[#050505]/95 backdrop-blur-xl md:hidden flex flex-col justify-center items-center"
+          className={cn(
+            "fixed inset-0 z-[90] backdrop-blur-xl md:hidden flex flex-col justify-center items-center",
+            isLightMode ? "bg-[#f7f6fb]/95" : "bg-[#050505]/95"
+          )}
         >
           <nav
             aria-label="Mobile"
@@ -95,24 +97,24 @@ export default function MobileMenu({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className="group relative flex items-center gap-4 w-full rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+                className="group relative flex items-center gap-4 w-full rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-black/60 dark:focus-visible:ring-white/60"
               >
                 <span
                   className={cn(
                     "text-xs font-mono font-medium transition-colors",
                     activeItem === item.label
-                      ? "text-purple-400 font-bold"
-                      : "text-gray-400 group-hover:text-white"
+                      ? isLightMode ? "text-[#000000] font-bold" : "text-[#ffffff] font-bold"
+                      : isLightMode ? "text-[#000000]/60 group-hover:text-[#000000]" : "text-gray-400 group-hover:text-white"
                   )}
                 >
                   {item.id}
                 </span>
                 <span
                   className={cn(
-                    "text-xl font-display font-bold tracking-tight transition-colors",
+                    "text-xl font-sans font-bold tracking-tight transition-colors",
                     activeItem === item.label
-                      ? "text-white font-bold"
-                      : "text-gray-300 group-hover:text-white"
+                      ? isLightMode ? "text-[#000000] font-bold" : "text-[#ffffff] font-bold"
+                      : isLightMode ? "text-[#000000] group-hover:text-[#000000]" : "text-gray-300 group-hover:text-white"
                   )}
                 >
                   {item.title}
@@ -121,7 +123,10 @@ export default function MobileMenu({
                 {activeItem === item.label && (
                   <motion.div
                     layoutId="mobile-active"
-                    className="absolute -left-6 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white"
+                    className={cn(
+                      "absolute -left-6 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full",
+                      isLightMode ? "bg-[#000000]" : "bg-[#ffffff]"
+                    )}
                   />
                 )}
               </motion.a>

@@ -25,11 +25,11 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
     return technologies.map((tech, index) => {
       // Distribute nodes across 3 concentric rings (e.g. radii 140, 210, 280)
       const ringIndex = index % 3;
-      const radius = 140 + (ringIndex * 70); 
-      
+      const radius = 140 + (ringIndex * 70);
+
       // Angle distribution (0 to 360)
       const angleOffset = (index / technologies.length) * 360;
-      
+
       // Speed and direction
       const speed = 40 + (ringIndex * 15) + ((index * 7) % 10);
       const isClockwise = ringIndex % 2 === 0;
@@ -57,7 +57,7 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
 
   return (
     <div ref={containerRef} className="relative w-full aspect-square max-w-[800px] mx-auto flex items-center justify-center select-none">
-      
+
       {/* Central Core - High-contrast, clearly visible */}
       <div className="relative z-30 flex items-center justify-center w-36 h-36 rounded-full border border-purple-400/40 dark:border-white/20 bg-white/95 dark:bg-[#0c0c14]/90 backdrop-blur-md shadow-[0_8px_32px_rgba(147,51,234,0.18)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)] group">
         <div className="absolute inset-0 rounded-full border border-purple-400/30 dark:border-white/15 animate-[spin_10s_linear_infinite]" />
