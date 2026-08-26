@@ -24,7 +24,7 @@ export default function ExperienceItem({ experience, isOpen, onClick }: Experien
       ref={ref}
       initial={false}
       className={cn(
-        "group relative flex flex-col w-full rounded-[20px] border transition-all duration-500 overflow-hidden",
+        "group relative flex flex-col w-full rounded-[20px] border transition-[border-color,background-color,box-shadow,transform] duration-250 ease-out overflow-hidden",
         isOpen 
           ? "bg-[rgba(14,15,17,0.94)] backdrop-blur-xl border-[rgba(255,255,255,0.18)] shadow-[0_12px_40px_rgba(0,0,0,0.6)]" 
           : "bg-[rgba(14,15,17,0.88)] backdrop-blur-xl border-[rgba(255,255,255,0.14)] shadow-[0_8px_30px_rgba(0,0,0,0.4)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(20,21,24,0.92)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(255,255,255,0.04)]"

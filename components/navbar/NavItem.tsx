@@ -31,7 +31,7 @@ export default function NavItem({
       }}
       aria-current={isActive ? "true" : undefined}
       className={cn(
-        "relative flex items-center justify-center px-3.5 py-1.5 rounded-full text-[13px] font-sans transition-all duration-300 whitespace-nowrap outline-none select-none",
+        "relative flex items-center justify-center px-3.5 py-1.5 rounded-full text-[13px] font-sans transition-[color,background-color,box-shadow] duration-200 ease-out whitespace-nowrap outline-none select-none",
         "focus-visible:ring-2 focus-visible:ring-black/40 dark:focus-visible:ring-white/40",
         isLightMode
           ? isActive

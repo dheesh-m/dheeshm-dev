@@ -492,11 +492,15 @@ function SystemHub({
       }
 
       if (found) {
-        setHoveredTechId(found.id);
-        onNodeHover(found, rect);
+        if (hoveredTechIdRef.current !== found.id) {
+          hoveredTechIdRef.current = found.id;
+          setHoveredTechId(found.id);
+          onNodeHover(found, rect);
+        }
         if (containerRef.current) containerRef.current.style.cursor = "pointer";
       } else {
-        if (hoveredTechIdRef.current) {
+        if (hoveredTechIdRef.current !== null) {
+          hoveredTechIdRef.current = null;
           setHoveredTechId(null);
           onNodeHover(null, null);
         }

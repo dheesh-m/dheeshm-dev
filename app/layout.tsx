@@ -89,6 +89,7 @@ export const viewport: Viewport = {
 };
 
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 
 export default function RootLayout({
   children,
@@ -103,10 +104,12 @@ export default function RootLayout({
         className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#050505] text-[#F5F5F5] selection:bg-white/20`}
       >
         <ThemeProvider>
-          <MotionProvider>
-            <CustomCursor />
-            {children}
-          </MotionProvider>
+          <SmoothScrollProvider>
+            <MotionProvider>
+              <CustomCursor />
+              {children}
+            </MotionProvider>
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>

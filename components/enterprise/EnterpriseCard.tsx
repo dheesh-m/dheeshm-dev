@@ -15,7 +15,7 @@ export default function EnterpriseCard({ item, isActive, onMouseEnter }: Enterpr
   return (
     <div onMouseEnter={onMouseEnter} className="h-full">
       <SweepCard className={cn(
-        "flex flex-col p-3.5 sm:p-6 md:p-8 transition-all duration-500 cursor-default h-full",
+        "flex flex-col p-3.5 sm:p-6 md:p-8 transition-[background-color,border-color,box-shadow] duration-250 ease-out cursor-default h-full",
         isActive ? "bg-white/5" : ""
       )}>
       {/* Subtle Grid/Circuit Pattern on Hover */}

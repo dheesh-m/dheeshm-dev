@@ -104,7 +104,7 @@ function SystemNode({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           className={cn(
-            "relative flex items-center justify-center cursor-crosshair transition-all duration-500",
+            "relative flex items-center justify-center cursor-crosshair transition-[transform,opacity] duration-200 ease-out",
             isActive ? "scale-110 z-20" : isRelated ? "scale-105 z-20" : "scale-100 z-10",
             isDimmed ? "opacity-30" : "opacity-100"
           )}
@@ -121,7 +121,7 @@ function SystemNode({
           <div className="flex flex-col items-center gap-1.5 select-none">
             {/* Small 3D Purple Sphere */}
             <div className={cn(
-              "w-4.5 h-4.5 md:w-5 md:h-5 rounded-full bg-gradient-to-br from-[#e9d5ff] via-[#8b5cf6] to-[#5b21b6] relative transition-all duration-500",
+              "w-4.5 h-4.5 md:w-5 md:h-5 rounded-full bg-gradient-to-br from-[#e9d5ff] via-[#8b5cf6] to-[#5b21b6] relative transition-[transform,box-shadow] duration-200 ease-out",
               isActive
                 ? "scale-125 shadow-[0_0_20px_rgba(139,92,246,0.9)]"
                 : isRelated
@@ -134,7 +134,7 @@ function SystemNode({
 
             {/* Label floating below */}
             <span className={cn(
-              "whitespace-nowrap text-[9px] md:text-[10px] font-bold font-mono tracking-widest uppercase transition-all duration-500",
+              "whitespace-nowrap text-[9px] md:text-[10px] font-bold font-mono tracking-widest uppercase transition-[color,filter] duration-200 ease-out",
               isActive
                 ? "text-white drop-shadow-[0_0_6px_rgba(139,92,246,0.8)]"
                 : isRelated

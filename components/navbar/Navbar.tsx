@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import MobileMenu from "./MobileMenu";
@@ -16,6 +16,9 @@ export default function Navbar() {
   const [active, setActive] = useState("HOME");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const isScrolledRef = useRef(false);
+  const activeRef = useRef("HOME");
+  activeRef.current = active;
 
   useEffect(() => {
     let ticking = false;
@@ -23,7 +26,11 @@ export default function Navbar() {
       if (ticking) return;
       ticking = true;
       window.requestAnimationFrame(() => {
-        setIsScrolled(window.scrollY > 40);
+        const next = window.scrollY > 16;
+        if (isScrolledRef.current !== next) {
+          isScrolledRef.current = next;
+          setIsScrolled(next);
+        }
         ticking = false;
       });
     };
@@ -60,7 +67,10 @@ export default function Navbar() {
         }
 
         const label = labelById.get(bestId);
-        if (label) setActive(label);
+        if (label && activeRef.current !== label) {
+          activeRef.current = label;
+          setActive(label);
+        }
       },
       {
         rootMargin: "-30% 0px -60% 0px",
@@ -111,7 +121,7 @@ export default function Navbar() {
             ease: [0.16, 1, 0.3, 1],
           }}
           className={cn(
-            "relative flex w-full items-center justify-between pointer-events-auto rounded-full transition-all duration-300",
+            "relative flex w-full items-center justify-between pointer-events-auto rounded-full transition-[background-color,border-color,box-shadow] duration-250 ease-out",
             isScrolled
               ? isLightMode
                 ? "bg-white/40 backdrop-blur-2xl backdrop-saturate-[190%] border border-white/50 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12),0_2px_10px_rgba(0,0,0,0.04)]"
@@ -132,7 +142,7 @@ export default function Navbar() {
               {/* Brand Name */}
               <span
                 className={cn(
-                  "brand-logo font-display text-base sm:text-lg font-bold tracking-tight transition-colors duration-300",
+                  "brand-logo font-display text-base sm:text-lg font-bold tracking-tight transition-colors duration-200",
                   isLightMode ? "text-[#000000]" : "text-[#ffffff]"
                 )}
               >
@@ -145,7 +155,7 @@ export default function Navbar() {
           <nav
             aria-label="Primary"
             className={cn(
-              "hidden md:flex items-center rounded-full transition-all duration-300",
+              "hidden md:flex items-center rounded-full transition-[background-color,border-color,box-shadow,padding,gap] duration-250 ease-out",
               isScrolled
                 ? isLightMode
                   ? "bg-white/35 backdrop-blur-xl backdrop-saturate-[180%] border border-white/45 px-1.5 py-1 shadow-inner gap-0.5"
@@ -177,7 +187,7 @@ export default function Navbar() {
             <a
               href="#contact"
               className={cn(
-                "navbar-cta-resume hidden sm:inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[13px] font-sans font-medium transition-all duration-300 whitespace-nowrap outline-none",
+                "navbar-cta-resume hidden sm:inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[13px] font-sans font-medium transition-[color,background-color,border-color,box-shadow] duration-200 ease-out whitespace-nowrap outline-none",
                 isLightMode
                   ? isScrolled
                     ? "bg-white/75 text-[#000000] border border-white/50 shadow-sm hover:bg-white hover:shadow"
@@ -195,7 +205,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setMobileOpen((open) => !open)}
               className={cn(
-                "flex h-9 w-9 flex-col items-center justify-center md:hidden rounded-full border transition-all duration-300",
+                "flex h-9 w-9 flex-col items-center justify-center md:hidden rounded-full border transition-[color,background-color,border-color] duration-200 ease-out",
                 isLightMode
                   ? isScrolled
                     ? "bg-white/40 border-white/40 text-[#000000]"

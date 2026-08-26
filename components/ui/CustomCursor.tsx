@@ -59,7 +59,13 @@ export default function CustomCursor() {
     const onPointerMove = (e: PointerEvent) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
-      setVisible(true);
+      if (!visible.current) {
+        dot.current.x = e.clientX;
+        dot.current.y = e.clientY;
+        ring.current.x = e.clientX;
+        ring.current.y = e.clientY;
+        setVisible(true);
+      }
       idleFrames = 0;
       start();
     };
@@ -68,7 +74,7 @@ export default function CustomCursor() {
       const target = e.target as HTMLElement | null;
       if (!target?.closest) return;
       isHovering.current = !!target.closest(
-        "a, button, [role='button'], input, textarea, select, summary, label"
+        "a, button, [role='button'], input, textarea, select, summary, label, .cursor-pointer, .cursor-crosshair"
       );
     };
 
@@ -80,12 +86,13 @@ export default function CustomCursor() {
       const r = ring.current;
       const light = isLightRef.current;
 
-      // Direct follow for dot
-      d.x += (m.x - d.x) * 0.95;
-      d.y += (m.y - d.y) * 0.95;
-      // Smooth follow for outer ring
-      r.x += (m.x - r.x) * 0.45;
-      r.y += (m.y - r.y) * 0.45;
+      // 1. Direct instantaneous follow for dot (zero latency)
+      d.x = m.x;
+      d.y = m.y;
+
+      // 2. High follow-factor for outer ring (tight response + subtle micro-smoothing)
+      r.x += (m.x - r.x) * 0.84;
+      r.y += (m.y - r.y) * 0.84;
 
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${d.x}px, ${d.y}px, 0) translate(-50%, -50%)`;
@@ -97,8 +104,8 @@ export default function CustomCursor() {
 
       if (ringRef.current) {
         const hovering = isHovering.current;
-        const scale = hovering ? 1.4 : 1;
-        ringRef.current.style.transform = `translate3d(${r.x}px, ${r.y}px, 0) translate(-50%, -50%) scale(${scale})`;
+        const scale = hovering ? 1.35 : 1.0;
+        ringRef.current.style.transform = `translate3d(${r.x.toFixed(2)}px, ${r.y.toFixed(2)}px, 0) translate(-50%, -50%) scale(${scale})`;
 
         if (appliedHover.current !== hovering || appliedLight.current !== light) {
           appliedHover.current = hovering;
@@ -130,12 +137,12 @@ export default function CustomCursor() {
       }
 
       const settled =
-        Math.abs(m.x - r.x) < 0.1 &&
-        Math.abs(m.y - r.y) < 0.1 &&
-        Math.abs(m.x - d.x) < 0.1 &&
-        Math.abs(m.y - d.y) < 0.1;
+        Math.abs(m.x - r.x) < 0.05 &&
+        Math.abs(m.y - r.y) < 0.05 &&
+        Math.abs(m.x - d.x) < 0.05 &&
+        Math.abs(m.y - d.y) < 0.05;
 
-      if (settled && ++idleFrames > 8) {
+      if (settled && ++idleFrames > 5) {
         frameRef.current = 0;
         return;
       }
@@ -165,14 +172,14 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* Outer Ring */}
+      {/* Outer Ring: NO CSS transform transition to eliminate double lag */}
       <div
         ref={ringRef}
         aria-hidden="true"
         style={{
           opacity: 0,
         }}
-        className="fixed top-0 left-0 w-7 h-7 rounded-full pointer-events-none z-[99999] backdrop-blur-[1px] transition-[background-color,border-color,box-shadow,opacity,transform] duration-200 ease-out will-change-transform border-[1.5px]"
+        className="fixed top-0 left-0 w-7 h-7 rounded-full pointer-events-none z-[99999] backdrop-blur-[1px] transition-[background-color,border-color,box-shadow,opacity] duration-150 ease-out will-change-transform border-[1.5px]"
       />
       {/* Inner Dot */}
       <div
@@ -181,7 +188,7 @@ export default function CustomCursor() {
         style={{
           opacity: 0,
         }}
-        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[99999] will-change-transform transition-opacity duration-200"
+        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[99999] will-change-transform transition-opacity duration-150"
       />
     </>
   );

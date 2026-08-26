@@ -194,7 +194,7 @@ export default function ProjectCard({ project, index }: { project: Project; inde
       transition={{ duration: 0.6, delay: index * 0.1, type: "spring", stiffness: 200, damping: 20 }}
       className="group-hover/grid:opacity-40 hover:!opacity-100 transition-opacity duration-500 ease-out h-full"
     >
-      <SweepCard className="h-full flex flex-col group/card !max-w-none transition-all duration-500 rounded-[18px] sm:rounded-[24px]">
+      <SweepCard className="h-full flex flex-col group/card !max-w-none transition-[border-color,box-shadow,transform] duration-250 ease-out rounded-[18px] sm:rounded-[24px]">
 
         {/* Abstract Visual Area */}
         <div className="w-full aspect-[16/10] sm:aspect-[16/9] relative border-b border-white/10 overflow-hidden rounded-t-[18px] sm:rounded-t-[24px]">
