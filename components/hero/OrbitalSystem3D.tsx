@@ -1,40 +1,36 @@
-// DO NOT TOUCH THIS SECTION — IT IS ALREADY APPROVED.
 "use client";
 
-/**
- * OrbitalSystem3D
- *
- * Pure-canvas 3D orbital visualization — no Three.js, no R3F, no external deps.
- * Uses perspective projection math directly on a 2D Canvas context.
- * Fully compatible with Next.js 16 reactCompiler, React 19, and iOS Safari.
- *
- * NOTE: THIS COMPONENT IS LOCKED AND FULLY APPROVED.
- * Math-driven responsive safe bounds guarantee all rings, nodes, glows, and labels
- * remain 100% visible and unclipped throughout full 3D rotation across all viewports.
- */
-
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState, memo } from "react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
-// ── Types ────────────────────────────────────────────────────────────────────
-interface Vec3 { x: number; y: number; z: number }
-interface Node3D { label: string; orbit: number; startAngle: number; speed: number }
+// ── 3D Vector & Matrix Math ──────────────────────────────────────────────────
+interface Vec3 {
+  x: number;
+  y: number;
+  z: number;
+}
 
-// ── Orbital planes: rotation matrices for 3 planes ──────────────────────────
-type Mat3 = [number, number, number, number, number, number, number, number, number];
+type Mat3 = [
+  number, number, number,
+  number, number, number,
+  number, number, number
+];
 
 function rotateX(angle: number): Mat3 {
   const c = Math.cos(angle), s = Math.sin(angle);
   return [1, 0, 0, 0, c, -s, 0, s, c];
 }
+
 function rotateY(angle: number): Mat3 {
   const c = Math.cos(angle), s = Math.sin(angle);
   return [c, 0, s, 0, 1, 0, -s, 0, c];
 }
+
 function rotateZ(angle: number): Mat3 {
   const c = Math.cos(angle), s = Math.sin(angle);
   return [c, -s, 0, s, c, 0, 0, 0, 1];
 }
+
 function mulMat(a: Mat3, b: Mat3): Mat3 {
   return [
     a[0] * b[0] + a[1] * b[3] + a[2] * b[6], a[0] * b[1] + a[1] * b[4] + a[2] * b[7], a[0] * b[2] + a[1] * b[5] + a[2] * b[8],
@@ -42,39 +38,105 @@ function mulMat(a: Mat3, b: Mat3): Mat3 {
     a[6] * b[0] + a[7] * b[3] + a[8] * b[6], a[6] * b[1] + a[7] * b[4] + a[8] * b[7], a[6] * b[2] + a[7] * b[5] + a[8] * b[8],
   ];
 }
+
 function applyMat(m: Mat3, v: Vec3): Vec3 {
-  return { x: m[0] * v.x + m[1] * v.y + m[2] * v.z, y: m[3] * v.x + m[4] * v.y + m[5] * v.z, z: m[6] * v.x + m[7] * v.y + m[8] * v.z };
+  return {
+    x: m[0] * v.x + m[1] * v.y + m[2] * v.z,
+    y: m[3] * v.x + m[4] * v.y + m[5] * v.z,
+    z: m[6] * v.x + m[7] * v.y + m[8] * v.z,
+  };
 }
 
-// 3 orbital plane orientations
+// 3 distinct 3D orbital planes creating authentic atomic motion
 const PLANE_MATS: Mat3[] = [
-  mulMat(rotateZ(0.3), rotateX(Math.PI / 6)),
-  mulMat(rotateY(Math.PI / 4), rotateX(Math.PI / 2.5)),
-  mulMat(rotateZ(-0.4), mulMat(rotateY(Math.PI / 3), rotateX(-Math.PI / 8))),
+  mulMat(rotateZ(0.38), rotateX(Math.PI / 5.2)),
+  mulMat(rotateY(Math.PI / 3.4), rotateX(Math.PI / 2.3)),
+  mulMat(rotateZ(-0.45), mulMat(rotateY(Math.PI / 2.8), rotateX(-Math.PI / 6.5))),
 ];
 
-// Nodes mapped to 3 orbital tiers
-const NODES: Node3D[] = [
-  { label: "RAG", orbit: 0, startAngle: 0, speed: 0.28 },
-  { label: "TOOLS", orbit: 1, startAngle: Math.PI * 0.6, speed: 0.22 },
-  { label: "MEMORY", orbit: 2, startAngle: Math.PI * 1.2, speed: 0.19 },
-  { label: "AGENTS", orbit: 0, startAngle: Math.PI, speed: 0.25 },
-  { label: "VECTOR DB", orbit: 1, startAngle: Math.PI * 1.6, speed: 0.30 },
-  { label: "API", orbit: 2, startAngle: Math.PI * 0.4, speed: 0.17 },
-];
-
-// Perspective projection parameters
-const FOCAL = 420;
-const CAM_Z = 480;
-
-function project(v: Vec3, cx: number, cy: number, camZ = 480) {
-  const dz = camZ - v.z;
-  const scale = dz > 10 ? FOCAL / dz : 0;
-  return { sx: cx + v.x * scale, sy: cy + v.y * scale, scale };
+// 5 Satellite Nodes matching the reference design layout
+interface NodeDefinition {
+  id: string;
+  label: string;
+  sublabel?: string;
+  iconType: "user" | "message" | "box" | "code" | "database";
+  orbitPlane: number;
+  startAngle: number;
+  speed: number;
+  radiusMultiplier: number;
+  accentDark: string;
+  accentLight: string;
 }
 
-// Ellipse sample points for orbit ring
-function ellipsePts(mat: Mat3, rx: number, ry: number, segs = 80): Vec3[] {
+const HERO_NODES: NodeDefinition[] = [
+  {
+    id: "agents",
+    label: "AGENTS",
+    iconType: "user",
+    orbitPlane: 0,
+    startAngle: -Math.PI * 0.45,
+    speed: 0.16,
+    radiusMultiplier: 1.05,
+    accentDark: "#a855f7",
+    accentLight: "#9333ea",
+  },
+  {
+    id: "rag",
+    label: "RAG",
+    iconType: "message",
+    orbitPlane: 1,
+    startAngle: Math.PI * 0.95,
+    speed: -0.14,
+    radiusMultiplier: 0.95,
+    accentDark: "#818cf8",
+    accentLight: "#7c3aed",
+  },
+  {
+    id: "tools",
+    label: "TOOLS",
+    sublabel: "VECTOR DB",
+    iconType: "box",
+    orbitPlane: 1,
+    startAngle: -Math.PI * 0.05,
+    speed: 0.15,
+    radiusMultiplier: 1.08,
+    accentDark: "#c084fc",
+    accentLight: "#a855f7",
+  },
+  {
+    id: "api",
+    label: "API",
+    iconType: "code",
+    orbitPlane: 2,
+    startAngle: Math.PI * 0.35,
+    speed: -0.13,
+    radiusMultiplier: 1.02,
+    accentDark: "#22d3ee",
+    accentLight: "#06b6d4",
+  },
+  {
+    id: "memory",
+    label: "MEMORY",
+    iconType: "database",
+    orbitPlane: 2,
+    startAngle: Math.PI * 0.72,
+    speed: 0.14,
+    radiusMultiplier: 0.96,
+    accentDark: "#a855f7",
+    accentLight: "#9333ea",
+  },
+];
+
+const FOCAL = 520;
+const CAM_Z = 600;
+
+function project(v: Vec3, cx: number, cy: number) {
+  const dz = CAM_Z - v.z;
+  const scale = dz > 10 ? FOCAL / dz : 0;
+  return { sx: cx + v.x * scale, sy: cy + v.y * scale, scale, z: v.z };
+}
+
+function ellipsePts(mat: Mat3, rx: number, ry: number, segs = 72): Vec3[] {
   const pts: Vec3[] = [];
   for (let i = 0; i <= segs; i++) {
     const t = (i / segs) * Math.PI * 2;
@@ -83,76 +145,242 @@ function ellipsePts(mat: Mat3, rx: number, ry: number, segs = 80): Vec3[] {
   return pts;
 }
 
-// Draw a dashed ellipse ring
-function drawRing(ctx: CanvasRenderingContext2D, pts: Vec3[], cx: number, cy: number, color: string, alpha: number, camZ: number) {
+// ── Icon Path Renderers ──────────────────────────────────────────────────────
+function drawUserIcon(ctx: CanvasRenderingContext2D, x: number, y: number, s: number, color: string) {
   ctx.save();
-  ctx.globalAlpha = alpha;
   ctx.strokeStyle = color;
-  ctx.lineWidth = 0.8;
-  ctx.setLineDash([6, 5]);
+  ctx.fillStyle = color;
+  ctx.lineWidth = 1.3;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  // Head circle
   ctx.beginPath();
-  pts.forEach((p, i) => {
-    const { sx, sy } = project(p, cx, cy, camZ);
-    if (i === 0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
-  });
+  ctx.arc(x, y - s * 0.28, s * 0.28, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
-}
 
-// Draw a sphere with depth-based glow (toned down)
-function drawSphere(ctx: CanvasRenderingContext2D, sx: number, sy: number, r: number, color: string, glowColor: string, alpha: number) {
-  ctx.save();
-  ctx.globalAlpha = alpha;
-
-  // Subtle soft glow
-  const grd = ctx.createRadialGradient(sx, sy, 0, sx, sy, r * 1.8);
-  grd.addColorStop(0, glowColor + "28");
-  grd.addColorStop(1, "transparent");
-  ctx.fillStyle = grd;
+  // Shoulder arch
   ctx.beginPath();
-  ctx.arc(sx, sy, r * 1.8, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Core sphere
-  const sphereGrd = ctx.createRadialGradient(sx - r * 0.3, sy - r * 0.3, 0, sx, sy, r);
-  sphereGrd.addColorStop(0, "#ffffff");
-  sphereGrd.addColorStop(0.4, color);
-  sphereGrd.addColorStop(1, color + "88");
-  ctx.fillStyle = sphereGrd;
-  ctx.beginPath();
-  ctx.arc(sx, sy, r, 0, Math.PI * 2);
-  ctx.fill();
-
+  ctx.arc(x, y + s * 0.48, s * 0.52, Math.PI * 1.15, Math.PI * 1.85, false);
+  ctx.stroke();
   ctx.restore();
 }
 
-// Draw label
-function drawLabel(ctx: CanvasRenderingContext2D, text: string, sx: number, sy: number, r: number, textColor: string, alpha: number) {
+function drawMessageIcon(ctx: CanvasRenderingContext2D, x: number, y: number, s: number, color: string) {
   ctx.save();
-  ctx.globalAlpha = Math.min(1, alpha * 1.3);
-  ctx.fillStyle = textColor;
-  ctx.font = `bold ${Math.max(8, r * 0.9)}px "Manrope", system-ui, sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  ctx.letterSpacing = "1px";
-  ctx.fillText(text, sx, sy + r + 4);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.3;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  const w = s * 0.9;
+  const h = s * 0.7;
+  const r = 2.5;
+
+  ctx.beginPath();
+  ctx.moveTo(x - w / 2 + r, y - h / 2);
+  ctx.lineTo(x + w / 2 - r, y - h / 2);
+  ctx.quadraticCurveTo(x + w / 2, y - h / 2, x + w / 2, y - h / 2 + r);
+  ctx.lineTo(x + w / 2, y + h / 2 - r);
+  ctx.quadraticCurveTo(x + w / 2, y + h / 2, x + w / 2 - r, y + h / 2);
+  ctx.lineTo(x - w / 6, y + h / 2);
+  ctx.lineTo(x - w / 2.5, y + h / 2 + s * 0.28);
+  ctx.lineTo(x - w / 2.8, y + h / 2);
+  ctx.lineTo(x - w / 2 + r, y + h / 2);
+  ctx.quadraticCurveTo(x - w / 2, y + h / 2, x - w / 2, y + h / 2 - r);
+  ctx.lineTo(x - w / 2, y - h / 2 + r);
+  ctx.quadraticCurveTo(x - w / 2, y - h / 2, x - w / 2 + r, y - h / 2);
+  ctx.stroke();
+
+  // 2 inner chat lines
+  ctx.beginPath();
+  ctx.moveTo(x - w * 0.28, y - h * 0.12);
+  ctx.lineTo(x + w * 0.28, y - h * 0.12);
+  ctx.moveTo(x - w * 0.28, y + h * 0.16);
+  ctx.lineTo(x + w * 0.12, y + h * 0.16);
+  ctx.stroke();
   ctx.restore();
 }
 
-// ── Main component ────────────────────────────────────────────────────────────
-export default function OrbitalSystem3D() {
+function drawBoxIcon(ctx: CanvasRenderingContext2D, x: number, y: number, s: number, color: string) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.3;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  const r = s * 0.58;
+  const h = r * 0.5;
+
+  // Isometric 3D cube
+  // Top Face
+  ctx.beginPath();
+  ctx.moveTo(x, y - r);
+  ctx.lineTo(x + r * 0.86, y - h);
+  ctx.lineTo(x, y);
+  ctx.lineTo(x - r * 0.86, y - h);
+  ctx.closePath();
+  ctx.stroke();
+
+  // Left Face
+  ctx.beginPath();
+  ctx.moveTo(x - r * 0.86, y - h);
+  ctx.lineTo(x - r * 0.86, y + h);
+  ctx.lineTo(x, y + r);
+  ctx.lineTo(x, y);
+  ctx.stroke();
+
+  // Right Face
+  ctx.beginPath();
+  ctx.moveTo(x + r * 0.86, y - h);
+  ctx.lineTo(x + r * 0.86, y + h);
+  ctx.lineTo(x, y + r);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawCodeIcon(ctx: CanvasRenderingContext2D, x: number, y: number, s: number, color: string) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.4;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  const w = s * 0.55;
+  const h = s * 0.42;
+
+  // Left bracket <
+  ctx.beginPath();
+  ctx.moveTo(x - w * 0.35, y - h);
+  ctx.lineTo(x - w * 1.1, y);
+  ctx.lineTo(x - w * 0.35, y + h);
+  ctx.stroke();
+
+  // Right bracket >
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.35, y - h);
+  ctx.lineTo(x + w * 1.1, y);
+  ctx.lineTo(x + w * 0.35, y + h);
+  ctx.stroke();
+
+  // Slash /
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.22, y - h * 1.15);
+  ctx.lineTo(x - w * 0.22, y + h * 1.15);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawDatabaseIcon(ctx: CanvasRenderingContext2D, x: number, y: number, s: number, color: string) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.3;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  const rx = s * 0.62;
+  const ry = s * 0.22;
+  const gap = s * 0.38;
+
+  // Top Ellipse
+  ctx.beginPath();
+  ctx.ellipse(x, y - gap, rx, ry, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Middle Dish
+  ctx.beginPath();
+  ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI);
+  ctx.moveTo(x - rx, y - gap);
+  ctx.lineTo(x - rx, y);
+  ctx.moveTo(x + rx, y - gap);
+  ctx.lineTo(x + rx, y);
+  ctx.stroke();
+
+  // Bottom Dish
+  ctx.beginPath();
+  ctx.ellipse(x, y + gap, rx, ry, 0, 0, Math.PI);
+  ctx.moveTo(x - rx, y);
+  ctx.lineTo(x - rx, y + gap);
+  ctx.moveTo(x + rx, y);
+  ctx.lineTo(x + rx, y + gap);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function renderNodeIcon(ctx: CanvasRenderingContext2D, type: NodeDefinition["iconType"], x: number, y: number, size: number, color: string) {
+  switch (type) {
+    case "user":
+      drawUserIcon(ctx, x, y, size, color);
+      break;
+    case "message":
+      drawMessageIcon(ctx, x, y, size, color);
+      break;
+    case "box":
+      drawBoxIcon(ctx, x, y, size, color);
+      break;
+    case "code":
+      drawCodeIcon(ctx, x, y, size, color);
+      break;
+    case "database":
+      drawDatabaseIcon(ctx, x, y, size, color);
+      break;
+  }
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
+function OrbitalSystem3D() {
   const { isLightMode } = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const startTimeRef = useRef(performance.now());
-  const mouseRef = useRef({ x: 0, y: 0 });
-  const smoothMouseRef = useRef({ x: 0, y: 0 });
   const isLightRef = useRef(isLightMode);
 
-  // Keep theme ref in sync
-  useEffect(() => { isLightRef.current = isLightMode; }, [isLightMode]);
+  useEffect(() => {
+    isLightRef.current = isLightMode;
+  }, [isLightMode]);
+
+  // Mouse & interaction states
+  const mouseRef = useRef({ x: 0, y: 0, rawX: 0, rawY: 0, isInside: false });
+  const smoothMouseRef = useRef({ x: 0, y: 0 });
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
+  const hoveredNodeIdRef = useRef<string | null>(null);
+  hoveredNodeIdRef.current = hoveredNodeId;
+
+  // Node physics offsets for magnetic spring pull
+  const nodePhysicsRef = useRef(
+    HERO_NODES.map(() => ({
+      currentOffset: { x: 0, y: 0 },
+      targetOffset: { x: 0, y: 0 },
+    }))
+  );
+
+  // Traveling data photons along spoke lines
+  const dataPhotonsRef = useRef(
+    Array.from({ length: 15 }, (_, i) => ({
+      nodeIndex: i % 5,
+      progress: Math.random(),
+      speed: 0.0035 + Math.random() * 0.004,
+      size: 1.5 + Math.random() * 1.5,
+    }))
+  );
+
+  // Orbital particles traveling along rings
+  const orbitParticlesRef = useRef(
+    Array.from({ length: 18 }, (_, i) => ({
+      plane: i % 3,
+      angle: Math.random() * Math.PI * 2,
+      speed: 0.12 + Math.random() * 0.15,
+      size: 1.0 + Math.random() * 1.6,
+      alpha: 0.25 + Math.random() * 0.55,
+    }))
+  );
+
+  // Hit targets for mouse testing
+  const hitTargetsRef = useRef<Array<{ id: string; sx: number; sy: number; r: number }>>([]);
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
@@ -164,177 +392,458 @@ export default function OrbitalSystem3D() {
     const H = canvas.height / dpr;
     const cx = W / 2;
     const cy = H / 2;
-    const camZ = CAM_Z;
-
-    // Smooth mouse
-    smoothMouseRef.current.x += (mouseRef.current.x - smoothMouseRef.current.x) * 0.04;
-    smoothMouseRef.current.y += (mouseRef.current.y - smoothMouseRef.current.y) * 0.04;
-    const mx = smoothMouseRef.current.x;
-    const my = smoothMouseRef.current.y;
-
-    const t = (performance.now() - startTimeRef.current) / 1000;
     const light = isLightRef.current;
 
-    // Global rotation matrix: slow auto-rotate Y + mouse tilt
-    const autoRotY = rotateY(t * 0.07 + mx * 0.3);
-    const mouseTiltX = rotateX(-my * 0.25 + Math.sin(t * 0.04) * 0.08);
+    const t = (performance.now() - startTimeRef.current) / 1000;
+
+    // Smooth Mouse Parallax
+    smoothMouseRef.current.x += (mouseRef.current.x - smoothMouseRef.current.x) * 0.045;
+    smoothMouseRef.current.y += (mouseRef.current.y - smoothMouseRef.current.y) * 0.045;
+    const pmx = smoothMouseRef.current.x;
+    const pmy = smoothMouseRef.current.y;
+
+    // 3D Universe Rotation Matrix
+    const autoRotY = rotateY(t * 0.04 + pmx * 0.24);
+    const mouseTiltX = rotateX(-pmy * 0.20 + Math.sin(t * 0.035) * 0.06);
     const globalMat = mulMat(mouseTiltX, autoRotY);
 
-    // Clear full logical canvas
     ctx.clearRect(0, 0, W, H);
 
-    // Atmospheric glow around center (Toned down & centered)
-    const glowR = Math.min(W, H) * 0.40;
-    const atmosGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
+    // ── 1. Soft Central Atmosphere Glow ──────────────────────────────────────
+    const atmosR = Math.min(W, H) * 0.48;
+    const atmosGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, atmosR);
     if (light) {
-      atmosGrd.addColorStop(0, "rgba(147,51,234,0.08)");
-      atmosGrd.addColorStop(0.5, "rgba(168,85,247,0.03)");
+      atmosGrd.addColorStop(0, "rgba(147, 51, 234, 0.07)");
+      atmosGrd.addColorStop(0.5, "rgba(168, 85, 247, 0.025)");
       atmosGrd.addColorStop(1, "transparent");
     } else {
-      atmosGrd.addColorStop(0, "rgba(180,180,190,0.03)");
+      atmosGrd.addColorStop(0, "rgba(168, 85, 247, 0.08)");
+      atmosGrd.addColorStop(0.5, "rgba(129, 140, 248, 0.025)");
       atmosGrd.addColorStop(1, "transparent");
     }
     ctx.fillStyle = atmosGrd;
     ctx.beginPath();
-    ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
+    ctx.arc(cx, cy, atmosR, 0, Math.PI * 2);
     ctx.fill();
 
-    // ── 1. Rigorous Safe Orbital Boundaries Calculation ──────────────────────
+    // ── 2. Safe Bounds & Orbital Radii ───────────────────────────────────────
     const isMobile = W < 640;
-    const insetPct = W >= 1024 ? 0.08 : (W >= 640 ? 0.10 : 0.08);
-    const marginPad = isMobile ? 26 : 44; // Accounts for sphere radius + glow + label width
-    const safeHalfW = Math.max(65, (W * (1 - 2 * insetPct)) * 0.5 - marginPad);
-    const safeHalfH = Math.max(55, (H * (1 - 2 * insetPct)) * 0.5 - marginPad);
+    const isTablet = W >= 640 && W < 1024;
+    const baseRadiusX = isMobile ? W * 0.38 : isTablet ? W * 0.40 : Math.min(220, W * 0.38);
+    const baseRadiusY = isMobile ? H * 0.36 : isTablet ? H * 0.38 : Math.min(170, H * 0.34);
 
-    // Divide by max perspective projection expansion factor (~1.25)
-    // so that even at the closest z-depth to camera, projected coordinates stay inside safe area
-    const MAX_PERSPECTIVE_FACTOR = 1.25;
-    const maxSafeRadiusX = safeHalfW / MAX_PERSPECTIVE_FACTOR;
-    const maxSafeRadiusY = safeHalfH / MAX_PERSPECTIVE_FACTOR;
-
-    // Strict Orbital Hierarchy: Outer: 90%, Middle: 70%, Inner: 50%
     const orbitRadii = [
-      { rx: maxSafeRadiusX * 0.90, ry: maxSafeRadiusY * 0.90 },
-      { rx: maxSafeRadiusX * 0.70, ry: maxSafeRadiusY * 0.70 },
-      { rx: maxSafeRadiusX * 0.50, ry: maxSafeRadiusY * 0.50 },
+      { rx: baseRadiusX * 1.08, ry: baseRadiusY * 0.72 },
+      { rx: baseRadiusX * 0.88, ry: baseRadiusY * 0.58 },
+      { rx: baseRadiusX * 0.68, ry: baseRadiusY * 0.44 },
     ];
 
-    // ── 2. Compute 3D Projected Positions for All Nodes ─────────────────────
-    const nodePositions = NODES.map(node => {
-      const { rx, ry } = orbitRadii[node.orbit];
-      const angle = node.startAngle + t * node.speed;
-      const local: Vec3 = {
-        x: Math.cos(angle) * rx,
-        y: Math.sin(angle) * ry,
-        z: 0,
-      };
-
-      const inPlane = applyMat(PLANE_MATS[node.orbit], local);
-      const world = applyMat(globalMat, inPlane);
-      const proj = project(world, cx, cy, camZ);
-
-      const depth = (world.z + 220) / 440;
-      const alpha = Math.max(0.3, Math.min(1.0, 0.3 + depth * 0.7));
-      const r = Math.max(isMobile ? 4.5 : 5, (isMobile ? 8.5 : 10.5) * (0.55 + depth * 0.8));
-
-      // Calculate exact visual footprint for safe containment
-      ctx.font = `bold ${Math.max(isMobile ? 7.5 : 8, r * 0.9)}px "Manrope", system-ui, sans-serif`;
-      const textMetrics = ctx.measureText(node.label);
-      const labelHalfW = textMetrics.width / 2 + 3;
-      const footprintX = Math.max(r * 1.3, labelHalfW) + 3;
-      const footprintTop = r * 1.3 + 3;
-      const footprintBottom = (r + 3 + 12) + 3; // includes label below sphere
-
-      // Clamp coordinates within container safe margin [inset, 1-inset]
-      const safeSx = Math.max(footprintX, Math.min(W - footprintX, proj.sx));
-      const safeSy = Math.max(footprintTop, Math.min(H - footprintBottom, proj.sy));
-
-      return {
-        world,
-        sx: safeSx,
-        sy: safeSy,
-        scale: proj.scale,
-        depth,
-        alpha,
-        r,
-        label: node.label,
-      };
-    });
-
-    // ── 3. Draw All Orbital Rings (Guaranteed 100% Inside Container) ──────────
-    const ringColor = light ? "#9333ea" : "#6b7280";
-    const ringAlpha = light ? 0.32 : 0.18;
+    // ── 3. Draw 3D Elliptical Magnetic Orbit Rings ───────────────────────────
     PLANE_MATS.forEach((mat, i) => {
       const { rx, ry } = orbitRadii[i];
       const pts = ellipsePts(mat, rx, ry);
-      const transformed = pts.map(p => applyMat(globalMat, p));
-      drawRing(ctx, transformed, cx, cy, ringColor, ringAlpha, camZ);
-    });
-
-    // ── 4. Depth Sort & Draw Connection Lines ────────────────────────────────
-    const sorted = [...nodePositions].sort((a, b) => a.depth - b.depth);
-    const lineColor = light ? "#9333ea" : "#9ca3af";
-
-    sorted.forEach(node => {
-      const { sx, sy, depth } = node;
+      
+      // Primary dashed orbit
       ctx.save();
-      ctx.globalAlpha = light ? (0.18 + depth * 0.25) : (0.12 + depth * 0.18);
-      ctx.strokeStyle = lineColor;
-      ctx.lineWidth = 0.8;
+      ctx.lineWidth = 0.95;
+      ctx.setLineDash([6, 5]);
+      ctx.strokeStyle = light ? "#9333ea" : "rgba(255, 255, 255, 0.22)";
+      ctx.globalAlpha = light ? 0.38 : 0.25;
+
       ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(sx, sy);
+      pts.forEach((p, idx) => {
+        const trans = applyMat(globalMat, p);
+        const { sx, sy } = project(trans, cx, cy);
+        if (idx === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      });
+      ctx.closePath();
       ctx.stroke();
+
+      // Secondary faint outer halo ring
+      ctx.setLineDash([]);
+      ctx.lineWidth = 0.6;
+      ctx.strokeStyle = light ? "rgba(168, 85, 247, 0.15)" : "rgba(168, 85, 247, 0.12)";
+      ctx.globalAlpha = light ? 0.25 : 0.15;
+      ctx.stroke();
+
       ctx.restore();
     });
 
-    // ── 5. Draw Nodes (Back to Front) ───────────────────────────────────────
-    sorted.forEach(node => {
-      const { sx, sy, r, alpha, label } = node;
-      const sphereColor = light ? "#a855f7" : "#374151";
-      const glowCol = light ? "#7c3aed" : "#9ca3af";
-      const textCol = light ? "#ffffff" : "#e5e7eb";
-      drawSphere(ctx, sx, sy, r, sphereColor, glowCol, alpha);
-      drawLabel(ctx, label, sx, sy, r, textCol, alpha);
+    // ── 4. Draw Orbiting Dust Particles along Rings ───────────────────────────
+    orbitParticlesRef.current.forEach((op) => {
+      op.angle += op.speed * 0.015;
+      const { rx, ry } = orbitRadii[op.plane];
+      const ptLocal: Vec3 = {
+        x: Math.cos(op.angle) * rx,
+        y: Math.sin(op.angle) * ry,
+        z: 0,
+      };
+      const inPlane = applyMat(PLANE_MATS[op.plane], ptLocal);
+      const world = applyMat(globalMat, inPlane);
+      const proj = project(world, cx, cy);
+
+      ctx.save();
+      ctx.fillStyle = light ? "#9333ea" : "#ffffff";
+      ctx.globalAlpha = op.alpha * (light ? 0.25 : 0.35);
+      ctx.beginPath();
+      ctx.arc(proj.sx, proj.sy, op.size * 0.75, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
     });
 
-    // ── 6. Draw Central LLM Sphere ──────────────────────────────────────────
-    const llmR = 22;
-    const pulse = 1 + Math.sin(t * 1.8) * 0.06;
-    // Pulsing halo (Toned down)
-    ctx.save();
-    ctx.globalAlpha = light ? 0.12 : 0.06;
-    const haloGrd = ctx.createRadialGradient(cx, cy, llmR * 0.5, cx, cy, llmR * 2.0 * pulse);
-    haloGrd.addColorStop(0, light ? "rgba(147,51,234,0.4)" : "rgba(200,200,210,0.25)");
-    haloGrd.addColorStop(1, "transparent");
-    ctx.fillStyle = haloGrd;
-    ctx.beginPath();
-    ctx.arc(cx, cy, llmR * 2.0 * pulse, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+    // ── 5. Project All 5 Satellite Nodes with Magnetic Physics ────────────────
+    const newHitTargets: typeof hitTargetsRef.current = [];
 
-    // Core sphere
-    drawSphere(
-      ctx, cx, cy, llmR,
-      light ? "#7c3aed" : "#1f2937",
-      light ? "#6d28d9" : "#9ca3af",
-      1.0
-    );
+    interface RenderNode {
+      def: NodeDefinition;
+      sx: number;
+      sy: number;
+      z: number;
+      depth: number;
+      alpha: number;
+      r: number;
+      isHovered: boolean;
+    }
 
-    // LLM label
-    ctx.save();
-    ctx.fillStyle = light ? "#ffffff" : "#f9fafb";
-    ctx.font = `bold 11px "Manrope", system-ui, sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.globalAlpha = 0.98;
-    ctx.fillText("LLM", cx, cy);
-    ctx.restore();
+    const projectedNodes: RenderNode[] = HERO_NODES.map((def, idx) => {
+      const { rx, ry } = orbitRadii[def.orbitPlane];
+      const angle = def.startAngle + t * def.speed;
 
+      // Harmonic 3D drift oscillation
+      const driftX = Math.sin(t * 1.5 + def.startAngle) * 4;
+      const driftY = Math.cos(t * 1.2 + def.startAngle) * 3;
+      const driftZ = Math.sin(t * 1.8 + def.startAngle) * 5;
+
+      const local: Vec3 = {
+        x: Math.cos(angle) * rx * def.radiusMultiplier + driftX,
+        y: Math.sin(angle) * ry * def.radiusMultiplier + driftY,
+        z: driftZ,
+      };
+
+      const inPlane = applyMat(PLANE_MATS[def.orbitPlane], local);
+      const world = applyMat(globalMat, inPlane);
+      const proj = project(world, cx, cy);
+
+      // Magnetic Cursor Attraction Force
+      let magnetDx = 0;
+      let magnetDy = 0;
+      if (mouseRef.current.isInside) {
+        const d = Math.hypot(mouseRef.current.rawX - proj.sx, mouseRef.current.rawY - proj.sy);
+        const PROXIMITY = 100;
+        if (d < PROXIMITY && d > 1) {
+          const force = Math.pow(1 - d / PROXIMITY, 2) * 20;
+          magnetDx = ((mouseRef.current.rawX - proj.sx) / d) * force;
+          magnetDy = ((mouseRef.current.rawY - proj.sy) / d) * force;
+        }
+      }
+
+      // Smooth offset spring interpolation
+      const physics = nodePhysicsRef.current[idx];
+      physics.targetOffset.x = magnetDx;
+      physics.targetOffset.y = magnetDy;
+      physics.currentOffset.x += (physics.targetOffset.x - physics.currentOffset.x) * 0.18;
+      physics.currentOffset.y += (physics.targetOffset.y - physics.currentOffset.y) * 0.18;
+
+      const finalSx = proj.sx + physics.currentOffset.x;
+      const finalSy = proj.sy + physics.currentOffset.y;
+
+      const depth = (world.z + 240) / 480;
+      const alpha = Math.max(0.4, Math.min(1.0, 0.45 + depth * 0.55));
+      const isHovered = hoveredNodeIdRef.current === def.id;
+
+      // Base radius of glossy glass satellite spheres (18-22px)
+      const baseR = isMobile ? 15 : isTablet ? 18 : 22;
+      const r = baseR * (0.75 + depth * 0.5) * (isHovered ? 1.2 : 1.0);
+
+      newHitTargets.push({ id: def.id, sx: finalSx, sy: finalSy, r });
+
+      return {
+        def,
+        sx: finalSx,
+        sy: finalSy,
+        z: world.z,
+        depth,
+        alpha,
+        r,
+        isHovered,
+      };
+    });
+
+    // ── 6. Draw Spoke Energy Lines from LLM Core -> Nodes ────────────────────
+    projectedNodes.forEach((node) => {
+      ctx.save();
+      const isEnergized = node.isHovered;
+      ctx.strokeStyle = light
+        ? isEnergized ? "#9333ea" : "rgba(147, 51, 234, 0.32)"
+        : isEnergized ? "#c084fc" : "rgba(255, 255, 255, 0.18)";
+      ctx.lineWidth = isEnergized ? 2.0 : 1.0;
+      ctx.globalAlpha = isEnergized ? 0.95 : (0.2 + node.depth * 0.35);
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(node.sx, node.sy);
+      ctx.stroke();
+
+      if (isEnergized) {
+        ctx.strokeStyle = light ? "rgba(147, 51, 234, 0.18)" : "rgba(168, 85, 247, 0.22)";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    });
+
+    // ── 7. Draw Traveling Data Photons along Spoke Lines ──────────────────────
+    dataPhotonsRef.current.forEach((p) => {
+      const node = projectedNodes[p.nodeIndex];
+      p.progress += p.speed;
+      if (p.progress >= 1) p.progress = 0;
+
+      const px = cx + (node.sx - cx) * p.progress;
+      const py = cy + (node.sy - cy) * p.progress;
+
+      ctx.save();
+      ctx.fillStyle = light ? "#7c3aed" : "#ffffff";
+      ctx.globalAlpha = light ? 0.45 : 0.50;
+      ctx.beginPath();
+      ctx.arc(px, py, p.size * 0.85, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    // ── 8. Global Depth-Sorting of Core & Satellite Nodes ─────────────────────
+    type HeroZItem = 
+      | { type: "core"; z: 0 }
+      | { type: "satellite"; node: RenderNode; z: number };
+
+    const zItems: HeroZItem[] = [
+      { type: "core", z: 0 },
+      ...projectedNodes.map(node => ({ type: "satellite" as const, node, z: node.z })),
+    ];
+
+    zItems.sort((a, b) => a.z - b.z);
+
+    zItems.forEach((item) => {
+      if (item.type === "core") {
+        // Draw Central LLM Core
+        const coreR = (isMobile ? 26 : isTablet ? 30 : 36) * (1 + Math.sin(t * 1.6) * 0.05);
+        drawCentralLLMCore(ctx, cx, cy, coreR, light, t);
+      } else {
+        // Draw Glossy Glass Satellite Node
+        const node = item.node;
+        drawGlossySatelliteSphere(ctx, node.sx, node.sy, node.r, node.def, light, node.alpha, node.isHovered);
+        drawSatelliteLabels(ctx, node.sx, node.sy, node.r, node.def, light, node.alpha, node.isHovered, isMobile);
+      }
+    });
+
+    hitTargetsRef.current = newHitTargets;
     rafRef.current = requestAnimationFrame(draw);
   }, []);
 
-  // Resize observer
+  // ── Drawing Sub-Routines ───────────────────────────────────────────────────
+
+  function drawCentralLLMCore(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    r: number,
+    light: boolean,
+    t: number
+  ) {
+    ctx.save();
+
+    // 1. Subtle ambient bloom
+    const bloomR = r * 2.4;
+    const bloomGrd = ctx.createRadialGradient(x, y, r * 0.5, x, y, bloomR);
+    if (light) {
+      bloomGrd.addColorStop(0, "rgba(192, 132, 252, 0.14)");
+      bloomGrd.addColorStop(0.5, "rgba(147, 51, 234, 0.05)");
+      bloomGrd.addColorStop(1, "transparent");
+    } else {
+      bloomGrd.addColorStop(0, "rgba(168, 85, 247, 0.12)");
+      bloomGrd.addColorStop(0.5, "rgba(255, 255, 255, 0.04)");
+      bloomGrd.addColorStop(1, "transparent");
+    }
+    ctx.fillStyle = bloomGrd;
+    ctx.beginPath();
+    ctx.arc(x, y, bloomR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. Rotating orbital ring around central sphere
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(t * 0.6);
+    ctx.scale(1, 0.42);
+    ctx.strokeStyle = light ? "rgba(147, 51, 234, 0.55)" : "rgba(255, 255, 255, 0.35)";
+    ctx.lineWidth = 1.0;
+    ctx.globalAlpha = light ? 0.45 : 0.40;
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 1.35, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+
+    // 3. 3D Glass / Chrome Sphere Body
+    const sphereGrd = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, 0, x, y, r);
+    if (light) {
+      sphereGrd.addColorStop(0, "#ffffff");
+      sphereGrd.addColorStop(0.25, "#d8b4fe");
+      sphereGrd.addColorStop(0.55, "#a855f7");
+      sphereGrd.addColorStop(0.85, "#6b21a8");
+      sphereGrd.addColorStop(1, "#3b0764");
+    } else {
+      sphereGrd.addColorStop(0, "#ffffff");
+      sphereGrd.addColorStop(0.18, "#cbd5e1");
+      sphereGrd.addColorStop(0.42, "#475569");
+      sphereGrd.addColorStop(0.75, "#0f172a");
+      sphereGrd.addColorStop(1, "#020617");
+    }
+    ctx.fillStyle = sphereGrd;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 4. Luminous rim edge highlight
+    ctx.strokeStyle = light ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.9)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // 5. Specular Reflection Arc (High-gloss glass look)
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(x - r * 0.28, y - r * 0.28, r * 0.38, r * 0.22, -Math.PI / 4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+    ctx.fill();
+    ctx.restore();
+
+    // 6. Central Bold LLM Typography
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `bold ${Math.round(r * 0.58)}px "Manrope", system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.letterSpacing = "1px";
+    ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
+    ctx.shadowBlur = 8;
+    ctx.fillText("LLM", x, y);
+
+    ctx.restore();
+  }
+
+  function drawGlossySatelliteSphere(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    r: number,
+    def: NodeDefinition,
+    light: boolean,
+    alpha: number,
+    isHovered: boolean
+  ) {
+    ctx.save();
+    ctx.globalAlpha = isHovered ? 1.0 : alpha;
+
+    // 1. Ambient Halo (subtle)
+    const haloR = r * (isHovered ? 2.0 : 1.5);
+    const haloGrd = ctx.createRadialGradient(x, y, r * 0.5, x, y, haloR);
+    haloGrd.addColorStop(0, light ? def.accentLight + "1a" : def.accentDark + "22");
+    haloGrd.addColorStop(1, "transparent");
+    ctx.fillStyle = haloGrd;
+    ctx.beginPath();
+    ctx.arc(x, y, haloR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. Glossy Glass Sphere Body
+    const sphereGrd = ctx.createRadialGradient(x - r * 0.32, y - r * 0.32, 0, x, y, r);
+    if (light) {
+      sphereGrd.addColorStop(0, "#ffffff");
+      sphereGrd.addColorStop(0.3, "#f3e8ff");
+      sphereGrd.addColorStop(0.65, "#d8b4fe");
+      sphereGrd.addColorStop(0.9, def.accentLight);
+      sphereGrd.addColorStop(1, "#4c1d95");
+    } else {
+      sphereGrd.addColorStop(0, "#ffffff");
+      sphereGrd.addColorStop(0.25, "#94a3b8");
+      sphereGrd.addColorStop(0.6, "#1e293b");
+      sphereGrd.addColorStop(0.9, "#0f172a");
+      sphereGrd.addColorStop(1, "#020617");
+    }
+    ctx.fillStyle = sphereGrd;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 3. Crisp Glass Border
+    ctx.strokeStyle = light
+      ? (isHovered ? "#9333ea" : "rgba(147, 51, 234, 0.6)")
+      : (isHovered ? "#ffffff" : "rgba(255, 255, 255, 0.75)");
+    ctx.lineWidth = isHovered ? 1.8 : 1.2;
+    ctx.stroke();
+
+    // 4. Specular Shine
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(x - r * 0.25, y - r * 0.25, r * 0.32, r * 0.18, -Math.PI / 4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.fill();
+    ctx.restore();
+
+    // 5. Draw Icon inside the sphere
+    const iconSize = r * 0.85;
+    const iconColor = light
+      ? (isHovered ? "#3b0764" : "#ffffff")
+      : (isHovered ? "#ffffff" : "#f8fafc");
+    renderNodeIcon(ctx, def.iconType, x, y, iconSize, iconColor);
+
+    ctx.restore();
+  }
+
+  function drawSatelliteLabels(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    r: number,
+    def: NodeDefinition,
+    light: boolean,
+    alpha: number,
+    isHovered: boolean,
+    isMobile: boolean
+  ) {
+    ctx.save();
+    ctx.globalAlpha = isHovered ? 1.0 : Math.min(1.0, alpha * 1.3);
+
+    // Main Label (AGENTS, RAG, TOOLS, API, MEMORY)
+    ctx.fillStyle = isHovered
+      ? (light ? "#3b0764" : "#ffffff")
+      : (light ? "#1e1b4b" : "#f1f5f9");
+    ctx.font = `bold ${isMobile ? 8.5 : 10.5}px "Manrope", system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.letterSpacing = "0.8px";
+
+    if (!light) {
+      ctx.shadowColor = "rgba(0, 0, 0, 0.95)";
+      ctx.shadowBlur = 6;
+    } else {
+      ctx.shadowColor = "rgba(255, 255, 255, 0.85)";
+      ctx.shadowBlur = 4;
+    }
+
+    ctx.fillText(def.label, x, y + r + 5);
+
+    // Sublabel (e.g. VECTOR DB under TOOLS)
+    if (def.sublabel) {
+      ctx.fillStyle = isHovered
+        ? (light ? "#6b21a8" : "#e2e8f0")
+        : (light ? "#6b7280" : "#94a3b8");
+      ctx.font = `600 ${isMobile ? 7 : 8}px "JetBrains Mono", monospace`;
+      ctx.letterSpacing = "0.6px";
+      ctx.fillText(def.sublabel, x, y + r + (isMobile ? 16 : 19));
+    }
+
+    ctx.restore();
+  }
+
+  // ── Resize Observer ────────────────────────────────────────────────────────
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -364,31 +873,63 @@ export default function OrbitalSystem3D() {
     };
   }, [draw]);
 
-  // Mouse handlers
-  const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  // ── Mouse & Touch Event Handlers ───────────────────────────────────────────
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
-    mouseRef.current = {
-      x: ((e.clientX - rect.left) / rect.width - 0.5) * 2,
-      y: -((e.clientY - rect.top) / rect.height - 0.5) * 2,
-    };
+
+    const clientX = e.clientX - rect.left;
+    const clientY = e.clientY - rect.top;
+
+    mouseRef.current.rawX = clientX;
+    mouseRef.current.rawY = clientY;
+    mouseRef.current.isInside = true;
+    mouseRef.current.x = (clientX / rect.width - 0.5) * 2;
+    mouseRef.current.y = -(clientY / rect.height - 0.5) * 2;
+
+    // Hit-testing
+    let found: string | null = null;
+    for (const target of hitTargetsRef.current) {
+      const d = Math.hypot(clientX - target.sx, clientY - target.sy);
+      if (d <= target.r + 12) {
+        found = target.id;
+        break;
+      }
+    }
+
+    if (found) {
+      if (hoveredNodeIdRef.current !== found) {
+        hoveredNodeIdRef.current = found;
+        setHoveredNodeId(found);
+      }
+      if (containerRef.current) containerRef.current.style.cursor = "pointer";
+    } else {
+      if (hoveredNodeIdRef.current !== null) {
+        hoveredNodeIdRef.current = null;
+        setHoveredNodeId(null);
+      }
+      if (containerRef.current) containerRef.current.style.cursor = "default";
+    }
   }, []);
 
-  const onMouseLeave = useCallback(() => {
-    mouseRef.current = { x: 0, y: 0 };
+  const handleMouseLeave = useCallback(() => {
+    mouseRef.current.isInside = false;
+    mouseRef.current.x = 0;
+    mouseRef.current.y = 0;
+    hoveredNodeIdRef.current = null;
+    setHoveredNodeId(null);
   }, []);
 
   return (
     <div
       ref={containerRef}
-      className="w-full h-full"
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
+      className="relative w-full h-full select-none overflow-hidden"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
-      <canvas
-        ref={canvasRef}
-        style={{ display: "block", width: "100%", height: "100%" }}
-      />
+      <canvas ref={canvasRef} className="w-full h-full block pointer-events-none" />
     </div>
   );
 }
+
+export default memo(OrbitalSystem3D);

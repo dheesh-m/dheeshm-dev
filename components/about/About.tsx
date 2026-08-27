@@ -3,7 +3,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import SectionLabel from "../ui/SectionLabel";
-import BuildShowcase from "./BuildShowcase";
 
 export default function About() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -78,8 +77,6 @@ export default function About() {
             </div>
           </motion.div>
         </div>
-
-        <BuildShowcase />
       </div>
     </section>
   );

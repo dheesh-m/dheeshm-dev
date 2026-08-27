@@ -88,6 +88,27 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.25);
   }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+  }
+
+  .perspective-1200 {
+    perspective: 1200px;
+    -webkit-perspective: 1200px;
+  }
 }
 
 /* Custom cursor. Scoped to a class the component adds only on fine pointers,
@@ -342,6 +363,40 @@ body.light-theme [class*="bg-[rgba(255,255,255,0.04)"] {
   background-color: rgba(243, 240, 255, 0.95) !important;
   border-color: rgba(160, 150, 210, 0.35) !important;
   color: #374151 !important;
+}
+
+/* 3D Flip Card System Light Theme */
+body.light-theme .flip-card-glass {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(160, 150, 210, 0.35) !important;
+  box-shadow: 0 16px 36px -8px rgba(139, 92, 246, 0.12), 0 0 1px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light-theme .flip-card-glass .flip-title {
+  color: #0f172a !important;
+}
+
+body.light-theme .flip-card-glass .flip-desc {
+  color: #475569 !important;
+}
+
+body.light-theme .flip-card-glass .flip-number {
+  color: #64748b !important;
+}
+
+body.light-theme .flip-card-glass .flip-highlight {
+  color: #1e293b !important;
+}
+
+body.light-theme .flip-card-glass .flip-btn {
+  background: rgba(139, 92, 246, 0.08) !important;
+  border-color: rgba(139, 92, 246, 0.25) !important;
+  color: #1e1b4b !important;
+}
+
+body.light-theme .flip-card-glass .flip-btn:hover {
+  background: rgba(139, 92, 246, 0.16) !important;
+  color: #0f172a !important;
 }
 
 /* iOS 26 Glassmorphism Navbar System */

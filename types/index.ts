@@ -1,14 +1,19 @@
 export type Project = {
   id: string;
+  number?: string;
   title: string;
   description: string;
+  categoryBadge?: string;
+  iconName?: "leaf" | "bot" | "zap" | "flask";
   problem?: string;
   solution?: string;
   outcome?: string;
   architecture?: string;
   engineeringFocus?: string[];
+  whatIBuilt?: string[];
+  highlights?: string[];
   flows?: { title: string; description: string }[];
-  category?: "AI" | "Full Stack" | "Backend" | "Real-Time" | "Experiments";
+  category?: "AI" | "Full Stack" | "Backend" | "Real-Time" | "Experiments" | string;
   technologies: string[];
   githubUrl?: string;
   liveUrl?: string;
