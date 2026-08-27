@@ -93,12 +93,8 @@ export default function Contact() {
             07 / CONTACT
           </p>
 
-          <h2 className="text-[clamp(2.2rem,10vw,6.5rem)] font-bold tracking-[-0.04em] leading-[0.95] text-white mb-6 font-sans">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">
-              LET&apos;S BUILD
-              <br />
-              SOMETHING.
-            </span>
+          <h2 className="text-[clamp(1.75rem,6.5vw,4.8rem)] font-bold tracking-[-0.04em] leading-tight mb-6 font-sans text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:via-[#D1D5DB] dark:to-[#FFFFFF] whitespace-normal sm:whitespace-nowrap">
+            LET&apos;S BUILD SOMETHING.
           </h2>
 
           <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-xl mx-auto mb-8 sm:mb-10 font-sans px-2">
@@ -111,7 +107,7 @@ export default function Contact() {
             <span
               className={cn(
                 "contact-status-dot h-1.5 w-1.5 rounded-full inline-block shrink-0",
-                isLightMode ? "bg-[#5F7692]" : "bg-[#ffffff]"
+                isLightMode ? "bg-[#394E6E]" : "bg-[#ffffff]"
               )}
             />
             Open to new opportunities

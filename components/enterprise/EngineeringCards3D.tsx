@@ -63,9 +63,9 @@ export default function EngineeringCards3D({
   );
 
   return (
-    <div className="w-full relative mt-6 sm:mt-10 mb-8 sm:mb-12">
+    <div className="w-full relative mt-4 sm:mt-8 mb-6 sm:mb-10">
       {/* 4-Card Responsive Grid: Single row on desktop (lg:grid-cols-4) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 items-stretch">
         {enterpriseData.map((item, i) => (
           <motion.div
             key={item.id}

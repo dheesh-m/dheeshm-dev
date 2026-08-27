@@ -23,7 +23,7 @@ export default function ProjectsDominoGrid({ projects }: ProjectsDominoGridProps
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5 w-full">
         {projects.map((project, index) => (
           <motion.div
             key={project.id}

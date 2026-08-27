@@ -154,7 +154,7 @@ function SystemsUniverseCanvas({
       accentColor: "#cbd5e1",
       glowColor: "rgba(203, 213, 225, 0.18)",
       sphereColorDark: "#334155",
-      sphereColorLight: "#e2e8f0",
+      sphereColorLight: "#394E6E",
       relX: -1,
       relY: -0.74,
       technologies: aiTechnologies,
@@ -168,7 +168,7 @@ function SystemsUniverseCanvas({
       accentColor: "#94a3b8",
       glowColor: "rgba(148, 163, 184, 0.18)",
       sphereColorDark: "#1e293b",
-      sphereColorLight: "#cbd5e1",
+      sphereColorLight: "#394E6E",
       relX: 1,
       relY: -0.70,
       technologies: systemTechnologies.filter(t => t.category === "Data & Cloud Infra"),
@@ -182,7 +182,7 @@ function SystemsUniverseCanvas({
       accentColor: "#cbd5e1",
       glowColor: "rgba(203, 213, 225, 0.18)",
       sphereColorDark: "#1e293b",
-      sphereColorLight: "#e2e8f0",
+      sphereColorLight: "#394E6E",
       relX: -1,
       relY: 0.74,
       technologies: systemTechnologies.filter(t => t.category === "Backend & APIs"),
@@ -196,7 +196,7 @@ function SystemsUniverseCanvas({
       accentColor: "#a1a1aa",
       glowColor: "rgba(161, 161, 170, 0.18)",
       sphereColorDark: "#334155",
-      sphereColorLight: "#cbd5e1",
+      sphereColorLight: "#394E6E",
       relX: 1,
       relY: 0.74,
       technologies: systemTechnologies.filter(t => t.category === "Full-Stack"),
@@ -368,8 +368,8 @@ function SystemsUniverseCanvas({
     const auraR = coreR * 2.2;
     const auraGrd = ctx.createRadialGradient(coreProj.sx, coreProj.sy, 0, coreProj.sx, coreProj.sy, auraR);
     if (light) {
-      auraGrd.addColorStop(0, "rgba(147, 51, 234, 0.03)");
-      auraGrd.addColorStop(0.5, "rgba(148, 163, 184, 0.015)");
+      auraGrd.addColorStop(0, "rgba(57, 78, 110, 0.04)");
+      auraGrd.addColorStop(0.5, "rgba(57, 78, 110, 0.015)");
       auraGrd.addColorStop(1, "transparent");
     } else {
       auraGrd.addColorStop(0, "rgba(255, 255, 255, 0.04)");
@@ -403,12 +403,12 @@ function SystemsUniverseCanvas({
       const cp2X = endX - (endX - midX) * 0.6 + perpX * 0.8;
       const cp2Y = endY - (endY - midY) * 0.8 + perpY * 0.8;
 
-      // Base Conduit Line
+      // Base Conduit Line (#394E6E with defined 0.30-0.40 opacity)
       ctx.strokeStyle = light
-        ? isEnergized ? "rgba(100, 116, 139, 0.65)" : "rgba(148, 163, 184, 0.22)"
+        ? isEnergized ? "rgba(57, 78, 110, 0.85)" : "rgba(57, 78, 110, 0.35)"
         : isEnergized ? "rgba(255, 255, 255, 0.65)" : "rgba(255, 255, 255, 0.12)";
-      ctx.lineWidth = (isEnergized ? 1.8 : 0.9) * zoom;
-      ctx.globalAlpha = isEnergized ? 0.9 : (light ? 0.4 : 0.3);
+      ctx.lineWidth = (isEnergized ? 1.8 : 1.0) * zoom;
+      ctx.globalAlpha = isEnergized ? 0.95 : (light ? 0.45 : 0.3);
 
       ctx.beginPath();
       ctx.moveTo(startX, startY);
@@ -417,9 +417,9 @@ function SystemsUniverseCanvas({
 
       // Outer subtle glow for energized conduits
       if (isEnergized) {
-        ctx.strokeStyle = light ? "rgba(148, 163, 184, 0.18)" : "rgba(255, 255, 255, 0.12)";
+        ctx.strokeStyle = light ? "rgba(57, 78, 110, 0.25)" : "rgba(255, 255, 255, 0.12)";
         ctx.lineWidth = 3.5 * zoom;
-        ctx.globalAlpha = 0.25;
+        ctx.globalAlpha = 0.30;
         ctx.stroke();
       }
 
@@ -455,10 +455,10 @@ function SystemsUniverseCanvas({
       const py = omt * omt * omt * startY + 3 * omt * omt * prg * cp1Y + 3 * omt * prg * prg * cp2Y + prg * prg * prg * endY;
 
       ctx.save();
-      ctx.fillStyle = light ? "#64748b" : "#ffffff";
-      ctx.globalAlpha = light ? 0.45 : 0.45;
+      ctx.fillStyle = light ? "#394E6E" : "#ffffff";
+      ctx.globalAlpha = light ? 0.85 : 0.45;
       ctx.beginPath();
-      ctx.arc(px, py, p.size * 0.7 * zoom, 0, Math.PI * 2);
+      ctx.arc(px, py, p.size * 0.75 * zoom, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.restore();
@@ -594,8 +594,8 @@ function SystemsUniverseCanvas({
         });
         ctx.closePath();
 
-        ctx.strokeStyle = light ? "rgba(100, 116, 139, 0.25)" : "rgba(255, 255, 255, 0.14)";
-        ctx.globalAlpha = light ? 0.3 : 0.2;
+        ctx.strokeStyle = light ? "rgba(57, 78, 110, 0.32)" : "rgba(255, 255, 255, 0.14)";
+        ctx.globalAlpha = light ? 0.35 : 0.2;
         ctx.stroke();
       });
 
@@ -608,10 +608,10 @@ function SystemsUniverseCanvas({
       ctx.save();
       const isEnergized = node.isHovered || node.isActive;
       ctx.strokeStyle = light
-        ? isEnergized ? "rgba(100, 116, 139, 0.6)" : "rgba(148, 163, 184, 0.18)"
+        ? isEnergized ? "rgba(57, 78, 110, 0.85)" : "rgba(57, 78, 110, 0.30)"
         : isEnergized ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.1)";
-      ctx.lineWidth = (isEnergized ? 1.4 : 0.75) * zoom;
-      ctx.globalAlpha = isEnergized ? 0.85 : (0.15 + node.depth * 0.25);
+      ctx.lineWidth = (isEnergized ? 1.5 : 0.85) * zoom;
+      ctx.globalAlpha = isEnergized ? 0.95 : (0.25 + node.depth * 0.20);
 
       ctx.beginPath();
       ctx.moveTo(node.hub.proj.sx, node.hub.proj.sy);
@@ -689,8 +689,8 @@ function SystemsUniverseCanvas({
       const dp = project(dustTrans, cx, cy, zoom);
 
       ctx.save();
-      ctx.fillStyle = light ? "#64748b" : "#ffffff";
-      ctx.globalAlpha = d.alpha * (light ? 0.3 : 0.35);
+      ctx.fillStyle = light ? "#394E6E" : "#ffffff";
+      ctx.globalAlpha = d.alpha * (light ? 0.45 : 0.35);
       ctx.beginPath();
       ctx.arc(dp.sx, dp.sy, d.size * 0.7 * zoom, 0, Math.PI * 2);
       ctx.fill();
@@ -713,7 +713,7 @@ function SystemsUniverseCanvas({
   ) {
     ctx.save();
 
-    // Dynamic rotating energy rings on multiple axes (refined silver/slate)
+    // Dynamic rotating energy rings on multiple axes (#394E6E in light mode)
     for (let i = 0; i < 3; i++) {
       const ringAngle = t * (0.5 + i * 0.25) * (i % 2 === 0 ? 1 : -1);
       ctx.save();
@@ -722,7 +722,7 @@ function SystemsUniverseCanvas({
       ctx.scale(1, 0.45 + i * 0.2);
 
       ctx.strokeStyle = light
-        ? "rgba(100, 116, 139, 0.35)"
+        ? "rgba(57, 78, 110, 0.25)"
         : "rgba(255, 255, 255, 0.25)";
       ctx.lineWidth = 0.9;
       ctx.globalAlpha = light ? 0.35 : 0.35;
@@ -732,13 +732,13 @@ function SystemsUniverseCanvas({
       ctx.restore();
     }
 
-    // Core Singularity Body with 3D radial shading
+    // Core Singularity Body with 3D radial shading (#394E6E based)
     const coreGrd = ctx.createRadialGradient(sx - r * 0.25, sy - r * 0.25, 0, sx, sy, r);
     if (light) {
       coreGrd.addColorStop(0, "#ffffff");
-      coreGrd.addColorStop(0.3, "#f1f5f9");
-      coreGrd.addColorStop(0.7, "#cbd5e1");
-      coreGrd.addColorStop(1, "#475569");
+      coreGrd.addColorStop(0.3, "#E2E8F0");
+      coreGrd.addColorStop(0.7, "#8DA4C4");
+      coreGrd.addColorStop(1, "#394E6E");
     } else {
       coreGrd.addColorStop(0, "#ffffff");
       coreGrd.addColorStop(0.2, "#94a3b8");
@@ -773,22 +773,22 @@ function SystemsUniverseCanvas({
   ) {
     ctx.save();
 
-    // Ambient Halo (Subtle & restrained)
+    // Ambient Halo (Subtle & restrained #394E6E)
     const haloGrd = ctx.createRadialGradient(sx, sy, r * 0.6, sx, sy, r * 1.4);
-    haloGrd.addColorStop(0, light ? "rgba(113, 136, 163, 0.08)" : "rgba(255, 255, 255, 0.08)");
+    haloGrd.addColorStop(0, light ? "rgba(57, 78, 110, 0.08)" : "rgba(255, 255, 255, 0.08)");
     haloGrd.addColorStop(1, "transparent");
     ctx.fillStyle = haloGrd;
     ctx.beginPath();
     ctx.arc(sx, sy, r * 1.4, 0, Math.PI * 2);
     ctx.fill();
 
-    // 3D Glass Sphere Body
+    // 3D Glass Sphere Body (#394E6E steel-blue system)
     const sphereGrd = ctx.createRadialGradient(sx - r * 0.3, sy - r * 0.3, 0, sx, sy, r);
     if (light) {
-      sphereGrd.addColorStop(0, "#CBD5E1");
-      sphereGrd.addColorStop(0.35, "#94A3B8");
-      sphereGrd.addColorStop(0.70, "#7188A3");
-      sphereGrd.addColorStop(1, "#5F7692");
+      sphereGrd.addColorStop(0, "#8DA4C4");
+      sphereGrd.addColorStop(0.35, "#5B759E");
+      sphereGrd.addColorStop(0.70, "#445C80");
+      sphereGrd.addColorStop(1, "#394E6E");
     } else {
       sphereGrd.addColorStop(0, "#ffffff");
       sphereGrd.addColorStop(0.25, "#64748b");
@@ -823,7 +823,7 @@ function SystemsUniverseCanvas({
 
     // Subtle Subtitle under core (e.g. LLM ORCHESTRATION)
     if (hub.subtitle) {
-      ctx.fillStyle = light ? "#5F7692" : "#94a3b8";
+      ctx.fillStyle = light ? "#394E6E" : "#94a3b8";
       ctx.font = `600 ${isMobile ? 6 : 7.5}px "JetBrains Mono", monospace`;
       ctx.letterSpacing = "0.6px";
       ctx.fillText(hub.subtitle, sx, sy + r + (isMobile ? 8 : 11));
@@ -846,23 +846,23 @@ function SystemsUniverseCanvas({
     ctx.save();
     ctx.globalAlpha = isHovered ? 1.0 : alpha;
 
-    // Outer Glow (Minimal)
+    // Outer Glow (Minimal #394E6E)
     const haloRadius = r * (isHovered ? 1.6 : 1.35);
     const haloGrd = ctx.createRadialGradient(sx, sy, 0, sx, sy, haloRadius);
-    haloGrd.addColorStop(0, light ? "rgba(113, 136, 163, 0.08)" : "rgba(255, 255, 255, 0.08)");
+    haloGrd.addColorStop(0, light ? "rgba(57, 78, 110, 0.08)" : "rgba(255, 255, 255, 0.08)");
     haloGrd.addColorStop(1, "transparent");
     ctx.fillStyle = haloGrd;
     ctx.beginPath();
     ctx.arc(sx, sy, haloRadius, 0, Math.PI * 2);
     ctx.fill();
 
-    // 3D Luminous Sphere with specular reflection
+    // 3D Luminous Sphere with specular reflection (#394E6E based)
     const sphereGrd = ctx.createRadialGradient(sx - r * 0.35, sy - r * 0.35, 0, sx, sy, r);
     if (light) {
       sphereGrd.addColorStop(0, "#ffffff");
-      sphereGrd.addColorStop(0.35, "#f8fafc");
-      sphereGrd.addColorStop(0.70, "#cbd5e1");
-      sphereGrd.addColorStop(1, "#475569");
+      sphereGrd.addColorStop(0.35, "#E2E8F0");
+      sphereGrd.addColorStop(0.70, "#8DA4C4");
+      sphereGrd.addColorStop(1, "#394E6E");
     } else {
       sphereGrd.addColorStop(0, "#ffffff");
       sphereGrd.addColorStop(0.30, "#94a3b8");
@@ -876,7 +876,7 @@ function SystemsUniverseCanvas({
     ctx.fill();
 
     if (isHovered) {
-      ctx.strokeStyle = light ? "#334155" : "#ffffff";
+      ctx.strokeStyle = light ? "#2B3C56" : "#ffffff";
       ctx.lineWidth = 1.2;
       ctx.stroke();
     }
@@ -924,8 +924,10 @@ function SystemsUniverseCanvas({
     const container = containerRef.current;
     if (!canvas || !container) return;
 
+    let isVisible = true;
+
     const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = container.clientWidth;
       const h = container.clientHeight;
       canvas.width = w * dpr;
@@ -940,12 +942,28 @@ function SystemsUniverseCanvas({
     const ro = new ResizeObserver(resize);
     ro.observe(container);
 
+    const io = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        isVisible = entry.isIntersecting;
+        if (isVisible && isAnimating) {
+          cancelAnimationFrame(rafRef.current);
+          rafRef.current = requestAnimationFrame(draw);
+        } else {
+          cancelAnimationFrame(rafRef.current);
+        }
+      },
+      { threshold: 0.05 }
+    );
+    io.observe(container);
+
     if (isAnimating) {
       rafRef.current = requestAnimationFrame(draw);
     }
 
     return () => {
       ro.disconnect();
+      io.disconnect();
       cancelAnimationFrame(rafRef.current);
     };
   }, [draw, isAnimating]);

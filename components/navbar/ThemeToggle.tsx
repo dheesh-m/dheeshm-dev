@@ -40,7 +40,9 @@ export default function ThemeToggle() {
         <div
           className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 scale-100 transition-opacity duration-300 pointer-events-none"
           style={{
-            boxShadow: "0 0 12px rgba(77, 184, 255, 0.4)",
+            boxShadow: isLightMode
+              ? "0 0 10px rgba(57, 78, 110, 0.25)"
+              : "0 0 10px rgba(255, 255, 255, 0.3)",
           }}
         />
 
@@ -57,8 +59,8 @@ export default function ThemeToggle() {
           strokeLinejoin="round"
           className={`theme-toggle-star relative z-10 transition-colors duration-200 ${
             isLightMode
-              ? "text-[#000000] group-hover:text-[#4DB8FF]"
-              : "text-[#9A9A9A] group-hover:text-[#4DB8FF]"
+              ? "text-[#171A1F] group-hover:text-[#394E6E]"
+              : "text-white/80 group-hover:text-white"
           }`}
           style={{ willChange: "transform, filter" }}
         >

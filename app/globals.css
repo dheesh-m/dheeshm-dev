@@ -250,7 +250,10 @@ html.has-custom-cursor [contenteditable="true"] {
    .light-theme class is active on the <body> tag.
    ======================================================================= */
 
-
+:root {
+  --light-accent: #394E6E;
+  --light-accent-rgb: 57, 78, 110;
+}
 
 /* Base Light Theme Backgrounds */
 body.light-theme,
@@ -262,10 +265,10 @@ body.light-theme div.bg-black:not(.contact-status-dot) {
 }
 
 body.light-theme .contact-status-dot {
-  background: #5F7692 !important;
-  background-color: #5F7692 !important;
+  background: #394E6E !important;
+  background-color: #394E6E !important;
   background-image: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 6px rgba(57, 78, 110, 0.4) !important;
 }
 
 /* Hide dark mode ambient elements */
@@ -286,10 +289,10 @@ body.light-theme .light-grid-overlay {
   display: block !important;
   opacity: 1 !important;
   background-image:
-    linear-gradient(rgba(113, 136, 163, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(113, 136, 163, 0.08) 1px, transparent 1px),
-    linear-gradient(rgba(113, 136, 163, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(113, 136, 163, 0.035) 1px, transparent 1px);
+    linear-gradient(rgba(57, 78, 110, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 78, 110, 0.07) 1px, transparent 1px),
+    linear-gradient(rgba(57, 78, 110, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57, 78, 110, 0.03) 1px, transparent 1px);
   background-size: 60px 60px, 60px 60px, 20px 20px, 20px 20px;
   background-position: center top;
 }
@@ -312,36 +315,36 @@ body.light-theme [class*="bg-[#050505]/"],
 body.light-theme [class*="bg-[rgba(14,15,17"],
 body.light-theme [class*="hover:bg-[rgba(20,21,24"] {
   background-color: rgba(255, 255, 255, 0.95) !important;
-  border-color: rgba(160, 150, 210, 0.25) !important;
-  box-shadow: 0 8px 30px -4px rgba(139, 92, 246, 0.08) !important;
+  border-color: #D9DEE4 !important;
+  box-shadow: 0 8px 30px -4px rgba(57, 78, 110, 0.06) !important;
 }
 
 /* Glass Panel specifics (About side panel) */
 body.light-theme .glass-panel .text-gray-500 {
-  color: #4B5563 !important;
+  color: #66717D !important;
   font-weight: 600 !important;
 }
 
 body.light-theme .glass-panel .text-gray-300 {
-  color: #111827 !important;
+  color: #171A1F !important;
   font-weight: 600 !important;
 }
 
 body.light-theme .glass-panel .bg-white\/20 {
-  background-color: rgba(139, 92, 246, 0.35) !important;
+  background-color: rgba(57, 78, 110, 0.25) !important;
 }
 
 body.light-theme .glass-panel .bg-white {
-  background-color: #8B5CF6 !important;
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.7) !important;
+  background-color: #394E6E !important;
+  box-shadow: 0 0 8px rgba(57, 78, 110, 0.6) !important;
 }
 
 /* Card Hover and Active States */
 body.light-theme [class*="group-hover:bg-[#101010]"],
 body.light-theme [class*="hover:bg-[rgba(20,21,24"]:hover {
   background-color: #FAFBFC !important;
-  border-color: #7188A3 !important;
-  box-shadow: 0 12px 40px -4px rgba(113, 136, 163, 0.12) !important;
+  border-color: #394E6E !important;
+  box-shadow: 0 12px 40px -4px rgba(57, 78, 110, 0.12) !important;
 }
 
 body.light-theme .bg-white\/5,
@@ -369,7 +372,7 @@ body.light-theme [class*="bg-[rgba(255,255,255,0.04)"] {
 body.light-theme .flip-card-glass {
   background: rgba(250, 251, 252, 0.95) !important;
   border-color: #D9DEE4 !important;
-  box-shadow: 0 12px 30px -8px rgba(113, 136, 163, 0.08), 0 0 1px rgba(113, 136, 163, 0.1) !important;
+  box-shadow: 0 12px 30px -8px rgba(57, 78, 110, 0.08), 0 0 1px rgba(57, 78, 110, 0.1) !important;
 }
 
 body.light-theme .flip-card-glass .flip-title {
@@ -381,7 +384,7 @@ body.light-theme .flip-card-glass .flip-desc {
 }
 
 body.light-theme .flip-card-glass .flip-number {
-  color: #7188A3 !important;
+  color: #394E6E !important;
 }
 
 body.light-theme .flip-card-glass .flip-highlight {
@@ -396,8 +399,8 @@ body.light-theme .flip-card-glass .flip-btn {
 
 body.light-theme .flip-card-glass .flip-btn:hover {
   background: #D9DEE4 !important;
-  border-color: #7188A3 !important;
-  color: #5F7692 !important;
+  border-color: #394E6E !important;
+  color: #394E6E !important;
 }
 
 /* iOS 26 Glassmorphism Navbar System */
@@ -423,8 +426,8 @@ body.light-theme header .ios-glass-nav {
   border: 1px solid #D9DEE4 !important;
   box-shadow:
     inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 1px 0 rgba(113, 136, 163, 0.1),
-    0 12px 32px -8px rgba(113, 136, 163, 0.12),
+    inset 0 -1px 1px 0 rgba(57, 78, 110, 0.08),
+    0 12px 32px -8px rgba(57, 78, 110, 0.10),
     0 4px 16px rgba(0, 0, 0, 0.03) !important;
 }
 
@@ -443,8 +446,33 @@ body.light-theme header .ios-glass-nav a:hover .text-zinc-500 {
 }
 
 body.light-theme header .ios-glass-nav .nav-active-indicator {
-  background-color: #5F7692 !important;
-  box-shadow: 0 0 10px rgba(95, 118, 146, 0.5) !important;
+  background-color: #394E6E !important;
+  box-shadow: 0 0 10px rgba(57, 78, 110, 0.5) !important;
+}
+
+/* ── Traveling Edge Light Overlay ── */
+@keyframes navbarEdgeTravel {
+  0% {
+    stroke-dasharray: 12 88;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dasharray: 12 88;
+    stroke-dashoffset: -100;
+  }
+}
+
+.navbar-traveling-beam {
+  animation: navbarEdgeTravel 8.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-traveling-beam {
+    animation: none;
+    opacity: 0.3;
+    stroke-dasharray: none;
+  }
 }
 
 /* Text Overrides - Light Mode */
@@ -525,7 +553,7 @@ body.light-theme .text-\[\#D4D4D4\] {
 body.light-theme .text-gray-500,
 body.light-theme .text-zinc-500,
 body.light-theme .text-white\/40 {
-  color: #7188A3 !important;
+  color: #66717D !important;
 }
 
 body.light-theme .text-zinc-600 {
@@ -550,15 +578,24 @@ body.light-theme #projects h2 .bg-clip-text,
 body.light-theme #experience h2 .bg-clip-text,
 body.light-theme .bg-clip-text,
 body.light-theme .from-\[\#8A8A8A\] {
-  background-image: linear-gradient(90deg, #171A1F 0%, #475569 50%, #5F7692 100%) !important;
+  background-image: linear-gradient(90deg, #171A1F 0%, #334663 50%, #394E6E 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 
 /* Section Label & Badges */
 body.light-theme .animate-pulse.bg-white {
-  background-color: #5F7692 !important;
-  box-shadow: 0 0 8px rgba(95, 118, 146, 0.4) !important;
+  background-color: #394E6E !important;
+  box-shadow: 0 0 8px rgba(57, 78, 110, 0.4) !important;
+}
+
+/* Hero Roles in Light Mode */
+body.light-theme .hero-role-text {
+  color: #394E6E !important;
+}
+
+body.light-theme .hero-role-dash {
+  background-color: #394E6E !important;
 }
 
 /* Hero Action Buttons in Light Mode */
@@ -566,16 +603,16 @@ body.light-theme .hero-btn-primary,
 body.light-theme .contact-btn-primary,
 body.light-theme a.bg-white.text-\[\#050505\],
 body.light-theme button.bg-white.text-\[\#050505\] {
-  background-color: #5F7692 !important;
+  background-color: #394E6E !important;
   color: #FFFFFF !important;
-  box-shadow: 0 4px 14px rgba(95, 118, 146, 0.25) !important;
+  box-shadow: 0 4px 14px rgba(57, 78, 110, 0.25) !important;
 }
 
 body.light-theme .hero-btn-primary:hover,
 body.light-theme .contact-btn-primary:hover,
 body.light-theme a.bg-white.text-\[\#050505\]:hover,
 body.light-theme button.bg-white.text-\[\#050505\]:hover {
-  background-color: #4F647E !important;
+  background-color: #2F415C !important;
 }
 
 body.light-theme .hero-btn-secondary,
@@ -585,14 +622,14 @@ body.light-theme button.border-white\/10.text-white {
   background-color: #FAFBFC !important;
   color: #171A1F !important;
   border-color: #D9DEE4 !important;
-  box-shadow: 0 2px 8px rgba(113, 136, 163, 0.06) !important;
+  box-shadow: 0 2px 8px rgba(57, 78, 110, 0.05) !important;
 }
 
 body.light-theme .hero-btn-secondary:hover,
 body.light-theme .contact-btn-secondary:hover {
   background-color: #FFFFFF !important;
-  border-color: #7188A3 !important;
-  color: #5F7692 !important;
+  border-color: #394E6E !important;
+  color: #394E6E !important;
 }
 
 body.light-theme .contact-email-btn {
@@ -604,7 +641,7 @@ body.light-theme .contact-email-btn {
 body.light-theme .contact-email-btn:hover {
   background-color: #FFFFFF !important;
   color: #171A1F !important;
-  border-color: #7188A3 !important;
+  border-color: #394E6E !important;
 }
 
 /* Navbar Navigation Text in Light Mode */
@@ -633,13 +670,13 @@ body.light-theme #mobile-menu nav a span {
 
 body.light-theme #primary-mobile-menu nav a[aria-current="true"] span,
 body.light-theme #mobile-menu nav a[aria-current="true"] span {
-  color: #5F7692 !important;
+  color: #394E6E !important;
   font-weight: 700 !important;
 }
 
 body.light-theme #primary-mobile-menu div[class*="rounded-full"],
 body.light-theme #mobile-menu div[class*="rounded-full"] {
-  background-color: #5F7692 !important;
+  background-color: #394E6E !important;
   box-shadow: none !important;
 }
 
@@ -669,12 +706,12 @@ body.light-theme footer a .text-white {
 }
 
 body.light-theme footer a .text-zinc-500 {
-  color: #7188A3 !important;
+  color: #66717D !important;
 }
 
 body.light-theme footer a:hover .text-zinc-500,
 body.light-theme footer a:hover {
-  color: #5F7692 !important;
+  color: #394E6E !important;
 }
 
 body.light-theme footer p {
@@ -692,19 +729,19 @@ body.light-theme footer p {
 }
 
 body.light-theme .theme-toggle-bg {
-  background-color: rgba(113, 136, 163, 0.08);
+  background-color: rgba(57, 78, 110, 0.08);
 }
 
 body.light-theme .theme-toggle-glow {
-  box-shadow: 0 0 12px rgba(113, 136, 163, 0.3);
+  box-shadow: 0 0 12px rgba(57, 78, 110, 0.3);
 }
 
 body.light-theme .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(113, 136, 163, 0.2);
+  background: rgba(57, 78, 110, 0.2);
 }
 
 body.light-theme .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(113, 136, 163, 0.35);
+  background: rgba(57, 78, 110, 0.35);
 }
 
 /* =======================================================================

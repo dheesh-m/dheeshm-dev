@@ -9,6 +9,7 @@ import ExperienceSection from "@/components/experience/ExperienceSection";
 import NeuralBackground from "@/components/background/NeuralBackground";
 import Contact from "@/components/contact/Contact";
 import Footer from "@/components/footer/Footer";
+import ScrollSectionWrapper from "@/components/ui/ScrollSectionWrapper";
 import { SAME_AS, EMAIL } from "@/data/socials";
 import { SITE_URL } from "@/lib/siteUrl";
 
@@ -44,14 +45,37 @@ export default function Home() {
       <Navbar />
 
       <main className="relative z-10 flex flex-col items-center w-full mx-auto">
-        <Hero />
-        <About />
-        <Enterprise />
-        <GlossarySection />
-        <Projects />
-        <SystemsSection />
-        <ExperienceSection />
-        <Contact />
+        <ScrollSectionWrapper isFirst>
+          <Hero />
+        </ScrollSectionWrapper>
+
+        <ScrollSectionWrapper>
+          <About />
+        </ScrollSectionWrapper>
+
+        <ScrollSectionWrapper>
+          <Enterprise />
+        </ScrollSectionWrapper>
+
+        <ScrollSectionWrapper>
+          <GlossarySection />
+        </ScrollSectionWrapper>
+
+        <ScrollSectionWrapper>
+          <Projects />
+        </ScrollSectionWrapper>
+
+        <ScrollSectionWrapper>
+          <SystemsSection />
+        </ScrollSectionWrapper>
+
+        <ScrollSectionWrapper>
+          <ExperienceSection />
+        </ScrollSectionWrapper>
+
+        <ScrollSectionWrapper isLast>
+          <Contact />
+        </ScrollSectionWrapper>
       </main>
 
       <Footer />

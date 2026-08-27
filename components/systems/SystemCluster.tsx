@@ -5,6 +5,8 @@ import { useInView, motion } from "framer-motion";
 import { Technology } from "@/data/technologies";
 import SystemsUniverseCanvas from "./SystemsUniverseCanvas";
 import TechnologyInfoCard from "../glossary/TechnologyInfoCard";
+import { useTheme } from "@/components/providers/ThemeProvider";
+import { cn } from "@/lib/utils";
 import {
   Brain,
   Cloud,
@@ -14,13 +16,15 @@ import {
   ZoomIn,
   Compass,
   MousePointerClick,
-  Box,
-  Sparkles,
-  Activity,
-  Zap,
+  LayoutGrid,
 } from "lucide-react";
 
-export default function SystemCluster() {
+interface SystemClusterProps {
+  onToggleView?: () => void;
+}
+
+export default function SystemCluster({ onToggleView }: SystemClusterProps) {
+  const { isLightMode } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { margin: "200px" });
 
@@ -174,35 +178,26 @@ export default function SystemCluster() {
             </p>
           </div>
         </div>
-      </div>
 
-      {/* ── Bottom Features Pill ──────────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="mt-6 flex items-center justify-center"
-      >
-        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 px-6 py-2.5 rounded-full bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.5)] text-xs font-sans text-gray-700 dark:text-gray-300">
-          <div className="flex items-center gap-2">
-            <Box className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
-            <span className="font-medium">Interactive 3D</span>
+        {/* ── View Toggle Button in the Middle of BACKEND & APIS and FULL-STACK ── */}
+        {onToggleView && (
+          <div className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-auto flex items-center justify-center">
+            <button
+              onClick={onToggleView}
+              className={cn(
+                "inline-flex items-center gap-2 px-4.5 py-2 rounded-full text-xs font-mono font-bold tracking-wider transition-all duration-300 shadow-[0_8px_24px_rgba(0,0,0,0.12)] outline-none cursor-pointer group backdrop-blur-xl",
+                isLightMode
+                  ? "bg-white/95 hover:bg-white text-[#171A1F] border border-slate-200 hover:border-[#394E6E]/40 hover:shadow-md active:scale-95"
+                  : "bg-[#0c0c14]/90 hover:bg-white/10 text-white border border-white/20 hover:border-white/35 hover:shadow-[0_4px_24px_rgba(0,0,0,0.7)] active:scale-95"
+              )}
+              aria-label="Switch to Cards View"
+            >
+              <LayoutGrid className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 group-hover:text-[#394E6E] dark:group-hover:text-white transition-colors" />
+              <span>CARDS ↗</span>
+            </button>
           </div>
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
-            <span className="font-medium">Restrained Lighting</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Activity className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
-            <span className="font-medium">Smooth Motion</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Zap className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
-            <span className="font-medium">Performance Optimized</span>
-          </div>
-        </div>
-      </motion.div>
+        )}
+      </div>
 
       {/* Floating Info Tooltip for Hovered / Active Node */}
       <TechnologyInfoCard technology={activeNode} position={hoverPosition} />

@@ -8,6 +8,7 @@ import {
   Bot,
   Zap,
   FlaskConical,
+  Film,
   Lock,
   ExternalLink,
   ArrowRight,
@@ -102,7 +103,7 @@ const ProjectVisual = ({ id, imageUrl, title, isHovered }: { id: string; imageUr
     return <FarmLensDiagram on={isHovered} />;
   }
 
-  const src = imageUrl || (id === "humanoid" ? "/humanoid-head.jpg" : id === "apt" ? "/apt-transit.jpg" : "/ai-experiments.jpg");
+  const src = imageUrl || (id === "humanoid" ? "/humanoid-head.jpg" : id === "apt" ? "/apt-transit.jpg" : "/movie-ai-recommendation.png");
 
   return (
     <div className="absolute inset-0 bg-[#0a0b12] dark:bg-[#07070c] overflow-hidden">
@@ -141,8 +142,10 @@ const ProjectIcon = ({ name }: { name?: string }) => {
       return <Zap className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
     case "flask":
       return <FlaskConical className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
+    case "film":
+      return <Film className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
     default:
-      return <Leaf className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
+      return <Film className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
   }
 };
 
@@ -163,30 +166,39 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
     damping: 24,
   });
 
-  // Spotlight coordinates (px)
-  const [spotlightPos, setSpotlightPos] = useState({ x: 150, y: 150 });
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = cardRef.current?.getBoundingClientRect();
-    if (!rect) return;
-
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
-
-    setSpotlightPos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  }, [mouseX, mouseY]);
+  const rectRef = useRef<DOMRect | null>(null);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
+    if (cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
   }, []);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    let rect = rectRef.current;
+    if (!rect && cardRef.current) {
+      rect = cardRef.current.getBoundingClientRect();
+      rectRef.current = rect;
+    }
+    if (!rect) return;
+
+    const relX = e.clientX - rect.left;
+    const relY = e.clientY - rect.top;
+    const x = relX / rect.width - 0.5;
+    const y = relY / rect.height - 0.5;
+    mouseX.set(x);
+    mouseY.set(y);
+
+    if (cardRef.current) {
+      cardRef.current.style.setProperty("--spotlight-x", `${relX}px`);
+      cardRef.current.style.setProperty("--spotlight-y", `${relY}px`);
+    }
+  }, [mouseX, mouseY]);
 
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
+    rectRef.current = null;
     mouseX.set(0);
     mouseY.set(0);
   }, [mouseX, mouseY]);
@@ -200,7 +212,11 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
   return (
     <div
       ref={cardRef}
-      className="relative w-full h-[470px] sm:h-[490px] lg:h-[505px] perspective-1200 cursor-pointer select-none group"
+      style={{
+        ["--spotlight-x" as string]: "150px",
+        ["--spotlight-y" as string]: "150px",
+      }}
+      className="relative w-full h-[330px] sm:h-[460px] lg:h-[505px] perspective-1200 cursor-pointer select-none group"
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -226,18 +242,18 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
             FRONT FACE OF CARD
            ══════════════════════════════════════════════════════════════════════ */}
         <div
-          className="absolute inset-0 w-full h-full rounded-2xl bg-[#FAFBFC]/95 dark:bg-[#0a0b12]/90 backdrop-blur-xl border border-[#D9DEE4] dark:border-white/10 group-hover:border-[#7188A3] dark:group-hover:border-white/20 shadow-[0_8px_30px_rgba(113,136,163,0.06)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.7)] group-hover:shadow-[0_12px_36px_rgba(113,136,163,0.12)] dark:group-hover:shadow-[0_16px_44px_rgba(0,0,0,0.9)] flex flex-col justify-between overflow-hidden backface-hidden transition-all duration-300"
+          className="absolute inset-0 w-full h-full rounded-2xl bg-[#FAFBFC]/95 dark:bg-[#0a0b12]/90 backdrop-blur-xl border border-[#D9DEE4] dark:border-white/10 group-hover:border-[#394E6E] dark:group-hover:border-white/20 shadow-[0_8px_30px_rgba(57,78,110,0.06)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.7)] group-hover:shadow-[0_12px_36px_rgba(57,78,110,0.12)] dark:group-hover:shadow-[0_16px_44px_rgba(0,0,0,0.9)] flex flex-col justify-between overflow-hidden backface-hidden transition-all duration-300"
         >
           {/* Dynamic Cursor Spotlight Overlay */}
           <div
             className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30"
             style={{
-              background: `radial-gradient(320px circle at ${spotlightPos.x}px ${spotlightPos.y}px, rgba(255, 255, 255, 0.05), transparent 80%)`,
+              background: `radial-gradient(320px circle at var(--spotlight-x, 150px) var(--spotlight-y, 150px), rgba(255, 255, 255, 0.05), transparent 80%)`,
             }}
           />
 
-          {/* ── TOP IMAGE / DIAGRAM AREA (~42% of height) ─────────────────── */}
-          <div className="relative w-full h-[180px] sm:h-[190px] border-b border-[#D9DEE4] dark:border-white/10 overflow-hidden rounded-t-2xl">
+          {/* ── TOP IMAGE / DIAGRAM AREA (~40% of height) ─────────────────── */}
+          <div className="relative w-full h-[120px] sm:h-[180px] lg:h-[190px] border-b border-[#D9DEE4] dark:border-white/10 overflow-hidden rounded-t-2xl">
             <ProjectVisual
               id={project.id}
               imageUrl={project.imageUrl}
@@ -246,71 +262,83 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
             />
 
             {/* Top-Left: Project Number Badge */}
-            <div className="absolute top-3 left-3 z-20">
-              <span className="px-2.5 py-0.5 text-[10px] font-mono font-bold tracking-widest text-white bg-black/75 backdrop-blur-md rounded-md border border-white/15 shadow-sm">
+            <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-20">
+              <span className="px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest text-white bg-black/75 backdrop-blur-md rounded-md border border-white/15 shadow-sm">
                 {projectNum}
               </span>
             </div>
 
             {/* Bottom-Left: Floating Refined Icon Badge */}
-            <div className="absolute bottom-2.5 left-3 z-20 flex items-center justify-center w-7 h-7 rounded-lg bg-[#FAFBFC]/90 dark:bg-[#0c0c14]/90 backdrop-blur-md border border-[#D9DEE4] dark:border-white/15 shadow-[0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.2)] group-hover:scale-105 transition-transform">
+            <div className="absolute bottom-2 left-2.5 sm:bottom-2.5 sm:left-3 z-20 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#FAFBFC]/90 dark:bg-[#0c0c14]/90 backdrop-blur-md border border-[#D9DEE4] dark:border-white/15 shadow-[0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.2)] group-hover:scale-105 transition-transform">
               <ProjectIcon name={project.iconName} />
             </div>
 
             {/* Bottom-Right: Category Badge */}
             {project.categoryBadge && (
-              <div className="absolute bottom-2.5 right-3 z-20">
-                <span className="px-2 py-0.5 text-[8.5px] font-mono font-bold uppercase tracking-wider text-[#334155] dark:text-gray-300 bg-[#FAFBFC]/90 dark:bg-[#0c0c14]/90 backdrop-blur-md rounded border border-[#D9DEE4] dark:border-white/15">
+              <div className="absolute bottom-2 right-2.5 sm:bottom-2.5 sm:right-3 z-20">
+                <span className="px-1.5 sm:px-2 py-0.5 text-[7.5px] sm:text-[8.5px] font-mono font-bold uppercase tracking-wider text-[#334155] dark:text-gray-300 bg-[#FAFBFC]/90 dark:bg-[#0c0c14]/90 backdrop-blur-md rounded border border-[#D9DEE4] dark:border-white/15">
                   {project.categoryBadge}
                 </span>
               </div>
             )}
           </div>
 
-          {/* ── CONTENT AREA (~58% of height) ─────────────────────────────── */}
-          <div className="p-4 sm:p-4.5 flex flex-col flex-grow justify-between">
+          {/* ── CONTENT AREA (~60% of height) ─────────────────────────────── */}
+          <div className="p-3 sm:p-4 lg:p-4.5 flex flex-col flex-grow justify-between">
             {/* Title & Description */}
             <div>
-              <h3 className="text-base sm:text-lg font-bold text-[#171A1F] dark:text-white tracking-tight font-display mb-1.5 group-hover:text-[#5F7692] dark:group-hover:text-zinc-200 transition-colors">
+              <h3 className="text-[13.5px] sm:text-base md:text-lg font-bold text-[#171A1F] dark:text-white tracking-tight font-display mb-1 sm:mb-1.5 group-hover:text-[#394E6E] dark:group-hover:text-zinc-200 transition-colors">
                 {project.title}
               </h3>
-              <p className="text-[11.5px] sm:text-xs text-[#66717D] dark:text-gray-400 leading-relaxed font-sans line-clamp-3 mb-3">
+              <p className="text-[10.5px] sm:text-[11.5px] lg:text-xs text-[#66717D] dark:text-gray-400 leading-snug sm:leading-relaxed font-sans line-clamp-2 sm:line-clamp-3 mb-2 sm:mb-3">
                 {project.description}
               </p>
             </div>
 
             {/* Tech Tags */}
-            <div className="flex flex-wrap gap-1 mb-3">
+            <div className="flex flex-wrap gap-1 mb-2 sm:mb-3">
               {project.technologies.slice(0, 5).map((tech) => (
                 <span
                   key={tech}
-                  className="px-2 py-0.5 text-[9px] font-mono rounded bg-[#E9EDF1] dark:bg-white/[0.04] border border-[#D9DEE4] dark:border-white/10 text-[#334155] dark:text-gray-300 group-hover:border-[#7188A3] dark:group-hover:border-white/20 transition-colors"
+                  className="px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] font-mono rounded bg-[#E9EDF1] dark:bg-white/[0.04] border border-[#D9DEE4] dark:border-white/10 text-[#334155] dark:text-gray-300 group-hover:border-[#394E6E] dark:group-hover:border-white/20 transition-colors"
                 >
                   {tech}
                 </span>
               ))}
             </div>
 
-            {/* Divider Line */}
-            <div className="w-full h-px bg-[#D9DEE4] dark:border-white/10 mb-2.5" />
-
             {/* Footer Row */}
-            <div className="flex items-center justify-between text-xs font-semibold">
-              {project.githubUrl === "private" ? (
-                <div className="flex items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400">
-                  <Lock className="w-3 h-3 text-gray-400" />
-                  <span>Private source</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1.5 text-[11px] text-[#66717D] dark:text-gray-400 group-hover:text-[#171A1F] dark:group-hover:text-white transition-colors">
-                  <GithubIcon className="w-3.5 h-3.5" />
-                  <span>Source</span>
-                </div>
-              )}
+            <div className="flex items-center justify-between text-[10px] sm:text-xs font-semibold">
+              <div className="flex items-center gap-2 sm:gap-3">
+                {project.githubUrl === "private" ? (
+                  <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400">
+                    <Lock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-gray-400" />
+                    <span>Private source</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-[#66717D] dark:text-gray-400 group-hover:text-[#171A1F] dark:group-hover:text-white transition-colors">
+                    <GithubIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    <span>Source</span>
+                  </div>
+                )}
 
-              <div className="flex items-center gap-1 text-[11.5px] font-bold text-[#171A1F] dark:text-gray-300 group-hover:text-[#5F7692] dark:group-hover:text-white transition-colors">
+                {project.liveUrl && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-[#394E6E] dark:text-gray-300 hover:text-[#171A1F] dark:hover:text-white transition-colors hover:underline"
+                  >
+                    <span>Live</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                )}
+              </div>
+
+              <div className="flex items-center gap-1 text-[10.5px] sm:text-[11.5px] font-bold text-[#171A1F] dark:text-gray-300 group-hover:text-[#394E6E] dark:group-hover:text-white transition-colors">
                 <span>View More</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
           </div>
@@ -320,32 +348,32 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
             BACK FACE OF CARD ("WHAT I BUILT")
            ══════════════════════════════════════════════════════════════════════ */}
         <div
-          className="absolute inset-0 w-full h-full rounded-2xl bg-[#FAFBFC]/95 dark:bg-[#0a0b12]/95 backdrop-blur-xl border border-[#D9DEE4] dark:border-white/20 p-5 flex flex-col justify-between overflow-hidden backface-hidden shadow-[0_12px_36px_rgba(113,136,163,0.1)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.8)]"
+          className="absolute inset-0 w-full h-full rounded-2xl bg-[#FAFBFC]/95 dark:bg-[#0a0b12]/95 backdrop-blur-xl border border-[#D9DEE4] dark:border-white/20 p-3.5 sm:p-5 flex flex-col justify-between overflow-hidden backface-hidden shadow-[0_12px_36px_rgba(57,78,110,0.1)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.8)]"
           style={{
             transform: "rotateY(180deg)",
           }}
         >
           {/* Header */}
           <div>
-            <div className="flex items-center justify-between border-b border-[#D9DEE4] dark:border-white/10 pb-2 mb-3">
-              <span className="px-2 py-0.5 text-[9.5px] font-mono font-bold tracking-widest text-[#171A1F] dark:text-gray-300 bg-[#E9EDF1] dark:bg-white/5 rounded border border-[#D9DEE4] dark:border-white/10">
+            <div className="flex items-center justify-between border-b border-[#D9DEE4] dark:border-white/10 pb-1.5 sm:pb-2 mb-2 sm:mb-3">
+              <span className="px-2 py-0.5 text-[8.5px] sm:text-[9.5px] font-mono font-bold tracking-widest text-[#171A1F] dark:text-gray-300 bg-[#E9EDF1] dark:bg-white/5 rounded border border-[#D9DEE4] dark:border-white/10">
                 {projectNum} · WHAT I BUILT
               </span>
-              <div className="flex items-center gap-1 text-[10px] font-mono text-[#66717D] dark:text-gray-400">
-                <RotateCcw className="w-3 h-3" />
+              <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-mono text-[#66717D] dark:text-gray-400">
+                <RotateCcw className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                 <span>Return</span>
               </div>
             </div>
 
-            <h4 className="text-base font-bold text-[#171A1F] dark:text-white font-display mb-2.5">
+            <h4 className="text-sm sm:text-base font-bold text-[#171A1F] dark:text-white font-display mb-1.5 sm:mb-2.5">
               {project.title}
             </h4>
 
             {/* Checklist of Engineering Achievements */}
-            <ul className="space-y-1.5 mb-3">
+            <ul className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
               {(project.whatIBuilt || project.engineeringFocus || []).slice(0, 5).map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-[11px] text-[#334155] dark:text-gray-300 leading-snug">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#5F7692] dark:text-gray-400 shrink-0 mt-0.5" />
+                <li key={i} className="flex items-start gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] text-[#334155] dark:text-gray-300 leading-snug">
+                  <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#394E6E] dark:text-gray-400 shrink-0 mt-0.5" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -353,17 +381,17 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
           </div>
 
           {/* Back Action Links */}
-          <div className="pt-2.5 border-t border-[#D9DEE4] dark:border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-3">
+          <div className="pt-2 sm:pt-2.5 border-t border-[#D9DEE4] dark:border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-2 sm:gap-3">
               {project.githubUrl && project.githubUrl !== "private" && (
                 <a
                   href={project.githubUrl}
                   target="_blank"
                   rel="noreferrer noopener"
                   onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1 text-[11px] font-semibold text-[#66717D] dark:text-gray-300 hover:text-[#171A1F] dark:hover:text-white transition-colors"
+                  className="flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-[#66717D] dark:text-gray-300 hover:text-[#171A1F] dark:hover:text-white transition-colors"
                 >
-                  <GithubIcon className="w-3.5 h-3.5" />
+                  <GithubIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   <span>GitHub</span>
                 </a>
               )}
@@ -373,10 +401,10 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                   target="_blank"
                   rel="noreferrer noopener"
                   onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1 text-[11px] font-semibold text-[#171A1F] dark:text-white hover:text-[#5F7692] hover:underline"
+                  className="flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-[#171A1F] dark:text-white hover:text-[#394E6E] hover:underline"
                 >
                   <span>Live Demo</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                 </a>
               )}
             </div>
@@ -386,7 +414,7 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                 e.stopPropagation();
                 onFlipToggle(project.id);
               }}
-              className="text-[10px] font-mono uppercase px-2.5 py-1 rounded bg-[#E9EDF1] dark:bg-white/10 text-[#171A1F] dark:text-white hover:bg-[#D9DEE4] dark:hover:bg-white/20 transition-colors font-semibold"
+              className="text-[9px] sm:text-[10px] font-mono uppercase px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-[#E9EDF1] dark:bg-white/10 text-[#171A1F] dark:text-white hover:bg-[#D9DEE4] dark:hover:bg-white/20 transition-colors font-semibold"
             >
               Flip Back ↺
             </button>

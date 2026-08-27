@@ -95,34 +95,35 @@ export const projects: Project[] = [
     liveUrl: "https://apt-2.vercel.app"
   },
   {
-    id: "ai-experiments",
+    id: "ticketlojao",
     number: "04",
-    title: "AI Experiments",
-    description: "Exploring cutting-edge AI models, local inference, multimodal systems, and synthetic data generation through ongoing experiments.",
-    categoryBadge: "EXPERIMENTAL AI",
-    iconName: "flask",
-    imageUrl: "/ai-experiments.jpg",
-    problem: "Rapid advancements in foundation models require continuous experimentation across local inference optimization, latency, and multimodal workflows.",
-    outcome: "Created experimental testbeds for testing small language models, vision-language architectures, and diffusion models under constrained hardware budgets.",
-    architecture: "Local runtime environments → PyTorch & Transformers pipelines → quantization layers → structured output evaluation.",
+    title: "AI Movie Recommendation Engine",
+    description: "Intelligent cinematic discovery platform featuring AI-powered smart suggestions, semantic natural language vibe search, and real-time personalized recommendations.",
+    categoryBadge: "AI RECOMMENDATION",
+    iconName: "film",
+    imageUrl: "/movie-ai-recommendation.png",
+    problem: "Traditional movie discovery relies on rigid genre tags and static popularity lists, failing to understand nuanced viewer moods, thematic vibes, and contextual preferences.",
+    outcome: "Built TicketLoJao, an AI-powered movie intelligence platform featuring semantic vibe search ('Search movies, genres, vibes...'), Smart Suggest algorithmic ranking, and dynamic interactive discovery.",
+    architecture: "Next.js & React frontend → AI semantic embedding & recommendation service → Vector similarity matching across genres/vibes → Real-time ticket booking flow with interactive UI.",
     whatIBuilt: [
-      "Local LLM Inference Engine",
-      "Multimodal Vision-Language Flows",
-      "Diffusion & Generation Pipelines",
-      "Synthetic Dataset Curation",
-      "Quantization & Latency Tuning"
+      "AI 'Smart Suggest' Recommendation Engine",
+      "Natural Language Mood & Vibe Search Pipeline",
+      "Vector Similarity & Content-Based Filtering",
+      "Dynamic Hero Carousel & Fast-Fill Booking",
+      "Interactive Critic & Audience Scoring Metric"
     ],
     engineeringFocus: [
-      "Benchmarking local inference performance and quantization loss",
-      "Creating reproducible evaluation scripts for prompt chaining",
-      "Testing state-of-the-art architectures in real-time pipelines"
+      "Semantic embedding similarity for vibe-based search queries",
+      "Optimizing latency for real-time auto-suggest & instant recommendations",
+      "Crafting a responsive, dark-aesthetic cinematic user interface"
     ],
     flows: [
-      { title: "01 · Local Inference", description: "Quantize → Load Weights → Stream Response" },
-      { title: "02 · Multimodal Evaluation", description: "Vision + Text → Embeddings → Generation" }
+      { title: "01 · Vibe Search & Smart Suggest", description: "Prompt / Mood → Vector Embeddings → AI Ranked Recommendations" },
+      { title: "02 · Instant Booking & Scoring", description: "Critic Score (9.2/10) + Fast-Fill Analytics → One-Click Ticketing" }
     ],
-    category: "Experiments",
-    technologies: ["PyTorch", "Transformers", "LLM", "Diffusion", "LangChain"],
-    githubUrl: "https://github.com/dheesh-m"
+    category: "Full Stack / AI",
+    technologies: ["Next.js", "React", "AI / Embeddings", "Semantic Search", "Tailwind CSS", "TypeScript"],
+    githubUrl: "https://github.com/dheesh-m",
+    liveUrl: "https://awp101.vercel.app/"
   }
 ];

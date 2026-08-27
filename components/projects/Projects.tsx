@@ -28,11 +28,8 @@ export default function Projects() {
               viewport={{ once: true, margin: "-20%" }}
               transition={{ duration: 0.8, delay: 0.1 }}
             >
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-[-0.04em] font-display">
-                <span className="text-[#171A1F] dark:text-white">Engineering</span>{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#5F7692] dark:from-[#8A8A8A] dark:to-[#FFFFFF]">
-                  Systems
-                </span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light tracking-[-0.04em] font-display text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:via-[#D1D5DB] dark:to-[#FFFFFF]">
+                Engineering Systems
               </h2>
             </motion.div>
           </div>

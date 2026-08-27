@@ -17,11 +17,9 @@ export default function ExperienceSection() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-center mb-16 md:mb-24"
         >
-          <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] font-display mb-6">
-            <span className="text-[#171A1F] dark:text-white">Professional</span><br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#5F7692] dark:from-[#8A8A8A] dark:to-[#FFFFFF]">
-              Experience
-            </span>
+          <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] font-display mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:via-[#D1D5DB] dark:to-[#FFFFFF]">
+            Professional<br />
+            Experience
           </h2>
         </motion.div>
 

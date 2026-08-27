@@ -4,7 +4,7 @@ export type Project = {
   title: string;
   description: string;
   categoryBadge?: string;
-  iconName?: "leaf" | "bot" | "zap" | "flask";
+  iconName?: "leaf" | "bot" | "zap" | "flask" | "film";
   problem?: string;
   solution?: string;
   outcome?: string;

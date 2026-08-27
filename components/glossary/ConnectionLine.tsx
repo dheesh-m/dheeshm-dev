@@ -42,15 +42,15 @@ function ConnectionLine({
         style={{ 
           width: radius, 
           backgroundColor: isActive || isRelated
-            ? "rgba(95, 118, 146, 0.6)"
-            : "rgba(113, 136, 163, 0.2)",
+            ? "rgba(57, 78, 110, 0.85)"
+            : "rgba(57, 78, 110, 0.35)",
           transition: "background-color 0.3s ease"
         }}
       >
         {/* Animated Data Particle moving along the line */}
         {isAnimating && (isActive || isRelated) && (
           <motion.div
-            className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#5F7692] dark:bg-white shadow-[0_0_8px_rgba(95,118,146,0.6)]"
+            className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#394E6E] dark:bg-white shadow-[0_0_8px_rgba(57,78,110,0.8)] dark:shadow-[0_0_8px_rgba(255,255,255,0.8)]"
             initial={{ left: 0, opacity: 0 }}
             animate={{ left: radius, opacity: [0, 1, 1, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}

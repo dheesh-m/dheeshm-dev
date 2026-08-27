@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, type CSSProperties } from "react";
 import MagneticButton from "../ui/MagneticButton";
 import { SOCIALS } from "@/data/socials";
@@ -20,29 +19,16 @@ const delay = (seconds: number) =>
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
-  });
-
-  // Scroll-linked parallax stays in framer-motion: it depends on scroll
-  // position, so it cannot be expressed as a static CSS animation.
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const graphScale = useTransform(scrollYProgress, [0, 1], [1, 0.8]);
-  const graphY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const graphOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.3]);
 
   return (
     <section
       ref={containerRef}
       id="home"
-      className="relative w-full min-h-[100dvh] flex items-center pt-28 md:pt-32 pb-8 lg:pt-24 lg:pb-16 overflow-visible"
+      className="relative w-full min-h-[100dvh] flex items-center pt-28 md:pt-32 pb-16 lg:pt-24 lg:pb-16"
     >
       <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center max-w-7xl mx-auto">
         {/* ── LEFT COLUMN ── */}
-        <motion.div
-          style={{ y: textY, opacity: textOpacity }}
+        <div
           className="flex flex-col items-start px-6"
         >
           <div className="reveal-up">
@@ -50,11 +36,14 @@ export default function Hero() {
           </div>
 
           <h1 className="flex flex-col gap-2 mb-8 text-[clamp(2.5rem,12vw,4.5rem)] font-light tracking-[-0.04em] leading-none font-display">
-            <span className="reveal-up block text-white" style={delay(0.05)}>
+            <span
+              className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#8A8A8A] dark:to-[#FFFFFF]"
+              style={delay(0.05)}
+            >
               Dheesh
             </span>
             <span
-              className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]"
+              className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#8A8A8A] dark:to-[#FFFFFF]"
               style={delay(0.1)}
             >
               Medekar
@@ -62,17 +51,21 @@ export default function Hero() {
           </h1>
 
           <div
-            className="reveal-up flex flex-col gap-1.5 mb-8"
+            className="reveal-up flex flex-col gap-2.5 mb-8"
             style={delay(0.15)}
           >
             {["AI / LLM ENGINEER", "BACKEND ENGINEER", "FULL-STACK DEVELOPER"].map(
               (role, i) => (
                 <div key={role} className="flex items-center gap-3">
                   <div
-                    className={`w-6 h-px ${i === 0 ? "bg-white" : "bg-white/20"}`}
+                    className={`w-6 h-[2px] hero-role-dash ${i === 0 ? "bg-[#394E6E] dark:bg-white" : "bg-[#394E6E]/60 dark:bg-white/30"}`}
                   />
                   <span
-                    className={`text-[11px] font-mono tracking-[0.2em] ${i === 0 ? "text-white" : "text-gray-400"}`}
+                    className={`text-[11.5px] font-mono tracking-[0.2em] font-bold hero-role-text ${
+                      i === 0
+                        ? "text-[#394E6E] dark:text-white"
+                        : "text-[#394E6E] dark:text-gray-300"
+                    }`}
                   >
                     {role}
                   </span>
@@ -82,11 +75,11 @@ export default function Hero() {
           </div>
 
           <p
-            className="reveal-up text-gray-400 text-base max-w-[420px] mb-10 leading-relaxed font-sans"
+            className="reveal-up text-[#1e293b] dark:text-gray-400 text-base max-w-[420px] mb-10 leading-relaxed font-sans font-normal"
             style={delay(0.2)}
           >
             I build{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:to-[#FFFFFF] font-semibold">
               intelligent
             </span>{" "}
             systems, real-time applications and full-stack products — from LLM
@@ -135,7 +128,7 @@ export default function Hero() {
               href={SOCIALS.github}
               target="_blank"
               rel="noreferrer noopener"
-              className="text-[11px] font-mono tracking-widest text-gray-500 dark:text-gray-400 hover:text-[#5F7692] dark:hover:text-white transition-colors uppercase flex items-center gap-2"
+              className="text-[11px] font-mono tracking-widest text-gray-500 dark:text-gray-400 hover:text-[#394E6E] dark:hover:text-white transition-colors uppercase flex items-center gap-2"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
@@ -147,7 +140,7 @@ export default function Hero() {
               href={SOCIALS.linkedin}
               target="_blank"
               rel="noreferrer noopener"
-              className="text-[11px] font-mono tracking-widest text-gray-500 dark:text-gray-400 hover:text-[#5F7692] dark:hover:text-white transition-colors uppercase flex items-center gap-2"
+              className="text-[11px] font-mono tracking-widest text-gray-500 dark:text-gray-400 hover:text-[#394E6E] dark:hover:text-white transition-colors uppercase flex items-center gap-2"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
@@ -157,15 +150,14 @@ export default function Hero() {
               LinkedIn
             </a>
           </div>
-        </motion.div>
+        </div>
 
         {/* ── RIGHT COLUMN: 3D Orbital System ── */}
-        <motion.div
-          style={{ scale: graphScale, y: graphY, opacity: graphOpacity }}
+        <div
           className="relative flex items-center justify-center w-full max-w-[500px] lg:max-w-none h-[380px] sm:h-[480px] lg:h-[560px] mx-auto mt-2 lg:-mt-8"
         >
           <SystemGraph />
-        </motion.div>
+        </div>
       </div>
     </section>
   );

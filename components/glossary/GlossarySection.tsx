@@ -27,8 +27,8 @@ export default function GlossarySection() {
           transition={{ duration: 0.8, delay: 0.1 }}
           className="mb-12"
         >
-          <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] text-white font-display mb-6">
-            Neural <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">Core</span>
+          <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:via-[#D1D5DB] dark:to-[#FFFFFF] font-display mb-6">
+            Neural Core
           </h2>
           <p className="text-gray-400 font-sans max-w-2xl text-lg">
             Hover over nodes to explore the interconnected technologies I use to build scalable AI systems.

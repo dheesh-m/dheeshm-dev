@@ -113,7 +113,7 @@ function SystemNode({
           {(isActive || isRelated) && (
             <motion.div
               layoutId={`sys-glow-${technology.id}`}
-              className="absolute inset-0 rounded-full bg-[rgba(113,136,163,0.3)] blur-md pointer-events-none"
+              className="absolute inset-0 rounded-full bg-[#394E6E]/25 blur-md pointer-events-none"
             />
           )}
 
@@ -121,12 +121,12 @@ function SystemNode({
           <div className="flex flex-col items-center gap-1.5 select-none">
             {/* Small 3D Steel-Blue Sphere */}
             <div className={cn(
-              "w-4.5 h-4.5 md:w-5 md:h-5 rounded-full bg-gradient-to-br from-[#CBD5E1] via-[#7188A3] to-[#475569] relative transition-[transform,box-shadow] duration-200 ease-out",
+              "w-4.5 h-4.5 md:w-5 md:h-5 rounded-full bg-gradient-to-br from-[#8DA4C4] via-[#5B759E] to-[#394E6E] relative transition-[transform,box-shadow] duration-200 ease-out",
               isActive
-                ? "scale-125 shadow-[0_0_16px_rgba(95,118,146,0.8)]"
+                ? "scale-125 shadow-[0_0_16px_rgba(57,78,110,0.8)]"
                 : isRelated
-                  ? "scale-110 shadow-[0_0_12px_rgba(113,136,163,0.6)]"
-                  : "shadow-[0_0_8px_rgba(113,136,163,0.3)] hover:scale-110"
+                  ? "scale-110 shadow-[0_0_12px_rgba(57,78,110,0.5)]"
+                  : "shadow-[0_0_8px_rgba(57,78,110,0.25)] hover:scale-110"
             )}>
               {/* Specular highlight */}
               <div className="absolute top-[12%] left-[12%] w-[25%] h-[25%] rounded-full bg-white/70 blur-[0.5px]" />
@@ -136,9 +136,9 @@ function SystemNode({
             <span className={cn(
               "whitespace-nowrap text-[9px] md:text-[10px] font-bold font-mono tracking-widest uppercase transition-[color,filter] duration-200 ease-out",
               isActive
-                ? "text-white dark:text-white drop-shadow-[0_0_6px_rgba(95,118,146,0.7)]"
+                ? "text-white dark:text-white drop-shadow-[0_0_6px_rgba(57,78,110,0.7)]"
                 : isRelated
-                  ? "text-[#5F7692] dark:text-[#cbd5e1]"
+                  ? "text-[#394E6E] dark:text-[#cbd5e1]"
                   : "text-[#66717D] dark:text-gray-300/90"
             )}>
               {technology.name}

@@ -76,7 +76,7 @@ function TechnologyNode({
           {(isActive || isRelated) && (
             <motion.div
               layoutId={`glow-${technology.id}`}
-              className="absolute inset-0 rounded-full bg-slate-400/15 dark:bg-white/10 blur-sm"
+              className="absolute inset-0 rounded-full bg-[#394E6E]/15 dark:bg-white/10 blur-sm"
             />
           )}
 
@@ -84,22 +84,22 @@ function TechnologyNode({
           <div className={cn(
             "w-3 h-3 rounded-full transition-[transform,background-color,box-shadow] duration-200 ease-out flex items-center justify-center",
             isActive
-              ? "bg-slate-900 dark:bg-white ring-2 ring-slate-400/40 dark:ring-white/40 shadow-[0_0_8px_rgba(255,255,255,0.4)] scale-125"
+              ? "bg-[#394E6E] dark:bg-white ring-2 ring-[#394E6E]/40 dark:ring-white/40 shadow-[0_0_8px_rgba(57,78,110,0.6)] dark:shadow-[0_0_8px_rgba(255,255,255,0.4)] scale-125"
               : isRelated
-                ? "bg-slate-700 dark:bg-slate-300 ring-1 ring-slate-400/30 dark:ring-white/20 shadow-[0_0_4px_rgba(255,255,255,0.2)]"
-                : "bg-slate-600/80 dark:bg-white/70 ring-1 ring-slate-400/20 dark:ring-white/10"
+                ? "bg-[#394E6E] dark:bg-slate-300 ring-1 ring-[#394E6E]/40 dark:ring-white/20 shadow-[0_0_4px_rgba(57,78,110,0.4)] dark:shadow-[0_0_4px_rgba(255,255,255,0.2)]"
+                : "bg-[#394E6E] dark:bg-white/70 ring-1 ring-[#394E6E]/30 dark:ring-white/10"
           )}>
             <div className="w-1 h-1 rounded-full bg-white dark:bg-slate-900" />
           </div>
 
           {/* Crisp, High-Contrast Node Label */}
           <span className={cn(
-            "absolute left-4.5 whitespace-nowrap text-[11px] font-mono tracking-wider font-semibold transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-out px-2 py-0.5 rounded-md",
+            "absolute left-4.5 whitespace-nowrap text-[11px] font-mono tracking-wider font-semibold transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-out px-2.5 py-0.5 rounded-md",
             isActive
-              ? "text-slate-950 dark:text-white bg-white/95 dark:bg-slate-900/90 shadow-sm border border-slate-300 dark:border-white/20 scale-105"
+              ? "text-white dark:text-white bg-[#394E6E] dark:bg-slate-900/90 shadow-md border border-[#394E6E] dark:border-white/20 scale-105"
               : isRelated
-                ? "text-slate-900 dark:text-slate-200 bg-white/85 dark:bg-black/60 shadow-sm border border-slate-200 dark:border-white/10"
-                : "text-slate-700 dark:text-gray-300 bg-white/80 dark:bg-black/40 shadow-[0_1px_4px_rgba(0,0,0,0.04)] border border-slate-200/50 dark:border-white/10 hover:text-black dark:hover:text-white"
+                ? "text-[#243347] dark:text-slate-200 bg-[#E9EDF1] dark:bg-black/60 shadow-sm border border-[#394E6E]/30 dark:border-white/10"
+                : "text-[#394E6E] dark:text-gray-300 bg-[#EEF2F6] dark:bg-black/40 shadow-[0_1px_4px_rgba(57,78,110,0.06)] border border-[#394E6E]/25 dark:border-white/10 hover:text-[#171A1F] hover:bg-[#DCE3EC] dark:hover:text-white"
           )}>
             {technology.name}
           </span>

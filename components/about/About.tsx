@@ -1,20 +1,14 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRef } from "react";
 import SectionLabel from "../ui/SectionLabel";
 
 export default function About() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
-
-  const textY = useTransform(scrollYProgress, [0, 1], ["20%", "-20%"]);
 
   return (
-    <section ref={containerRef} id="about" className="relative w-full py-20 md:py-28 overflow-hidden">
+    <section ref={containerRef} id="about" className="relative w-full pt-16 sm:pt-24 md:pt-32 pb-20 md:pb-28 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0 }}
@@ -27,24 +21,23 @@ export default function About() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mt-8 relative">
           {/* Main Statement */}
-          <motion.div
-            style={{ y: textY }}
+          <div
             className="lg:col-span-8 flex flex-col gap-8"
           >
-            <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] text-white font-display">
+            <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] font-display text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:via-[#D1D5DB] dark:to-[#FFFFFF]">
               I build systems
               <br />
-              <span className="text-gray-500">that connect</span>
+              that connect
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">intelligence</span>
+              intelligence
               <br />
-              <span className="text-gray-500">to software.</span>
+              to software.
             </h2>
 
-            <p className="text-lg text-gray-400 max-w-2xl leading-relaxed font-sans mt-4">
+            <p className="text-lg text-[#475569] dark:text-gray-400 max-w-2xl leading-relaxed font-sans mt-4">
               My focus is bridging the gap between cutting-edge AI models and reliable, scalable product interfaces. Whether it&apos;s designing a complex multi-agent reasoning loop or polishing a real-time web interface, I approach engineering with a focus on architecture, performance, and user experience.
             </p>
-          </motion.div>
+          </div>
 
           {/* Side Panel */}
           <motion.div

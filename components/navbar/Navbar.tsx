@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import MobileMenu from "./MobileMenu";
 import NavItem from "./NavItem";
 import ThemeToggle from "./ThemeToggle";
+import NavbarEdgeLight from "./NavbarEdgeLight";
 import { NAV_ITEMS, SECTION_IDS } from "./navItems";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
@@ -19,6 +20,8 @@ export default function Navbar() {
   const isScrolledRef = useRef(false);
   const activeRef = useRef("HOME");
   activeRef.current = active;
+  const isProgrammaticScrollRef = useRef(false);
+  const scrollLockTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     let ticking = false;
@@ -40,54 +43,120 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Scroll spy
+  // Stable, rock-solid scroll spy
   useEffect(() => {
-    const ratios = new Map<string, number>();
     const labelById = new Map(
       NAV_ITEMS.map((item) => [item.href.slice(1), item.label])
     );
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          ratios.set(
-            entry.target.id,
-            entry.isIntersecting ? entry.intersectionRatio : 0
-          );
-        }
+    // Initial check from window.location.hash
+    if (typeof window !== "undefined" && window.location.hash) {
+      const initialId = window.location.hash.slice(1);
+      const initialLabel = labelById.get(initialId);
+      if (initialLabel) {
+        setActive(initialLabel);
+        activeRef.current = initialLabel;
+      }
+    }
 
-        let bestId = "";
-        let bestRatio = 0;
-        for (const id of SECTION_IDS) {
-          const ratio = ratios.get(id) ?? 0;
-          if (ratio > bestRatio) {
-            bestRatio = ratio;
-            bestId = id;
+    const checkActiveSection = () => {
+      // If user recently clicked a nav item, hold that section until smooth scroll finishes
+      if (isProgrammaticScrollRef.current) return;
+
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+
+      // 1. Home priority ONLY when genuinely near the very top of the page
+      if (scrollY < 120) {
+        if (activeRef.current !== "HOME") {
+          activeRef.current = "HOME";
+          setActive("HOME");
+        }
+        return;
+      }
+
+      // 2. Contact priority ONLY when genuinely reached the bottom of the document
+      if (windowHeight + scrollY >= docHeight - 90) {
+        if (activeRef.current !== "CONTACT") {
+          activeRef.current = "CONTACT";
+          setActive("CONTACT");
+        }
+        return;
+      }
+
+      // 3. Middle sections: find the section with the largest visible presence & closest to viewport center
+      const viewportCenter = windowHeight / 2;
+      let bestSectionId: string | null = null;
+      let maxVisibleHeight = 0;
+      let minDistanceToCenter = Infinity;
+
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+
+        const rect = el.getBoundingClientRect();
+        
+        // Calculate the height of the section visible within the viewport
+        const visibleTop = Math.max(0, rect.top);
+        const visibleBottom = Math.min(windowHeight, rect.bottom);
+        const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+
+        if (visibleHeight > 60) {
+          const sectionCenter = (rect.top + rect.bottom) / 2;
+          const distToCenter = Math.abs(sectionCenter - viewportCenter);
+
+          // Primary metric: highest visible area; Secondary: closest to center (with 50px hysteresis)
+          if (
+            visibleHeight > maxVisibleHeight + 50 ||
+            (Math.abs(visibleHeight - maxVisibleHeight) <= 50 && distToCenter < minDistanceToCenter)
+          ) {
+            maxVisibleHeight = visibleHeight;
+            minDistanceToCenter = distToCenter;
+            bestSectionId = id;
           }
         }
+      }
 
-        const label = labelById.get(bestId);
+      // If a dominant section is found in the viewport, update active item
+      if (bestSectionId) {
+        const label = labelById.get(bestSectionId);
         if (label && activeRef.current !== label) {
           activeRef.current = label;
           setActive(label);
         }
-      },
-      {
-        rootMargin: "-30% 0px -60% 0px",
-        threshold: [0, 0.25, 0.5, 0.75, 1],
       }
-    );
+      // CRITICAL: If no section crosses the threshold (e.g. fast scrolling or brief gap),
+      // NEVER fallback to "HOME". Keep the previous active section instead!
+    };
 
-    for (const id of SECTION_IDS) {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    }
-    return () => observer.disconnect();
+    // Run initial check on mount
+    checkActiveSection();
+
+    window.addEventListener("scroll", checkActiveSection, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", checkActiveSection);
+      if (scrollLockTimerRef.current) {
+        clearTimeout(scrollLockTimerRef.current);
+      }
+    };
   }, []);
 
   const handleNavClick = useCallback((label: string, href?: string) => {
     setActive(label);
+    activeRef.current = label;
     setMobileOpen(false);
+
+    // Lock programmatic scroll for 850ms so intermediate sections don't hijack active state
+    isProgrammaticScrollRef.current = true;
+    if (scrollLockTimerRef.current) {
+      clearTimeout(scrollLockTimerRef.current);
+    }
+    scrollLockTimerRef.current = setTimeout(() => {
+      isProgrammaticScrollRef.current = false;
+    }, 850);
+
     if (href && href.startsWith("#")) {
       const targetId = href.slice(1);
       const el = document.getElementById(targetId);
@@ -95,7 +164,8 @@ export default function Navbar() {
         if ((window as any).__lenis) {
           (window as any).__lenis.scrollTo(el, { offset: -70 });
         } else {
-          el.scrollIntoView({ behavior: "smooth" });
+          const y = el.getBoundingClientRect().top + window.scrollY - 70;
+          window.scrollTo({ top: y, behavior: "smooth" });
         }
       }
     }
@@ -129,8 +199,11 @@ export default function Navbar() {
               : "bg-transparent border border-transparent shadow-none"
           )}
         >
+          {/* ── Traveling Edge Light Overlay on Outer Border ── */}
+          <NavbarEdgeLight />
+
           {/* ── 1. Left: Brand / Logo ────────────────────────────────────────── */}
-          <div className="flex items-center">
+          <div className="relative z-30 flex items-center">
             <a
               href="#home"
               onClick={(e) => {
@@ -155,7 +228,7 @@ export default function Navbar() {
           <nav
             aria-label="Primary"
             className={cn(
-              "hidden md:flex items-center rounded-full transition-[background-color,border-color,box-shadow,padding,gap] duration-250 ease-out",
+              "relative z-30 hidden md:flex items-center rounded-full transition-[background-color,border-color,box-shadow,padding,gap] duration-250 ease-out",
               isScrolled
                 ? isLightMode
                   ? "bg-white/35 backdrop-blur-xl backdrop-saturate-[180%] border border-white/45 px-1.5 py-1 shadow-inner gap-0.5"
@@ -180,7 +253,7 @@ export default function Navbar() {
           </nav>
 
           {/* ── 3. Right: CTA & Controls ────────────────────────────────────── */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="relative z-30 flex items-center gap-2 sm:gap-3">
             <ThemeToggle />
 
             {/* iOS 26 Glass CTA Pill */}

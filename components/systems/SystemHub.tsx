@@ -187,12 +187,12 @@ function SystemHub({
 
     ctx.clearRect(0, 0, W, H);
 
-    // ── Atmospheric glow around center (Toned down) ───────────────────────────
+    // ── Atmospheric glow around center (Subtle #394E6E in light mode) ─────────
     const glowR = Math.min(W, H) * 0.40;
     const atmosGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
     if (light) {
-      atmosGrd.addColorStop(0, "rgba(147, 51, 234, 0.08)");
-      atmosGrd.addColorStop(0.5, "rgba(168, 85, 247, 0.03)");
+      atmosGrd.addColorStop(0, "rgba(57, 78, 110, 0.05)");
+      atmosGrd.addColorStop(0.5, "rgba(57, 78, 110, 0.015)");
       atmosGrd.addColorStop(1, "transparent");
     } else {
       atmosGrd.addColorStop(0, "rgba(180, 180, 190, 0.03)");
@@ -276,11 +276,11 @@ function SystemHub({
       };
     });
 
-    // ── 2. Draw Orbital Rings (Muted Steel Blue on Light, Grey on Dark) ────────
+    // ── 2. Draw Orbital Rings (#394E6E on Light, Grey on Dark) ────────
     ctx.save();
-    ctx.globalAlpha = light ? 0.30 : 0.18;
-    ctx.strokeStyle = light ? "#7188A3" : "#6b7280";
-    ctx.lineWidth = 0.85;
+    ctx.globalAlpha = light ? 0.32 : 0.18;
+    ctx.strokeStyle = light ? "#394E6E" : "#6b7280";
+    ctx.lineWidth = 0.95;
     ctx.setLineDash([6, 5]);
 
     ORBIT_PLANES.forEach((mat, i) => {
@@ -299,16 +299,16 @@ function SystemHub({
     ctx.setLineDash([]);
     ctx.restore();
 
-    // ── 3. Draw Connection Lines (Steel Blue on Light, Grey on Dark) ─────────
+    // ── 3. Draw Connection Lines (#394E6E on Light, Grey on Dark) ─────────
     const sortedNodes = [...projectedNodes].sort((a, b) => a.depth - b.depth);
-    const lineColor = light ? "#5F7692" : "#9ca3af";
+    const lineColor = light ? "#394E6E" : "#9ca3af";
 
     sortedNodes.forEach((node) => {
       ctx.save();
-      const baseLineAlpha = light ? (0.16 + node.depth * 0.22) : (0.12 + node.depth * 0.18);
-      ctx.globalAlpha = node.isHovered ? 0.85 : baseLineAlpha;
+      const baseLineAlpha = light ? (0.25 + node.depth * 0.15) : (0.12 + node.depth * 0.18);
+      ctx.globalAlpha = node.isHovered ? 0.90 : baseLineAlpha;
       ctx.strokeStyle = lineColor;
-      ctx.lineWidth = node.isHovered ? 1.6 : 0.85;
+      ctx.lineWidth = node.isHovered ? 1.6 : 0.95;
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(node.sx, node.sy);
@@ -316,9 +316,9 @@ function SystemHub({
       ctx.restore();
     });
 
-    // ── 4. Draw Nodes (Steel Blue on Light, Technical Grey on Dark) ──────────
-    const nodeSphereColor = light ? "#7188A3" : "#374151";
-    const nodeGlowColor = light ? "#5F7692" : "#9ca3af";
+    // ── 4. Draw Nodes (#394E6E system on Light, Technical Grey on Dark) ─────
+    const nodeSphereColor = light ? "#394E6E" : "#374151";
+    const nodeGlowColor = light ? "#394E6E" : "#9ca3af";
     const nodeTextColor = light ? "#171A1F" : "#e5e7eb";
 
     sortedNodes.forEach((node) => {
@@ -340,11 +340,11 @@ function SystemHub({
     const coreR = isMobile ? 19 : 24;
     const pulse = 1 + Math.sin(t * 1.8) * 0.06;
 
-    // Pulsing outer halo (Toned down)
+    // Pulsing outer halo
     ctx.save();
     ctx.globalAlpha = light ? 0.12 : 0.06;
     const haloGrd = ctx.createRadialGradient(cx, cy, coreR * 0.5, cx, cy, coreR * 2.0 * pulse);
-    haloGrd.addColorStop(0, light ? "rgba(113, 136, 163, 0.35)" : "rgba(200, 200, 210, 0.25)");
+    haloGrd.addColorStop(0, light ? "rgba(57, 78, 110, 0.25)" : "rgba(200, 200, 210, 0.25)");
     haloGrd.addColorStop(1, "transparent");
     ctx.fillStyle = haloGrd;
     ctx.beginPath();
@@ -355,8 +355,8 @@ function SystemHub({
     // Central Sphere (Steel-Blue on Light, Charcoal/Grey on Dark)
     drawSphere(
       ctx, cx, cy, coreR,
-      light ? "#5F7692" : "#1f2937",
-      light ? "#475569" : "#9ca3af",
+      light ? "#394E6E" : "#1f2937",
+      light ? "#2B3C56" : "#9ca3af",
       1.0
     );
 
@@ -532,7 +532,7 @@ function SystemHub({
 
       {/* Adaptive Bottom Category Badge */}
       <div className="absolute bottom-2 z-20 pointer-events-none">
-        <span className="inline-block px-4 py-1.5 rounded-full bg-white/85 dark:bg-[#121218]/90 backdrop-blur-md border border-[rgba(147,51,234,0.35)] dark:border-white/15 shadow-[0_4px_16px_rgba(147,51,234,0.12)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.5)] text-[#29213f] dark:text-white/90 text-[11px] font-bold font-mono tracking-widest uppercase">
+        <span className="inline-block px-4 py-1.5 rounded-full bg-white/90 dark:bg-[#121218]/90 backdrop-blur-md border border-[#394E6E]/25 dark:border-white/15 shadow-[0_4px_16px_rgba(57,78,110,0.08)] dark:shadow-[0_4px_16px_rgba(0,0,0,0.5)] text-[#171A1F] dark:text-white/90 text-[11px] font-bold font-mono tracking-widest uppercase">
           {title}
         </span>
       </div>

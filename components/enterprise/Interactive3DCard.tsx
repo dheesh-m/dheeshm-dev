@@ -50,11 +50,25 @@ export default function Interactive3DCard({
 
   const IconComponent = iconMap[item.iconName] || Brain;
 
+  const rectRef = useRef<DOMRect | null>(null);
+
   // Handle mouse move for 3D tilt & dynamic specular glare
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+    if (cardRef.current) {
+      rectRef.current = cardRef.current.getBoundingClientRect();
+    }
+    onCardHover();
+  }, [onCardHover]);
+
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (!cardRef.current) return;
-      const rect = cardRef.current.getBoundingClientRect();
+      let rect = rectRef.current;
+      if (!rect && cardRef.current) {
+        rect = cardRef.current.getBoundingClientRect();
+        rectRef.current = rect;
+      }
+      if (!rect) return;
       const x = (e.clientX - rect.left) / rect.width;
       const y = (e.clientY - rect.top) / rect.height;
 
@@ -73,13 +87,9 @@ export default function Interactive3DCard({
     [mouseX, mouseY, glareX, glareY]
   );
 
-  const handleMouseEnter = useCallback(() => {
-    setIsHovered(true);
-    onCardHover();
-  }, [onCardHover]);
-
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
+    rectRef.current = null;
     // Smoothly return to neutral
     mouseX.set(0);
     mouseY.set(0);
@@ -104,7 +114,7 @@ export default function Interactive3DCard({
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="perspective-1200 relative w-full h-[360px] sm:h-[390px] md:h-[410px] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded-[22px]"
+        className="perspective-1200 relative w-full h-[220px] sm:h-[340px] lg:h-[385px] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded-[18px] sm:rounded-[22px]"
       >
         {/* Tilt Wrapper (tracks mouse tilt & hover scale/lift) */}
         <motion.div
@@ -137,14 +147,14 @@ export default function Interactive3DCard({
               delay: flipDelay,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className="w-full h-full preserve-3d relative rounded-[22px]"
+            className="w-full h-full preserve-3d relative rounded-[18px] sm:rounded-[22px]"
           >
             {/* ══════════════════════════════════════════════════════════════════
                 FRONT FACE
                 ══════════════════════════════════════════════════════════════════ */}
             <div
               className={cn(
-                "absolute inset-0 backface-hidden preserve-3d rounded-[22px] p-5 sm:p-6 flex flex-col justify-between overflow-hidden",
+                "absolute inset-0 backface-hidden preserve-3d rounded-[18px] sm:rounded-[22px] p-3.5 sm:p-5 lg:p-6 flex flex-col justify-between overflow-hidden",
                 "flip-card-glass bg-[#0a0b12]/90 backdrop-blur-2xl border transition-all duration-300",
                 isActive
                   ? "border-white/30 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),0_0_24px_rgba(255,255,255,0.06)]"
@@ -158,7 +168,7 @@ export default function Interactive3DCard({
             >
               {/* Dynamic Ambient Edge Highlight */}
               <div
-                className="absolute inset-0 rounded-[22px] pointer-events-none opacity-40 group-hover/card:opacity-80 transition-opacity duration-500"
+                className="absolute inset-0 rounded-[18px] sm:rounded-[22px] pointer-events-none opacity-40 group-hover/card:opacity-80 transition-opacity duration-500"
                 style={{
                   background: "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.06), transparent 70%)",
                 }}
@@ -166,7 +176,7 @@ export default function Interactive3DCard({
 
               {/* Specular Glare Reflection Layer */}
               <motion.div
-                className="absolute inset-0 rounded-[22px] pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-300"
+                className="absolute inset-0 rounded-[18px] sm:rounded-[22px] pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-300"
                 style={{
                   background: `radial-gradient(600px circle at ${glareX.get()}% ${glareY.get()}%, rgba(255, 255, 255, 0.06), transparent 45%)`,
                 }}
@@ -174,40 +184,40 @@ export default function Interactive3DCard({
 
               {/* Front Top: Number & Restrained Graphite Icon Badge */}
               <div className="relative z-10 flex items-start justify-between">
-                <span className="font-mono text-xs font-medium text-gray-500 flip-number tracking-wider">
+                <span className="font-mono text-[11px] sm:text-xs font-medium text-gray-500 flip-number tracking-wider">
                   {item.id}
                 </span>
 
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 bg-white/[0.04] transition-all duration-300 group-hover/card:scale-105 group-hover/card:border-white/25 group-hover/card:bg-white/[0.08]"
+                  className="w-7 h-7 sm:w-9 sm:h-9 lg:w-10 lg:h-10 rounded-lg sm:rounded-xl flex items-center justify-center border border-white/10 bg-white/[0.04] transition-all duration-300 group-hover/card:scale-105 group-hover/card:border-white/25 group-hover/card:bg-white/[0.08]"
                   style={{
                     boxShadow: isHovered ? "0 0 12px rgba(255, 255, 255, 0.1)" : "none",
                   }}
                 >
-                  <IconComponent className="w-5 h-5 text-gray-300 group-hover/card:text-white transition-colors duration-300" />
+                  <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-gray-300 group-hover/card:text-white transition-colors duration-300" />
                 </div>
               </div>
 
               {/* Front Middle: Title & Description */}
-              <div className="relative z-10 my-auto flex flex-col pt-2">
-                <h3 className="text-sm sm:text-base md:text-lg font-medium text-white tracking-tight font-display leading-snug mb-2 sm:mb-2.5 flip-title">
+              <div className="relative z-10 my-auto flex flex-col pt-1 sm:pt-2">
+                <h3 className="text-[13px] sm:text-base md:text-lg font-medium text-white tracking-tight font-display leading-snug mb-1 sm:mb-2 flip-title">
                   {item.title}
                 </h3>
-                <p className="text-[11.5px] sm:text-[13px] text-gray-400 font-sans leading-relaxed line-clamp-4 sm:line-clamp-none flip-desc">
+                <p className="text-[11px] sm:text-[12.5px] lg:text-[13px] text-gray-400 font-sans leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-4 lg:line-clamp-none flip-desc">
                   {item.frontDescription}
                 </p>
               </div>
 
               {/* Front Bottom: Explore Action Pill */}
-              <div className="relative z-10 pt-2 flex items-center justify-between">
+              <div className="relative z-10 pt-1 sm:pt-2 flex items-center justify-between">
                 <div
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-mono text-gray-300 bg-white/[0.04] border border-white/10 group-hover/card:border-white/25 group-hover/card:bg-white/[0.08] group-hover/card:text-white transition-all duration-300 flip-btn"
+                  className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono text-gray-300 bg-white/[0.04] border border-white/10 group-hover/card:border-white/25 group-hover/card:bg-white/[0.08] group-hover/card:text-white transition-all duration-300 flip-btn"
                   style={{
                     boxShadow: isHovered ? "0 0 10px rgba(255, 255, 255, 0.08)" : "none",
                   }}
                 >
                   <span>Explore</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-gray-400 group-hover/card:text-white transition-transform duration-300 group-hover/card:translate-x-1" />
+                  <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 group-hover/card:text-white transition-transform duration-300 group-hover/card:translate-x-1" />
                 </div>
 
                 {/* Subtle active pulse indicator */}
@@ -225,7 +235,7 @@ export default function Interactive3DCard({
                 ══════════════════════════════════════════════════════════════════ */}
             <div
               className={cn(
-                "absolute inset-0 backface-hidden preserve-3d rounded-[22px] p-5 sm:p-6 flex flex-col justify-between overflow-hidden",
+                "absolute inset-0 backface-hidden preserve-3d rounded-[18px] sm:rounded-[22px] p-3.5 sm:p-5 lg:p-6 flex flex-col justify-between overflow-hidden",
                 "flip-card-glass bg-[#0a0b12]/90 backdrop-blur-2xl border transition-all duration-300",
                 isActive
                   ? "border-white/30 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),0_0_24px_rgba(255,255,255,0.06)]"
@@ -245,34 +255,34 @@ export default function Interactive3DCard({
 
               {/* Dynamic Ambient Edge Highlight */}
               <div
-                className="absolute inset-0 rounded-[22px] pointer-events-none opacity-40 group-hover/card:opacity-80 transition-opacity duration-500"
+                className="absolute inset-0 rounded-[18px] sm:rounded-[22px] pointer-events-none opacity-40 group-hover/card:opacity-80 transition-opacity duration-500"
                 style={{
                   background: "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.06), transparent 70%)",
                 }}
               />
 
               {/* Back Top: Number & Category Title */}
-              <div className="relative z-10 flex items-center justify-between border-b border-white/5 pb-2.5">
-                <span className="font-mono text-xs font-medium text-gray-500 flip-number">
+              <div className="relative z-10 flex items-center justify-between border-b border-white/5 pb-1.5 sm:pb-2.5">
+                <span className="font-mono text-[11px] sm:text-xs font-medium text-gray-500 flip-number">
                   {item.id}
                 </span>
-                <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-full border border-white/10 bg-white/[0.04] text-gray-300">
+                <span className="font-mono text-[9px] sm:text-[10.5px] lg:text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 sm:px-2.5 rounded-full border border-white/10 bg-white/[0.04] text-gray-300">
                   {item.backHeading}
                 </span>
               </div>
 
               {/* Back Middle: Checklist Highlights */}
-              <div className="relative z-10 my-auto flex flex-col gap-2 pt-2">
-                <div className="text-xs sm:text-sm font-semibold text-white tracking-tight font-display mb-1 flip-title">
+              <div className="relative z-10 my-auto flex flex-col gap-1 sm:gap-2 pt-1 sm:pt-2">
+                <div className="text-[12px] sm:text-sm font-semibold text-white tracking-tight font-display mb-0.5 sm:mb-1 flip-title">
                   {item.title}
                 </div>
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1 sm:gap-1.5">
                   {item.highlights.map((highlight, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-2 text-[11.5px] sm:text-xs text-gray-300/90 font-sans leading-snug flip-highlight"
+                      className="flex items-center gap-1.5 sm:gap-2 text-[10.5px] sm:text-xs text-gray-300/90 font-sans leading-snug flip-highlight"
                     >
-                      <span className="font-bold flex-shrink-0 text-xs text-gray-400">
+                      <span className="font-bold flex-shrink-0 text-[10px] sm:text-xs text-gray-400">
                         ✓
                       </span>
                       <span className="truncate">{highlight}</span>
@@ -282,18 +292,18 @@ export default function Interactive3DCard({
               </div>
 
               {/* Back Bottom: Return / Code CTA Pill */}
-              <div className="relative z-10 pt-2 flex items-center justify-between">
+              <div className="relative z-10 pt-1 sm:pt-2 flex items-center justify-between">
                 <div
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-mono text-gray-300 bg-white/[0.04] border border-white/10 group-hover/card:border-white/25 group-hover/card:bg-white/[0.08] group-hover/card:text-white transition-all duration-300 flip-btn"
+                  className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-mono text-gray-300 bg-white/[0.04] border border-white/10 group-hover/card:border-white/25 group-hover/card:bg-white/[0.08] group-hover/card:text-white transition-all duration-300 flip-btn"
                   style={{
                     boxShadow: isHovered ? "0 0 10px rgba(255, 255, 255, 0.08)" : "none",
                   }}
                 >
                   <span>Explore</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-gray-400 group-hover/card:text-white transition-transform duration-300 group-hover/card:translate-x-1" />
+                  <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-400 group-hover/card:text-white transition-transform duration-300 group-hover/card:translate-x-1" />
                 </div>
 
-                <span className="text-[10px] font-mono text-gray-500 tracking-tight">
+                <span className="text-[9px] sm:text-[10px] font-mono text-gray-500 tracking-tight">
                   Click to flip
                 </span>
               </div>

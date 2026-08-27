@@ -96,10 +96,10 @@ export default function CustomCursor() {
 
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${d.x}px, ${d.y}px, 0) translate(-50%, -50%)`;
-        dotRef.current.style.backgroundColor = light ? "#1e1b4b" : "#ffffff";
+        dotRef.current.style.backgroundColor = light ? "#394E6E" : "#ffffff";
         dotRef.current.style.boxShadow = light
-          ? "0 0 5px rgba(147, 51, 234, 0.45), 0 0 1px #1e1b4b"
-          : "0 0 6px rgba(168, 85, 247, 0.8), 0 0 2px #ffffff";
+          ? "0 0 5px rgba(57, 78, 110, 0.45), 0 0 1px #394E6E"
+          : "0 0 8px rgba(255, 255, 255, 0.6), 0 0 2px #ffffff";
       }
 
       if (ringRef.current) {
@@ -113,25 +113,25 @@ export default function CustomCursor() {
 
           if (light) {
             ringRef.current.style.borderColor = hovering
-              ? "rgba(147, 51, 234, 0.75)"
-              : "rgba(147, 51, 234, 0.35)";
+              ? "rgba(57, 78, 110, 0.75)"
+              : "rgba(57, 78, 110, 0.35)";
             ringRef.current.style.backgroundColor = hovering
-              ? "rgba(147, 51, 234, 0.10)"
-              : "rgba(147, 51, 234, 0.03)";
+              ? "rgba(57, 78, 110, 0.10)"
+              : "rgba(57, 78, 110, 0.03)";
             ringRef.current.style.boxShadow = hovering
-              ? "0 0 12px rgba(147, 51, 234, 0.4)"
-              : "0 0 6px rgba(147, 51, 234, 0.15)";
+              ? "0 0 12px rgba(57, 78, 110, 0.4)"
+              : "0 0 6px rgba(57, 78, 110, 0.15)";
           } else {
-            // Dark mode (visible white / purple glow ring)
+            // Dark mode (Pure soft white glow ring)
             ringRef.current.style.borderColor = hovering
-              ? "rgba(168, 85, 247, 0.9)"
+              ? "rgba(255, 255, 255, 0.85)"
               : "rgba(255, 255, 255, 0.35)";
             ringRef.current.style.backgroundColor = hovering
-              ? "rgba(168, 85, 247, 0.15)"
-              : "rgba(255, 255, 255, 0.04)";
+              ? "rgba(255, 255, 255, 0.10)"
+              : "rgba(255, 255, 255, 0.03)";
             ringRef.current.style.boxShadow = hovering
-              ? "0 0 14px rgba(168, 85, 247, 0.65)"
-              : "0 0 8px rgba(255, 255, 255, 0.2)";
+              ? "0 0 14px rgba(255, 255, 255, 0.35), 0 0 2px rgba(255, 255, 255, 0.6)"
+              : "0 0 8px rgba(255, 255, 255, 0.15)";
           }
         }
       }
