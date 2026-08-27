@@ -245,51 +245,31 @@ export default function ParticleNetwork() {
 
         if (isLight) {
           if (s.colorType === 0) {
-            // 70% Tiny stars: ~1px, crisp light-grey/white
-            const r = Math.max(0.65, s.radius * 1.15);
+            // Tiny stars: ~0.8-1.2px, soft dark grey
+            const r = Math.max(0.65, s.radius * 1.1);
             ctx.beginPath();
-            ctx.fillStyle = `rgba(135, 130, 155, ${Math.min(1, renderAlpha * 1.9)})`;
+            ctx.fillStyle = `rgba(98, 104, 110, ${Math.min(0.7, renderAlpha * 1.4)})`;
             ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
             ctx.fill();
           } else if (s.colorType === 1) {
-            // 20% Lavender stars: ~1.5 - 2.5px, soft lavender
-            const r = Math.max(1.1, s.radius * 2.1);
+            // Medium stars: ~1.2 - 2.0px, muted slate-grey
+            const r = Math.max(0.9, s.radius * 1.5);
             ctx.beginPath();
-            ctx.fillStyle = `rgba(160, 130, 230, ${Math.min(1, renderAlpha * 2.1)})`;
+            ctx.fillStyle = `rgba(122, 128, 134, ${Math.min(0.75, renderAlpha * 1.5)})`;
             ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
             ctx.fill();
           } else {
-            // 10% Bright stars: ~2 - 4px with small soft halo + 4-point sparkle
-            const r = Math.max(1.6, s.radius * 3.2);
-            const a = Math.min(1, renderAlpha * 2.2);
+            // Subtle highlight stars: ~1.4 - 2.2px
+            const r = Math.max(1.1, s.radius * 1.6);
+            const a = Math.min(0.8, renderAlpha * 1.4);
 
-            // Soft purple halo bloom
-            ctx.save();
             ctx.beginPath();
-            ctx.arc(s.x, s.y, r * 2.4, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(170, 140, 255, ${a * 0.35})`;
-            ctx.fill();
-
-            // 4-point delicate sparkle flare (matches the reference image ✦)
-            ctx.beginPath();
-            const flare = r * 2.5;
-            ctx.strokeStyle = `rgba(170, 140, 255, ${a * 0.55})`;
-            ctx.lineWidth = 0.75;
-            ctx.moveTo(s.x - flare, s.y);
-            ctx.lineTo(s.x + flare, s.y);
-            ctx.moveTo(s.x, s.y - flare);
-            ctx.lineTo(s.x, s.y + flare);
-            ctx.stroke();
-            ctx.restore();
-
-            // Core bright white / lavender center
-            ctx.beginPath();
-            ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(1, a * 1.5)})`;
+            ctx.fillStyle = `rgba(138, 144, 150, ${a})`;
             ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
             ctx.fill();
 
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(160, 130, 240, ${a * 0.7})`;
+            ctx.strokeStyle = `rgba(138, 144, 150, ${a * 0.35})`;
             ctx.lineWidth = 0.5;
             ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
             ctx.stroke();
@@ -314,21 +294,22 @@ export default function ParticleNetwork() {
         let drawnRadius = p.radius;
         
         if (isLight) {
-          renderAlpha = Math.min(1, p.alpha * 2.5);
-          drawnRadius = Math.max(1.2, p.radius * 1.3);
+          renderAlpha = Math.min(0.8, p.alpha * 1.8);
+          drawnRadius = Math.max(1.0, p.radius * 1.15);
           
-          let rgb = "170, 150, 220"; 
-          if (p.colorType === 0) rgb = "150, 140, 190"; 
-          else if (p.colorType === 1) rgb = "168, 130, 240"; 
-          else rgb = "140, 100, 230"; 
+          // Technical dark-grey palette
+          let rgb = "98, 104, 110"; // #62686E (small stars / particles)
+          if (p.colorType === 0) rgb = "98, 104, 110"; // #62686E
+          else if (p.colorType === 1) rgb = "122, 128, 134"; // #7A8086
+          else rgb = "85, 91, 97"; // #555B61 (larger constellation nodes)
 
-          // Subtle orbital ring around selected prominent constellation nodes
-          if (p.colorType === 2 && drawnRadius > 1.8) {
+          // Subtle dashed technical ring around prominent constellation nodes (#8A9096)
+          if (p.colorType === 2 && drawnRadius > 1.6) {
             ctx.save();
             ctx.beginPath();
-            ctx.arc(p.x, p.y, drawnRadius * 3.2, 0, Math.PI * 2);
-            ctx.strokeStyle = `rgba(160, 150, 210, ${renderAlpha * 0.35})`;
-            ctx.lineWidth = 0.8;
+            ctx.arc(p.x, p.y, drawnRadius * 2.8, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(138, 144, 150, ${renderAlpha * 0.25})`;
+            ctx.lineWidth = 0.7;
             ctx.setLineDash([3, 3]);
             ctx.stroke();
             ctx.restore();
@@ -390,16 +371,16 @@ export default function ParticleNetwork() {
         }
       }
 
-      ctx.lineWidth = isLight ? 1 : 0.5; // Line width requested: 1px
-      const rgb = isLight ? "150, 140, 190" : "200, 210, 255"; // connection line color requested
+      ctx.lineWidth = isLight ? 0.75 : 0.5;
+      const rgb = isLight ? "122, 128, 134" : "200, 210, 255"; // #7A8086 dark grey linework
       for (let s = 0; s < OPACITY_BUCKETS; s++) {
         const seg = buckets[s];
         if (seg.length === 0) continue;
         
         let alpha = ((s + 0.5) / OPACITY_BUCKETS) * MAX_LINK_ALPHA;
         if (isLight) {
-           // Map to 0.18 - 0.28
-           alpha = 0.18 + ((s + 0.5) / OPACITY_BUCKETS) * 0.10;
+           // Low opacity (0.08 - 0.16) for light, subtle linework
+           alpha = 0.08 + ((s + 0.5) / OPACITY_BUCKETS) * 0.08;
         }
         ctx.strokeStyle = `rgba(${rgb}, ${alpha})`;
         ctx.beginPath();

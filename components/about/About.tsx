@@ -27,7 +27,7 @@ export default function About() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 mt-8 relative">
           {/* Main Statement */}
-          <motion.div 
+          <motion.div
             style={{ y: textY }}
             className="lg:col-span-8 flex flex-col gap-8"
           >
@@ -40,7 +40,7 @@ export default function About() {
               <br />
               <span className="text-gray-500">to software.</span>
             </h2>
-            
+
             <p className="text-lg text-gray-400 max-w-2xl leading-relaxed font-sans mt-4">
               My focus is bridging the gap between cutting-edge AI models and reliable, scalable product interfaces. Whether it&apos;s designing a complex multi-agent reasoning loop or polishing a real-time web interface, I approach engineering with a focus on architecture, performance, and user experience.
             </p>

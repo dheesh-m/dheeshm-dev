@@ -7,7 +7,6 @@ type ThemeOrigin = {
   x: number;
   y: number;
   maxRadius: number;
-  starElement?: SVGElement | HTMLElement | null;
 };
 
 type ThemeContextType = {
@@ -19,7 +18,6 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [isLightMode, setIsLightMode] = useState(false);
-  const burstRef = useRef<ThemeBurstTriggerRef>(null);
 
   useEffect(() => {
     // Check local storage on mount
@@ -34,7 +32,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     async (origin?: ThemeOrigin) => {
       const toLight = !isLightMode;
 
-      // Sample exact star coordinates
+      // Sample origin coordinates
       const x = origin?.x ?? (typeof window !== "undefined" ? window.innerWidth - 120 : 0);
       const y = origin?.y ?? 40;
       const maxRadius =
@@ -43,20 +41,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           ? Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))
           : 1200);
 
-      // Single synchronized master duration (0ms delay)
-      const DURATION = 850;
+      const DURATION = 700;
 
-      // 1. Immediately trigger the physical canvas shockwave animation (0ms delay)
-      burstRef.current?.trigger({
-        x,
-        y,
-        maxRadius,
-        toLight,
-        starElement: origin?.starElement,
-        duration: DURATION,
-      });
-
-      // 2. Immediately execute synchronized View Transition radial reveal (0ms delay)
+      // Execute synchronized View Transition radial reveal
       const doc = typeof document !== "undefined" ? (document as any) : null;
       if (doc && typeof doc.startViewTransition === "function") {
         document.documentElement.classList.add("is-theme-transitioning");
@@ -75,7 +62,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         try {
           await transition.ready;
 
-          // The new live theme expands directly from the star
+          // The new theme smoothly expands circularly from the click point
           const anim = document.documentElement.animate(
             {
               clipPath: [
@@ -114,7 +101,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   return (
     <ThemeContext.Provider value={{ isLightMode, toggleTheme }}>
-      <ThemeRadialBurstOverlay ref={burstRef} />
       {children}
     </ThemeContext.Provider>
   );

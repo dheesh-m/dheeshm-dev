@@ -14,9 +14,9 @@ export default function NeuralBackground() {
       <div className="ambient-vignette absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.8)]" />
 
       {/* ── LIGHT MODE ATMOSPHERE & GLOWS ── */}
-      <div className="light-ambient-glow absolute top-[-5%] left-[-5%] w-[750px] h-[750px] rounded-full bg-purple-300/30 blur-[150px] pointer-events-none" />
-      <div className="light-ambient-glow absolute top-[15%] right-[5%] w-[650px] h-[650px] rounded-full bg-violet-400/25 blur-[140px] pointer-events-none" />
-      <div className="light-ambient-glow absolute bottom-[10%] left-[25%] w-[550px] h-[550px] rounded-full bg-purple-200/40 blur-[130px] pointer-events-none" />
+      <div className="light-ambient-glow absolute top-[-5%] left-[-5%] w-[750px] h-[750px] rounded-full bg-slate-300/20 blur-[150px] pointer-events-none" />
+      <div className="light-ambient-glow absolute top-[15%] right-[5%] w-[650px] h-[650px] rounded-full bg-slate-200/30 blur-[140px] pointer-events-none" />
+      <div className="light-ambient-glow absolute bottom-[10%] left-[25%] w-[550px] h-[550px] rounded-full bg-slate-300/15 blur-[130px] pointer-events-none" />
 
       {/* ── LIGHT MODE TECHNICAL GRID (Visible across entire viewport) ── */}
       <div className="light-grid-overlay absolute inset-0 pointer-events-none" />

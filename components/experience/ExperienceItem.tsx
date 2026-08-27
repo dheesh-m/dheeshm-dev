@@ -1,114 +1,165 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, memo } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Experience } from "@/data/experience";
 import { cn } from "@/lib/utils";
-import { ExternalLink, MapPin } from "lucide-react";
+import { ExternalLink, MapPin, ChevronDown } from "lucide-react";
 
 interface ExperienceItemProps {
   experience: Experience;
+  isCurrent?: boolean;
   isOpen: boolean;
   onClick: () => void;
 }
 
-export default function ExperienceItem({ experience, isOpen, onClick }: ExperienceItemProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  // Decorative rings spin only while the expanded item is actually on screen.
-  const isInView = useInView(ref, { margin: "200px" });
-  const spinning = isOpen && isInView;
+function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: ExperienceItemProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Parse period into parts
+  const isPresent = experience.period.toLowerCase().includes("present");
+  const periodParts = experience.period.split("-").map((s) => s.trim());
+  const startYear = periodParts[0] || "2024";
 
   return (
-    <motion.div
-      ref={ref}
-      initial={false}
-      className={cn(
-        "group relative flex flex-col w-full rounded-[20px] border transition-[border-color,background-color,box-shadow,transform] duration-250 ease-out overflow-hidden",
-        isOpen 
-          ? "bg-[rgba(14,15,17,0.94)] backdrop-blur-xl border-[rgba(255,255,255,0.18)] shadow-[0_12px_40px_rgba(0,0,0,0.6)]" 
-          : "bg-[rgba(14,15,17,0.88)] backdrop-blur-xl border-[rgba(255,255,255,0.14)] shadow-[0_8px_30px_rgba(0,0,0,0.4)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(20,21,24,0.92)] hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(255,255,255,0.04)]"
-      )}
-    >
-      {/* Header / Trigger */}
-      <button
-        onClick={onClick}
-        className="relative flex items-center justify-between w-full px-4 sm:px-6 md:px-8 py-4 sm:py-5 text-left focus:outline-none z-10"
-      >
-        {/* Background Highlight on Open */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              layoutId={`exp-bg-${experience.id}`}
-              className="absolute inset-0 bg-[rgba(255,255,255,0.035)] z-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            />
-          )}
-        </AnimatePresence>
-
-        <div className="relative z-10 flex items-start justify-between w-full gap-3 sm:gap-4">
-          <div className="flex-1 flex flex-col md:flex-row md:items-center justify-between gap-1.5 md:gap-4">
-            <div className="flex-1">
-              <h3 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight font-display">
-                {experience.role} <span className="text-[#B5B5B5] font-normal block sm:inline mt-0.5 sm:mt-0">@ {experience.company}</span>
-              </h3>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <span className="text-xs sm:text-sm font-mono text-[#A5A5A5] font-semibold tracking-widest whitespace-nowrap">
-                {experience.period}
-              </span>
-            </div>
+    <div ref={containerRef} className="relative w-full">
+      {/* ── Timeline Node Indicator (Left of Card - Neutral Grey & Subtle Accent) ── */}
+      <div className="absolute -left-[24px] sm:-left-[32px] top-6 -translate-y-1/2 z-20">
+        {isCurrent ? (
+          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#22252b] dark:bg-[#252830] border-2 border-slate-400 dark:border-slate-300 flex items-center justify-center shadow-[0_0_10px_rgba(255,255,255,0.12)]">
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white shadow-sm" />
           </div>
-          
-          <div className="relative flex items-center justify-center w-6 h-6 mt-0.5 sm:mt-1 text-white/50 group-hover:text-white transition-colors shrink-0">
-            <motion.div
-              animate={{ rotate: isOpen ? 180 : 0, opacity: isOpen ? 0 : 1 }}
-              transition={{ duration: 0.3 }}
-              className="absolute"
-            >
-              +
-            </motion.div>
-            <motion.div
-              animate={{ rotate: isOpen ? 0 : -180, opacity: isOpen ? 1 : 0 }}
-              transition={{ duration: 0.3 }}
-              className="absolute text-white text-lg leading-none"
-            >
-              −
-            </motion.div>
+        ) : (
+          <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-slate-200 dark:bg-[#1a1b22] border-2 border-slate-300 dark:border-white/20 flex items-center justify-center">
+            <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-slate-400 dark:bg-white/40" />
+          </div>
+        )}
+      </div>
+
+      {/* ── Experience Card (Soft Charcoal Gradient #181A1F -> #22252B in Dark, #FAFBFC in Light) ── */}
+      <div
+        className={cn(
+          "group relative flex flex-col w-full rounded-2xl sm:rounded-3xl border transition-[border-color,background-color,box-shadow,transform] duration-300 ease-out overflow-hidden cursor-pointer",
+          // Dark Mode: Charcoal gradient #181A1F -> #22252B with subtle border rgba(180, 185, 195, 0.18)
+          "dark:bg-gradient-to-br dark:from-[#181A1F] dark:to-[#22252B] dark:backdrop-blur-2xl dark:border-[rgba(180,185,195,0.18)] dark:hover:border-[rgba(180,185,195,0.3)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.5)]",
+          // Light Mode: Cool-White #FAFBFC with subtle #D9DEE4 border
+          "bg-[#FAFBFC]/95 backdrop-blur-2xl border-[#D9DEE4] hover:border-[#7188A3] shadow-[0_8px_30px_rgba(113,136,163,0.05)]",
+          isOpen
+            ? "border-[#7188A3] dark:border-[rgba(180,185,195,0.28)] shadow-[0_16px_44px_rgba(113,136,163,0.08)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.65)]"
+            : "hover:-translate-y-0.5"
+        )}
+        onClick={onClick}
+      >
+        {/* ── Card Header / Summary Row ── */}
+        <div className="relative flex flex-col justify-between w-full p-5 sm:p-7 z-10">
+          <div className="flex items-start justify-between gap-4 w-full">
+            {/* Role & Company Title */}
+            <div className="flex-1">
+              <h3 className="text-base sm:text-lg md:text-xl font-bold text-[#171A1F] dark:text-[#f8fafc] font-display tracking-tight leading-snug">
+                {experience.role}{" "}
+                <span className="font-medium text-[#5F7692] dark:text-[#cbd5e1] transition-colors">
+                  @ {experience.company}
+                </span>
+              </h3>
+
+              {/* Location & External Link */}
+              {isOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex flex-wrap items-center gap-3 sm:gap-5 text-xs sm:text-[13px] font-mono text-[#66717D] dark:text-gray-400 mt-2.5"
+                >
+                  {experience.location && (
+                    <div className="flex items-center gap-1.5 text-[#66717D] dark:text-gray-400">
+                      <MapPin className="w-3.5 h-3.5 text-[#5F7692] dark:text-gray-400 shrink-0" />
+                      <span>{experience.location}</span>
+                    </div>
+                  )}
+
+                  {experience.companyUrl && (
+                    <a
+                      href={`https://${experience.companyUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-1.5 text-[#66717D] dark:text-gray-300 hover:text-[#171A1F] dark:hover:text-white transition-colors"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5 text-[#5F7692] dark:text-gray-400 shrink-0" />
+                      <span>{experience.companyUrl}</span>
+                    </a>
+                  )}
+                </motion.div>
+              )}
+            </div>
+
+            {/* Date & Expand Chevron Button */}
+            <div className="flex items-center gap-3 sm:gap-4 shrink-0 mt-0.5">
+              <div className="text-xs sm:text-sm font-mono font-medium tracking-wide text-[#66717D] dark:text-gray-400 whitespace-nowrap">
+                <span>{startYear}</span>
+                <span className="text-gray-400 mx-1.5">-</span>
+                {isPresent ? (
+                  <span className="text-[#171A1F] dark:text-[#f1f5f9] font-bold">
+                    Present
+                  </span>
+                ) : (
+                  <span>{periodParts[1]}</span>
+                )}
+              </div>
+
+              {/* Chevron Down Button */}
+              <motion.div
+                animate={{ rotate: isOpen ? 180 : 0 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#E9EDF1] dark:bg-white/[0.06] border border-[#D9DEE4] dark:border-white/10 flex items-center justify-center text-[#66717D] dark:text-gray-300 group-hover:bg-[#D9DEE4] dark:group-hover:bg-white/10 transition-colors"
+              >
+                <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </motion.div>
+            </div>
           </div>
         </div>
-      </button>
 
-      {/* Expanded Content */}
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="px-4 sm:px-6 md:px-8 pb-6 sm:pb-8 pt-2">
-              <div className="flex flex-col md:flex-row gap-4 sm:gap-6 md:gap-8 items-start">
-                {/* Visual Company Logo (above content on mobile, right side on desktop) */}
-                <div className={`order-first md:order-last flex shrink-0 w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 items-center justify-center relative ${experience.logo ? 'opacity-95' : 'opacity-20'} mx-auto md:mx-0 mb-1 sm:mb-2 md:mb-0`}>
-                  <motion.div 
-                    className="absolute inset-0 border border-white/10 rounded-full pointer-events-none"
-                    animate={spinning ? { rotate: 360, scale: [1, 1.05, 1] } : { rotate: 0, scale: 1 }}
-                    transition={spinning ? { duration: 10, repeat: Infinity, ease: "linear" } : { duration: 0 }}
-                  />
-                  <motion.div 
-                    className="absolute inset-3 sm:inset-4 border border-white/5 rounded-full pointer-events-none"
-                    animate={spinning ? { rotate: -360, scale: [1, 1.1, 1] } : { rotate: 0, scale: 1 }}
-                    transition={spinning ? { duration: 15, repeat: Infinity, ease: "linear" } : { duration: 0 }}
-                  />
-                  {experience.logo ? (
-                    <div className="w-11 h-11 sm:w-13 sm:h-13 md:w-16 md:h-16 rounded-full overflow-hidden flex items-center justify-center bg-black/40 backdrop-blur-sm border border-white/10 shadow-lg p-1.5">
+        {/* ── Expanded Content (Smooth Height & Fade Transition) ── */}
+        <AnimatePresence initial={false}>
+          {isOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="px-5 sm:px-7 pb-6 sm:pb-8 pt-1 flex flex-col md:flex-row items-start justify-between gap-6 md:gap-10 border-t border-[#D9DEE4] dark:border-white/[0.08]">
+                
+                {/* Left Column: Description & Tech Pills */}
+                <div className="flex-1 space-y-4 sm:space-y-5 pt-3">
+                  <p className="text-xs sm:text-[13.5px] md:text-sm text-[#66717D] dark:text-[#d1d5db] leading-relaxed sm:leading-loose font-sans">
+                    {experience.description}
+                  </p>
+
+                  {/* Technology Pills in clean grey / slate styling */}
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
+                    {experience.technologies.map((tech) => (
+                      <span
+                        key={tech}
+                        className="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-medium bg-[#E9EDF1] dark:bg-white/[0.05] border border-[#D9DEE4] dark:border-white/10 text-[#334155] dark:text-gray-300 hover:border-[#7188A3] dark:hover:border-white/25 transition-colors"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right Column: Company Logo Emblem in soft grey/white tones */}
+                {experience.logo && (
+                  <div className="hidden md:flex shrink-0 w-28 h-28 lg:w-32 lg:h-32 items-center justify-center relative my-auto">
+                    {/* Concentric subtle decorative rings in soft grey/white */}
+                    <div className="absolute inset-0 rounded-full border border-dashed border-[#D9DEE4] dark:border-white/15 animate-[spin_25s_linear_infinite]" />
+                    <div className="absolute inset-3 rounded-full border border-[#D9DEE4] dark:border-white/10" />
+                    
+                    {/* Center Logo Disc */}
+                    <div className="relative w-14 h-14 lg:w-16 lg:h-16 rounded-full bg-[#FAFBFC] dark:bg-[#1a1c23]/90 backdrop-blur-md border border-[#D9DEE4] dark:border-white/15 p-2 flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
                       <Image
                         src={experience.logo}
                         alt={`${experience.company} logo`}
@@ -118,57 +169,17 @@ export default function ExperienceItem({ experience, isOpen, onClick }: Experien
                         className="w-full h-full object-contain rounded-full"
                       />
                     </div>
-                  ) : (
-                    <div className="text-[10px] md:text-xs font-mono text-white/20">EXP</div>
-                  )}
-                </div>
-
-                {/* Text Content */}
-                <div className="flex-1 space-y-3.5 sm:space-y-5 relative z-10 w-full">
-                  
-                  {/* Metadata: Location & Link */}
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm font-mono text-[#8A8A8A]">
-                    {experience.location && (
-                      <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-500" />
-                        {experience.location}
-                      </div>
-                    )}
-                    {experience.companyUrl && (
-                      <a 
-                        href={`https://${experience.companyUrl}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 hover:text-white transition-colors"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400" />
-                        {experience.companyUrl}
-                      </a>
-                    )}
                   </div>
+                )}
 
-                  {/* Description */}
-                  <p className="text-[#A5A5A5] leading-relaxed sm:leading-loose text-sm sm:text-[15px]">
-                    {experience.description}
-                  </p>
-
-                  {/* Technologies */}
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1 sm:pt-2">
-                    {experience.technologies.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9.5px] sm:text-[10px] font-mono text-[#D4D4D4] bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.1)] hover:border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.08)] transition-colors"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
   );
 }
+
+export default memo(ExperienceItem);
+

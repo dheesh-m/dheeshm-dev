@@ -72,11 +72,11 @@ function TechnologyNode({
             isDimmed ? "opacity-35" : "opacity-100"
           )}
         >
-          {/* Node Glow (only on active/related) */}
+          {/* Node Glow (Subtle on active/related) */}
           {(isActive || isRelated) && (
             <motion.div
               layoutId={`glow-${technology.id}`}
-              className="absolute inset-0 rounded-full bg-purple-500/30 blur-md"
+              className="absolute inset-0 rounded-full bg-slate-400/15 dark:bg-white/10 blur-sm"
             />
           )}
 
@@ -84,22 +84,22 @@ function TechnologyNode({
           <div className={cn(
             "w-3 h-3 rounded-full transition-[transform,background-color,box-shadow] duration-200 ease-out flex items-center justify-center",
             isActive
-              ? "bg-purple-600 dark:bg-purple-400 ring-4 ring-purple-400/50 shadow-[0_0_12px_rgba(147,51,234,0.8)] scale-125"
+              ? "bg-slate-900 dark:bg-white ring-2 ring-slate-400/40 dark:ring-white/40 shadow-[0_0_8px_rgba(255,255,255,0.4)] scale-125"
               : isRelated
-                ? "bg-purple-500 dark:bg-purple-300 ring-2 ring-purple-400/40 shadow-[0_0_8px_rgba(147,51,234,0.5)]"
-                : "bg-purple-600/85 dark:bg-white/85 ring-2 ring-purple-400/30 dark:ring-white/20 shadow-[0_0_6px_rgba(147,51,234,0.35)]"
+                ? "bg-slate-700 dark:bg-slate-300 ring-1 ring-slate-400/30 dark:ring-white/20 shadow-[0_0_4px_rgba(255,255,255,0.2)]"
+                : "bg-slate-600/80 dark:bg-white/70 ring-1 ring-slate-400/20 dark:ring-white/10"
           )}>
-            <div className="w-1 h-1 rounded-full bg-white" />
+            <div className="w-1 h-1 rounded-full bg-white dark:bg-slate-900" />
           </div>
 
           {/* Crisp, High-Contrast Node Label */}
           <span className={cn(
             "absolute left-4.5 whitespace-nowrap text-[11px] font-mono tracking-wider font-semibold transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-out px-2 py-0.5 rounded-md",
             isActive
-              ? "text-purple-950 dark:text-white bg-white/95 dark:bg-purple-950/80 shadow-md border border-purple-300 dark:border-purple-600 scale-105"
+              ? "text-slate-950 dark:text-white bg-white/95 dark:bg-slate-900/90 shadow-sm border border-slate-300 dark:border-white/20 scale-105"
               : isRelated
-                ? "text-purple-900 dark:text-purple-200 bg-white/85 dark:bg-black/60 shadow-sm border border-purple-200/60 dark:border-purple-800/40"
-                : "text-[#29213f] dark:text-white/90 bg-white/75 dark:bg-black/40 shadow-[0_1px_4px_rgba(0,0,0,0.06)] border border-purple-200/40 dark:border-white/10 hover:text-purple-600 dark:hover:text-white"
+                ? "text-slate-900 dark:text-slate-200 bg-white/85 dark:bg-black/60 shadow-sm border border-slate-200 dark:border-white/10"
+                : "text-slate-700 dark:text-gray-300 bg-white/80 dark:bg-black/40 shadow-[0_1px_4px_rgba(0,0,0,0.04)] border border-slate-200/50 dark:border-white/10 hover:text-black dark:hover:text-white"
           )}>
             {technology.name}
           </span>

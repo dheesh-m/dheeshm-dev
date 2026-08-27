@@ -111,7 +111,7 @@ export default function Contact() {
             <span
               className={cn(
                 "contact-status-dot h-1.5 w-1.5 rounded-full inline-block shrink-0",
-                isLightMode ? "bg-[#000000]" : "bg-[#ffffff]"
+                isLightMode ? "bg-[#5F7692]" : "bg-[#ffffff]"
               )}
             />
             Open to new opportunities

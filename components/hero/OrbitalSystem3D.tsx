@@ -75,10 +75,10 @@ const HERO_NODES: NodeDefinition[] = [
     iconType: "user",
     orbitPlane: 0,
     startAngle: -Math.PI * 0.45,
-    speed: 0.16,
+    speed: 0.14,
     radiusMultiplier: 1.05,
-    accentDark: "#a855f7",
-    accentLight: "#9333ea",
+    accentDark: "#94a3b8",
+    accentLight: "#64748b",
   },
   {
     id: "rag",
@@ -86,10 +86,10 @@ const HERO_NODES: NodeDefinition[] = [
     iconType: "message",
     orbitPlane: 1,
     startAngle: Math.PI * 0.95,
-    speed: -0.14,
+    speed: -0.12,
     radiusMultiplier: 0.95,
-    accentDark: "#818cf8",
-    accentLight: "#7c3aed",
+    accentDark: "#94a3b8",
+    accentLight: "#64748b",
   },
   {
     id: "tools",
@@ -98,10 +98,10 @@ const HERO_NODES: NodeDefinition[] = [
     iconType: "box",
     orbitPlane: 1,
     startAngle: -Math.PI * 0.05,
-    speed: 0.15,
+    speed: 0.13,
     radiusMultiplier: 1.08,
-    accentDark: "#c084fc",
-    accentLight: "#a855f7",
+    accentDark: "#94a3b8",
+    accentLight: "#64748b",
   },
   {
     id: "api",
@@ -109,10 +109,10 @@ const HERO_NODES: NodeDefinition[] = [
     iconType: "code",
     orbitPlane: 2,
     startAngle: Math.PI * 0.35,
-    speed: -0.13,
+    speed: -0.11,
     radiusMultiplier: 1.02,
-    accentDark: "#22d3ee",
-    accentLight: "#06b6d4",
+    accentDark: "#94a3b8",
+    accentLight: "#64748b",
   },
   {
     id: "memory",
@@ -120,10 +120,10 @@ const HERO_NODES: NodeDefinition[] = [
     iconType: "database",
     orbitPlane: 2,
     startAngle: Math.PI * 0.72,
-    speed: 0.14,
+    speed: 0.12,
     radiusMultiplier: 0.96,
-    accentDark: "#a855f7",
-    accentLight: "#9333ea",
+    accentDark: "#94a3b8",
+    accentLight: "#64748b",
   },
 ];
 
@@ -410,15 +410,15 @@ function OrbitalSystem3D() {
     ctx.clearRect(0, 0, W, H);
 
     // ── 1. Soft Central Atmosphere Glow ──────────────────────────────────────
-    const atmosR = Math.min(W, H) * 0.48;
+    const atmosR = Math.min(W, H) * 0.45;
     const atmosGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, atmosR);
     if (light) {
-      atmosGrd.addColorStop(0, "rgba(147, 51, 234, 0.07)");
-      atmosGrd.addColorStop(0.5, "rgba(168, 85, 247, 0.025)");
+      atmosGrd.addColorStop(0, "rgba(147, 51, 234, 0.025)");
+      atmosGrd.addColorStop(0.5, "rgba(148, 163, 184, 0.015)");
       atmosGrd.addColorStop(1, "transparent");
     } else {
-      atmosGrd.addColorStop(0, "rgba(168, 85, 247, 0.08)");
-      atmosGrd.addColorStop(0.5, "rgba(129, 140, 248, 0.025)");
+      atmosGrd.addColorStop(0, "rgba(255, 255, 255, 0.03)");
+      atmosGrd.addColorStop(0.5, "rgba(148, 163, 184, 0.015)");
       atmosGrd.addColorStop(1, "transparent");
     }
     ctx.fillStyle = atmosGrd;
@@ -445,10 +445,10 @@ function OrbitalSystem3D() {
       
       // Primary dashed orbit
       ctx.save();
-      ctx.lineWidth = 0.95;
-      ctx.setLineDash([6, 5]);
-      ctx.strokeStyle = light ? "#9333ea" : "rgba(255, 255, 255, 0.22)";
-      ctx.globalAlpha = light ? 0.38 : 0.25;
+      ctx.lineWidth = 0.85;
+      ctx.setLineDash([5, 5]);
+      ctx.strokeStyle = light ? "rgba(100, 116, 139, 0.3)" : "rgba(255, 255, 255, 0.18)";
+      ctx.globalAlpha = light ? 0.3 : 0.22;
 
       ctx.beginPath();
       pts.forEach((p, idx) => {
@@ -460,11 +460,11 @@ function OrbitalSystem3D() {
       ctx.closePath();
       ctx.stroke();
 
-      // Secondary faint outer halo ring
+      // Secondary faint outer halo ring (barely visible guide)
       ctx.setLineDash([]);
-      ctx.lineWidth = 0.6;
-      ctx.strokeStyle = light ? "rgba(168, 85, 247, 0.15)" : "rgba(168, 85, 247, 0.12)";
-      ctx.globalAlpha = light ? 0.25 : 0.15;
+      ctx.lineWidth = 0.5;
+      ctx.strokeStyle = light ? "rgba(148, 163, 184, 0.12)" : "rgba(255, 255, 255, 0.06)";
+      ctx.globalAlpha = light ? 0.15 : 0.1;
       ctx.stroke();
 
       ctx.restore();
@@ -472,7 +472,7 @@ function OrbitalSystem3D() {
 
     // ── 4. Draw Orbiting Dust Particles along Rings ───────────────────────────
     orbitParticlesRef.current.forEach((op) => {
-      op.angle += op.speed * 0.015;
+      op.angle += op.speed * 0.012;
       const { rx, ry } = orbitRadii[op.plane];
       const ptLocal: Vec3 = {
         x: Math.cos(op.angle) * rx,
@@ -484,10 +484,10 @@ function OrbitalSystem3D() {
       const proj = project(world, cx, cy);
 
       ctx.save();
-      ctx.fillStyle = light ? "#9333ea" : "#ffffff";
-      ctx.globalAlpha = op.alpha * (light ? 0.25 : 0.35);
+      ctx.fillStyle = light ? "#64748b" : "#ffffff";
+      ctx.globalAlpha = op.alpha * (light ? 0.2 : 0.25);
       ctx.beginPath();
-      ctx.arc(proj.sx, proj.sy, op.size * 0.75, 0, Math.PI * 2);
+      ctx.arc(proj.sx, proj.sy, op.size * 0.65, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     });
@@ -554,7 +554,7 @@ function OrbitalSystem3D() {
 
       // Base radius of glossy glass satellite spheres (18-22px)
       const baseR = isMobile ? 15 : isTablet ? 18 : 22;
-      const r = baseR * (0.75 + depth * 0.5) * (isHovered ? 1.2 : 1.0);
+      const r = baseR * (0.75 + depth * 0.5) * (isHovered ? 1.15 : 1.0);
 
       newHitTargets.push({ id: def.id, sx: finalSx, sy: finalSy, r });
 
@@ -575,10 +575,10 @@ function OrbitalSystem3D() {
       ctx.save();
       const isEnergized = node.isHovered;
       ctx.strokeStyle = light
-        ? isEnergized ? "#9333ea" : "rgba(147, 51, 234, 0.32)"
-        : isEnergized ? "#c084fc" : "rgba(255, 255, 255, 0.18)";
-      ctx.lineWidth = isEnergized ? 2.0 : 1.0;
-      ctx.globalAlpha = isEnergized ? 0.95 : (0.2 + node.depth * 0.35);
+        ? isEnergized ? "rgba(100, 116, 139, 0.7)" : "rgba(148, 163, 184, 0.25)"
+        : isEnergized ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.12)";
+      ctx.lineWidth = isEnergized ? 1.5 : 0.85;
+      ctx.globalAlpha = isEnergized ? 0.9 : (0.15 + node.depth * 0.25);
 
       ctx.beginPath();
       ctx.moveTo(cx, cy);
@@ -586,8 +586,8 @@ function OrbitalSystem3D() {
       ctx.stroke();
 
       if (isEnergized) {
-        ctx.strokeStyle = light ? "rgba(147, 51, 234, 0.18)" : "rgba(168, 85, 247, 0.22)";
-        ctx.lineWidth = 3;
+        ctx.strokeStyle = light ? "rgba(148, 163, 184, 0.15)" : "rgba(255, 255, 255, 0.1)";
+        ctx.lineWidth = 2.5;
         ctx.stroke();
       }
 
@@ -597,17 +597,17 @@ function OrbitalSystem3D() {
     // ── 7. Draw Traveling Data Photons along Spoke Lines ──────────────────────
     dataPhotonsRef.current.forEach((p) => {
       const node = projectedNodes[p.nodeIndex];
-      p.progress += p.speed;
+      p.progress += p.speed * 0.85;
       if (p.progress >= 1) p.progress = 0;
 
       const px = cx + (node.sx - cx) * p.progress;
       const py = cy + (node.sy - cy) * p.progress;
 
       ctx.save();
-      ctx.fillStyle = light ? "#7c3aed" : "#ffffff";
-      ctx.globalAlpha = light ? 0.45 : 0.50;
+      ctx.fillStyle = light ? "#64748b" : "#ffffff";
+      ctx.globalAlpha = light ? 0.35 : 0.40;
       ctx.beginPath();
-      ctx.arc(px, py, p.size * 0.85, 0, Math.PI * 2);
+      ctx.arc(px, py, p.size * 0.7, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     });
@@ -627,7 +627,7 @@ function OrbitalSystem3D() {
     zItems.forEach((item) => {
       if (item.type === "core") {
         // Draw Central LLM Core
-        const coreR = (isMobile ? 26 : isTablet ? 30 : 36) * (1 + Math.sin(t * 1.6) * 0.05);
+        const coreR = (isMobile ? 26 : isTablet ? 30 : 36) * (1 + Math.sin(t * 1.4) * 0.03);
         drawCentralLLMCore(ctx, cx, cy, coreR, light, t);
       } else {
         // Draw Glossy Glass Satellite Node
@@ -653,16 +653,16 @@ function OrbitalSystem3D() {
   ) {
     ctx.save();
 
-    // 1. Subtle ambient bloom
-    const bloomR = r * 2.4;
+    // 1. Subtle, restrained ambient bloom
+    const bloomR = r * 1.6;
     const bloomGrd = ctx.createRadialGradient(x, y, r * 0.5, x, y, bloomR);
     if (light) {
-      bloomGrd.addColorStop(0, "rgba(192, 132, 252, 0.14)");
-      bloomGrd.addColorStop(0.5, "rgba(147, 51, 234, 0.05)");
+      bloomGrd.addColorStop(0, "rgba(147, 51, 234, 0.04)");
+      bloomGrd.addColorStop(0.6, "rgba(148, 163, 184, 0.02)");
       bloomGrd.addColorStop(1, "transparent");
     } else {
-      bloomGrd.addColorStop(0, "rgba(168, 85, 247, 0.12)");
-      bloomGrd.addColorStop(0.5, "rgba(255, 255, 255, 0.04)");
+      bloomGrd.addColorStop(0, "rgba(255, 255, 255, 0.05)");
+      bloomGrd.addColorStop(0.6, "rgba(148, 163, 184, 0.02)");
       bloomGrd.addColorStop(1, "transparent");
     }
     ctx.fillStyle = bloomGrd;
@@ -673,11 +673,11 @@ function OrbitalSystem3D() {
     // 2. Rotating orbital ring around central sphere
     ctx.save();
     ctx.translate(x, y);
-    ctx.rotate(t * 0.6);
+    ctx.rotate(t * 0.4);
     ctx.scale(1, 0.42);
-    ctx.strokeStyle = light ? "rgba(147, 51, 234, 0.55)" : "rgba(255, 255, 255, 0.35)";
-    ctx.lineWidth = 1.0;
-    ctx.globalAlpha = light ? 0.45 : 0.40;
+    ctx.strokeStyle = light ? "rgba(100, 116, 139, 0.35)" : "rgba(255, 255, 255, 0.28)";
+    ctx.lineWidth = 0.9;
+    ctx.globalAlpha = light ? 0.35 : 0.3;
     ctx.beginPath();
     ctx.arc(0, 0, r * 1.35, 0, Math.PI * 2);
     ctx.stroke();
@@ -686,17 +686,16 @@ function OrbitalSystem3D() {
     // 3. 3D Glass / Chrome Sphere Body
     const sphereGrd = ctx.createRadialGradient(x - r * 0.35, y - r * 0.35, 0, x, y, r);
     if (light) {
-      sphereGrd.addColorStop(0, "#ffffff");
-      sphereGrd.addColorStop(0.25, "#d8b4fe");
-      sphereGrd.addColorStop(0.55, "#a855f7");
-      sphereGrd.addColorStop(0.85, "#6b21a8");
-      sphereGrd.addColorStop(1, "#3b0764");
+      sphereGrd.addColorStop(0, "#8FA4BC");
+      sphereGrd.addColorStop(0.35, "#7188A3");
+      sphereGrd.addColorStop(0.75, "#5F7692");
+      sphereGrd.addColorStop(1, "#475569");
     } else {
       sphereGrd.addColorStop(0, "#ffffff");
-      sphereGrd.addColorStop(0.18, "#cbd5e1");
-      sphereGrd.addColorStop(0.42, "#475569");
-      sphereGrd.addColorStop(0.75, "#0f172a");
-      sphereGrd.addColorStop(1, "#020617");
+      sphereGrd.addColorStop(0.15, "#94a3b8");
+      sphereGrd.addColorStop(0.40, "#334155");
+      sphereGrd.addColorStop(0.72, "#0f172a");
+      sphereGrd.addColorStop(1, "#030712");
     }
     ctx.fillStyle = sphereGrd;
     ctx.beginPath();
@@ -704,26 +703,31 @@ function OrbitalSystem3D() {
     ctx.fill();
 
     // 4. Luminous rim edge highlight
-    ctx.strokeStyle = light ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.9)";
-    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = light ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.88)";
+    ctx.lineWidth = 1.3;
     ctx.stroke();
 
     // 5. Specular Reflection Arc (High-gloss glass look)
     ctx.save();
     ctx.beginPath();
     ctx.ellipse(x - r * 0.28, y - r * 0.28, r * 0.38, r * 0.22, -Math.PI / 4, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
     ctx.fill();
     ctx.restore();
 
     // 6. Central Bold LLM Typography
     ctx.fillStyle = "#ffffff";
-    ctx.font = `bold ${Math.round(r * 0.58)}px "Manrope", system-ui, sans-serif`;
+    ctx.font = `bold ${Math.round(r * 0.56)}px "Manrope", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.letterSpacing = "1px";
-    ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
-    ctx.shadowBlur = 8;
+    if (!light) {
+      ctx.shadowColor = "rgba(0, 0, 0, 0.95)";
+      ctx.shadowBlur = 6;
+    } else {
+      ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
+      ctx.shadowBlur = 4;
+    }
     ctx.fillText("LLM", x, y);
 
     ctx.restore();
@@ -742,10 +746,10 @@ function OrbitalSystem3D() {
     ctx.save();
     ctx.globalAlpha = isHovered ? 1.0 : alpha;
 
-    // 1. Ambient Halo (subtle)
-    const haloR = r * (isHovered ? 2.0 : 1.5);
+    // 1. Ambient Halo (minimal, restrained)
+    const haloR = r * (isHovered ? 1.5 : 1.3);
     const haloGrd = ctx.createRadialGradient(x, y, r * 0.5, x, y, haloR);
-    haloGrd.addColorStop(0, light ? def.accentLight + "1a" : def.accentDark + "22");
+    haloGrd.addColorStop(0, light ? "rgba(113, 136, 163, 0.08)" : "rgba(255, 255, 255, 0.08)");
     haloGrd.addColorStop(1, "transparent");
     ctx.fillStyle = haloGrd;
     ctx.beginPath();
@@ -755,16 +759,15 @@ function OrbitalSystem3D() {
     // 2. Glossy Glass Sphere Body
     const sphereGrd = ctx.createRadialGradient(x - r * 0.32, y - r * 0.32, 0, x, y, r);
     if (light) {
-      sphereGrd.addColorStop(0, "#ffffff");
-      sphereGrd.addColorStop(0.3, "#f3e8ff");
-      sphereGrd.addColorStop(0.65, "#d8b4fe");
-      sphereGrd.addColorStop(0.9, def.accentLight);
-      sphereGrd.addColorStop(1, "#4c1d95");
+      sphereGrd.addColorStop(0, "#CBD5E1");
+      sphereGrd.addColorStop(0.35, "#94A3B8");
+      sphereGrd.addColorStop(0.75, "#7188A3");
+      sphereGrd.addColorStop(1, "#5F7692");
     } else {
       sphereGrd.addColorStop(0, "#ffffff");
-      sphereGrd.addColorStop(0.25, "#94a3b8");
-      sphereGrd.addColorStop(0.6, "#1e293b");
-      sphereGrd.addColorStop(0.9, "#0f172a");
+      sphereGrd.addColorStop(0.20, "#64748b");
+      sphereGrd.addColorStop(0.55, "#1e293b");
+      sphereGrd.addColorStop(0.85, "#0f172a");
       sphereGrd.addColorStop(1, "#020617");
     }
     ctx.fillStyle = sphereGrd;
@@ -774,23 +777,23 @@ function OrbitalSystem3D() {
 
     // 3. Crisp Glass Border
     ctx.strokeStyle = light
-      ? (isHovered ? "#9333ea" : "rgba(147, 51, 234, 0.6)")
+      ? (isHovered ? "#334155" : "rgba(255, 255, 255, 0.8)")
       : (isHovered ? "#ffffff" : "rgba(255, 255, 255, 0.75)");
-    ctx.lineWidth = isHovered ? 1.8 : 1.2;
+    ctx.lineWidth = isHovered ? 1.6 : 1.1;
     ctx.stroke();
 
     // 4. Specular Shine
     ctx.save();
     ctx.beginPath();
     ctx.ellipse(x - r * 0.25, y - r * 0.25, r * 0.32, r * 0.18, -Math.PI / 4, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.6)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
     ctx.fill();
     ctx.restore();
 
     // 5. Draw Icon inside the sphere
     const iconSize = r * 0.85;
     const iconColor = light
-      ? (isHovered ? "#3b0764" : "#ffffff")
+      ? (isHovered ? "#ffffff" : "#ffffff")
       : (isHovered ? "#ffffff" : "#f8fafc");
     renderNodeIcon(ctx, def.iconType, x, y, iconSize, iconColor);
 
@@ -813,8 +816,8 @@ function OrbitalSystem3D() {
 
     // Main Label (AGENTS, RAG, TOOLS, API, MEMORY)
     ctx.fillStyle = isHovered
-      ? (light ? "#3b0764" : "#ffffff")
-      : (light ? "#1e1b4b" : "#f1f5f9");
+      ? (light ? "#171A1F" : "#ffffff")
+      : (light ? "#334155" : "#f1f5f9");
     ctx.font = `bold ${isMobile ? 8.5 : 10.5}px "Manrope", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
@@ -824,8 +827,8 @@ function OrbitalSystem3D() {
       ctx.shadowColor = "rgba(0, 0, 0, 0.95)";
       ctx.shadowBlur = 6;
     } else {
-      ctx.shadowColor = "rgba(255, 255, 255, 0.85)";
-      ctx.shadowBlur = 4;
+      ctx.shadowColor = "rgba(255, 255, 255, 0.95)";
+      ctx.shadowBlur = 3;
     }
 
     ctx.fillText(def.label, x, y + r + 5);
@@ -833,8 +836,8 @@ function OrbitalSystem3D() {
     // Sublabel (e.g. VECTOR DB under TOOLS)
     if (def.sublabel) {
       ctx.fillStyle = isHovered
-        ? (light ? "#6b21a8" : "#e2e8f0")
-        : (light ? "#6b7280" : "#94a3b8");
+        ? (light ? "#5F7692" : "#cbd5e1")
+        : (light ? "#66717D" : "#94a3b8");
       ctx.font = `600 ${isMobile ? 7 : 8}px "JetBrains Mono", monospace`;
       ctx.letterSpacing = "0.6px";
       ctx.fillText(def.sublabel, x, y + r + (isMobile ? 16 : 19));

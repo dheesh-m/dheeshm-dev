@@ -276,10 +276,10 @@ function SystemHub({
       };
     });
 
-    // ── 2. Draw Orbital Rings (Purple on Light, Grey on Dark) ─────────────────
+    // ── 2. Draw Orbital Rings (Muted Steel Blue on Light, Grey on Dark) ────────
     ctx.save();
-    ctx.globalAlpha = light ? 0.32 : 0.18;
-    ctx.strokeStyle = light ? "#9333ea" : "#6b7280";
+    ctx.globalAlpha = light ? 0.30 : 0.18;
+    ctx.strokeStyle = light ? "#7188A3" : "#6b7280";
     ctx.lineWidth = 0.85;
     ctx.setLineDash([6, 5]);
 
@@ -299,13 +299,13 @@ function SystemHub({
     ctx.setLineDash([]);
     ctx.restore();
 
-    // ── 3. Draw Connection Lines (Purple on Light, Grey on Dark) ─────────────
+    // ── 3. Draw Connection Lines (Steel Blue on Light, Grey on Dark) ─────────
     const sortedNodes = [...projectedNodes].sort((a, b) => a.depth - b.depth);
-    const lineColor = light ? "#9333ea" : "#9ca3af";
+    const lineColor = light ? "#5F7692" : "#9ca3af";
 
     sortedNodes.forEach((node) => {
       ctx.save();
-      const baseLineAlpha = light ? (0.18 + node.depth * 0.25) : (0.12 + node.depth * 0.18);
+      const baseLineAlpha = light ? (0.16 + node.depth * 0.22) : (0.12 + node.depth * 0.18);
       ctx.globalAlpha = node.isHovered ? 0.85 : baseLineAlpha;
       ctx.strokeStyle = lineColor;
       ctx.lineWidth = node.isHovered ? 1.6 : 0.85;
@@ -316,10 +316,10 @@ function SystemHub({
       ctx.restore();
     });
 
-    // ── 4. Draw Nodes (Purple on Light, Technical Grey on Dark) ──────────────
-    const nodeSphereColor = light ? "#a855f7" : "#374151";
-    const nodeGlowColor = light ? "#7c3aed" : "#9ca3af";
-    const nodeTextColor = light ? "#ffffff" : "#e5e7eb";
+    // ── 4. Draw Nodes (Steel Blue on Light, Technical Grey on Dark) ──────────
+    const nodeSphereColor = light ? "#7188A3" : "#374151";
+    const nodeGlowColor = light ? "#5F7692" : "#9ca3af";
+    const nodeTextColor = light ? "#171A1F" : "#e5e7eb";
 
     sortedNodes.forEach((node) => {
       // Draw Sphere
@@ -344,7 +344,7 @@ function SystemHub({
     ctx.save();
     ctx.globalAlpha = light ? 0.12 : 0.06;
     const haloGrd = ctx.createRadialGradient(cx, cy, coreR * 0.5, cx, cy, coreR * 2.0 * pulse);
-    haloGrd.addColorStop(0, light ? "rgba(147, 51, 234, 0.4)" : "rgba(200, 200, 210, 0.25)");
+    haloGrd.addColorStop(0, light ? "rgba(113, 136, 163, 0.35)" : "rgba(200, 200, 210, 0.25)");
     haloGrd.addColorStop(1, "transparent");
     ctx.fillStyle = haloGrd;
     ctx.beginPath();
@@ -352,17 +352,17 @@ function SystemHub({
     ctx.fill();
     ctx.restore();
 
-    // Central Sphere (Deep Purple on Light, Charcoal/Grey on Dark)
+    // Central Sphere (Steel-Blue on Light, Charcoal/Grey on Dark)
     drawSphere(
       ctx, cx, cy, coreR,
-      light ? "#7c3aed" : "#1f2937",
-      light ? "#6d28d9" : "#9ca3af",
+      light ? "#5F7692" : "#1f2937",
+      light ? "#475569" : "#9ca3af",
       1.0
     );
 
     // Central Text
     ctx.save();
-    ctx.fillStyle = light ? "#ffffff" : "#f9fafb";
+    ctx.fillStyle = "#ffffff";
     ctx.font = `bold ${isMobile ? 10 : 11.5}px "Manrope", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";

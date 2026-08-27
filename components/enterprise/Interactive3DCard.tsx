@@ -104,7 +104,7 @@ export default function Interactive3DCard({
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="perspective-1200 relative w-full h-[360px] sm:h-[390px] md:h-[410px] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 rounded-[22px]"
+        className="perspective-1200 relative w-full h-[360px] sm:h-[390px] md:h-[410px] cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-white/20 rounded-[22px]"
       >
         {/* Tilt Wrapper (tracks mouse tilt & hover scale/lift) */}
         <motion.div
@@ -114,8 +114,8 @@ export default function Interactive3DCard({
             transformStyle: "preserve-3d",
           }}
           animate={{
-            scale: isHovered ? 1.018 : 1,
-            y: isHovered ? -6 : 0,
+            scale: isHovered ? 1.015 : 1,
+            y: isHovered ? -5 : 0,
           }}
           transition={{
             scale: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
@@ -145,22 +145,22 @@ export default function Interactive3DCard({
             <div
               className={cn(
                 "absolute inset-0 backface-hidden preserve-3d rounded-[22px] p-5 sm:p-6 flex flex-col justify-between overflow-hidden",
-                "flip-card-glass bg-[#0d0d16]/85 backdrop-blur-2xl border transition-all duration-300",
+                "flip-card-glass bg-[#0a0b12]/90 backdrop-blur-2xl border transition-all duration-300",
                 isActive
-                  ? "border-white/25 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.7)]"
-                  : "border-white/10 hover:border-white/20 shadow-[0_16px_40px_-15px_rgba(0,0,0,0.6)]"
+                  ? "border-white/30 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),0_0_24px_rgba(255,255,255,0.06)]"
+                  : "border-white/10 hover:border-white/20 shadow-[0_16px_40px_-15px_rgba(0,0,0,0.7)]"
               )}
               style={{
                 boxShadow: isHovered || isActive
-                  ? `0 20px 48px -12px ${item.glowColor}, 0 0 24px -6px ${item.glowColor}, inset 0 1px 1px 0 rgba(255, 255, 255, 0.15)`
-                  : "0 16px 36px -12px rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.08)",
+                  ? "0 20px 48px -12px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12)"
+                  : "0 16px 36px -12px rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.06)",
               }}
             >
               {/* Dynamic Ambient Edge Highlight */}
               <div
-                className="absolute inset-0 rounded-[22px] pointer-events-none opacity-30 group-hover/card:opacity-75 transition-opacity duration-500"
+                className="absolute inset-0 rounded-[22px] pointer-events-none opacity-40 group-hover/card:opacity-80 transition-opacity duration-500"
                 style={{
-                  background: `radial-gradient(circle at 50% 0%, ${item.glowColor}, transparent 70%)`,
+                  background: "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.06), transparent 70%)",
                 }}
               />
 
@@ -168,28 +168,23 @@ export default function Interactive3DCard({
               <motion.div
                 className="absolute inset-0 rounded-[22px] pointer-events-none opacity-0 group-hover/card:opacity-100 transition-opacity duration-300"
                 style={{
-                  background: `radial-gradient(600px circle at ${glareX.get()}% ${glareY.get()}%, rgba(255, 255, 255, 0.08), transparent 45%)`,
+                  background: `radial-gradient(600px circle at ${glareX.get()}% ${glareY.get()}%, rgba(255, 255, 255, 0.06), transparent 45%)`,
                 }}
               />
 
-              {/* Front Top: Number & Glowing Neon Icon Badge */}
+              {/* Front Top: Number & Restrained Graphite Icon Badge */}
               <div className="relative z-10 flex items-start justify-between">
                 <span className="font-mono text-xs font-medium text-gray-500 flip-number tracking-wider">
                   {item.id}
                 </span>
 
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center border transition-transform duration-300 group-hover/card:scale-110"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/10 bg-white/[0.04] transition-all duration-300 group-hover/card:scale-105 group-hover/card:border-white/25 group-hover/card:bg-white/[0.08]"
                   style={{
-                    backgroundColor: item.badgeBg,
-                    borderColor: item.badgeBorder,
-                    boxShadow: `0 0 16px -2px ${item.glowColor}`,
+                    boxShadow: isHovered ? "0 0 12px rgba(255, 255, 255, 0.1)" : "none",
                   }}
                 >
-                  <IconComponent
-                    className="w-5 h-5 transition-colors duration-300"
-                    style={{ color: item.accentColor }}
-                  />
+                  <IconComponent className="w-5 h-5 text-gray-300 group-hover/card:text-white transition-colors duration-300" />
                 </div>
               </div>
 
@@ -206,29 +201,20 @@ export default function Interactive3DCard({
               {/* Front Bottom: Explore Action Pill */}
               <div className="relative z-10 pt-2 flex items-center justify-between">
                 <div
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-mono text-gray-300 bg-white/[0.04] border border-white/10 group-hover/card:border-white/20 group-hover/card:bg-white/[0.08] group-hover/card:text-white transition-all duration-300 flip-btn"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-mono text-gray-300 bg-white/[0.04] border border-white/10 group-hover/card:border-white/25 group-hover/card:bg-white/[0.08] group-hover/card:text-white transition-all duration-300 flip-btn"
                   style={{
-                    boxShadow: isHovered ? `0 0 12px -2px ${item.glowColor}` : "none",
+                    boxShadow: isHovered ? "0 0 10px rgba(255, 255, 255, 0.08)" : "none",
                   }}
                 >
                   <span>Explore</span>
-                  <ArrowRight
-                    className="w-3.5 h-3.5 transition-transform duration-300 group-hover/card:translate-x-1"
-                    style={{ color: item.accentColor }}
-                  />
+                  <ArrowRight className="w-3.5 h-3.5 text-gray-400 group-hover/card:text-white transition-transform duration-300 group-hover/card:translate-x-1" />
                 </div>
 
                 {/* Subtle active pulse indicator */}
                 {isActive && (
                   <span className="flex h-2 w-2 relative">
-                    <span
-                      className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
-                      style={{ backgroundColor: item.accentColor }}
-                    />
-                    <span
-                      className="relative inline-flex rounded-full h-2 w-2"
-                      style={{ backgroundColor: item.accentColor }}
-                    />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/40 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-white" />
                   </span>
                 )}
               </div>
@@ -240,20 +226,20 @@ export default function Interactive3DCard({
             <div
               className={cn(
                 "absolute inset-0 backface-hidden preserve-3d rounded-[22px] p-5 sm:p-6 flex flex-col justify-between overflow-hidden",
-                "flip-card-glass bg-[#0b0c14]/90 backdrop-blur-2xl border transition-all duration-300",
+                "flip-card-glass bg-[#0a0b12]/90 backdrop-blur-2xl border transition-all duration-300",
                 isActive
-                  ? "border-white/25 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.7)]"
-                  : "border-white/10 hover:border-white/20 shadow-[0_16px_40px_-15px_rgba(0,0,0,0.6)]"
+                  ? "border-white/30 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.8),0_0_24px_rgba(255,255,255,0.06)]"
+                  : "border-white/10 hover:border-white/20 shadow-[0_16px_40px_-15px_rgba(0,0,0,0.7)]"
               )}
               style={{
                 transform: "rotateY(180deg)",
                 boxShadow: isHovered || isActive
-                  ? `0 20px 48px -12px ${item.glowColor}, 0 0 24px -6px ${item.glowColor}, inset 0 1px 1px 0 rgba(255, 255, 255, 0.15)`
-                  : "0 16px 36px -12px rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.08)",
+                  ? "0 20px 48px -12px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12)"
+                  : "0 16px 36px -12px rgba(0, 0, 0, 0.6), inset 0 1px 1px 0 rgba(255, 255, 255, 0.06)",
               }}
             >
               {/* Subtle Watermark Icon in background */}
-              <div className="absolute -bottom-5 -right-5 opacity-[0.05] pointer-events-none text-white select-none">
+              <div className="absolute -bottom-5 -right-5 opacity-[0.04] pointer-events-none text-white select-none">
                 <IconComponent className="w-32 h-32" />
               </div>
 
@@ -261,7 +247,7 @@ export default function Interactive3DCard({
               <div
                 className="absolute inset-0 rounded-[22px] pointer-events-none opacity-40 group-hover/card:opacity-80 transition-opacity duration-500"
                 style={{
-                  background: `radial-gradient(circle at 50% 0%, ${item.glowColor}, transparent 70%)`,
+                  background: "radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.06), transparent 70%)",
                 }}
               />
 
@@ -270,14 +256,7 @@ export default function Interactive3DCard({
                 <span className="font-mono text-xs font-medium text-gray-500 flip-number">
                   {item.id}
                 </span>
-                <span
-                  className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full border"
-                  style={{
-                    backgroundColor: item.badgeBg,
-                    borderColor: item.badgeBorder,
-                    color: item.accentColor,
-                  }}
-                >
+                <span className="font-mono text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded-full border border-white/10 bg-white/[0.04] text-gray-300">
                   {item.backHeading}
                 </span>
               </div>
@@ -293,10 +272,7 @@ export default function Interactive3DCard({
                       key={idx}
                       className="flex items-center gap-2 text-[11.5px] sm:text-xs text-gray-300/90 font-sans leading-snug flip-highlight"
                     >
-                      <span
-                        className="font-bold flex-shrink-0 text-xs"
-                        style={{ color: item.accentColor }}
-                      >
+                      <span className="font-bold flex-shrink-0 text-xs text-gray-400">
                         ✓
                       </span>
                       <span className="truncate">{highlight}</span>
@@ -308,16 +284,13 @@ export default function Interactive3DCard({
               {/* Back Bottom: Return / Code CTA Pill */}
               <div className="relative z-10 pt-2 flex items-center justify-between">
                 <div
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-mono text-gray-300 bg-white/[0.04] border border-white/10 group-hover/card:border-white/20 group-hover/card:bg-white/[0.08] group-hover/card:text-white transition-all duration-300 flip-btn"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-mono text-gray-300 bg-white/[0.04] border border-white/10 group-hover/card:border-white/25 group-hover/card:bg-white/[0.08] group-hover/card:text-white transition-all duration-300 flip-btn"
                   style={{
-                    boxShadow: isHovered ? `0 0 12px -2px ${item.glowColor}` : "none",
+                    boxShadow: isHovered ? "0 0 10px rgba(255, 255, 255, 0.08)" : "none",
                   }}
                 >
                   <span>Explore</span>
-                  <ArrowRight
-                    className="w-3.5 h-3.5 transition-transform duration-300 group-hover/card:translate-x-1"
-                    style={{ color: item.accentColor }}
-                  />
+                  <ArrowRight className="w-3.5 h-3.5 text-gray-400 group-hover/card:text-white transition-transform duration-300 group-hover/card:translate-x-1" />
                 </div>
 
                 <span className="text-[10px] font-mono text-gray-500 tracking-tight">
@@ -333,9 +306,9 @@ export default function Interactive3DCard({
           GROUND FLOOR MIRROR REFLECTION (Apple Spatial / Showroom Depth)
           ══════════════════════════════════════════════════════════════════ */}
       <div
-        className="w-[85%] h-8 mt-1 rounded-full opacity-25 blur-md pointer-events-none transition-all duration-500 group-hover/card:opacity-50 group-hover/card:scale-105"
+        className="w-[85%] h-8 mt-1 rounded-full opacity-20 blur-md pointer-events-none transition-all duration-500 group-hover/card:opacity-40 group-hover/card:scale-105"
         style={{
-          background: `radial-gradient(ellipse at center, ${item.glowColor} 0%, transparent 75%)`,
+          background: "radial-gradient(ellipse at center, rgba(255, 255, 255, 0.06) 0%, transparent 75%)",
         }}
       />
     </div>

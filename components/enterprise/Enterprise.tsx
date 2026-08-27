@@ -32,8 +32,11 @@ export default function Enterprise() {
           className="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4"
         >
           <div>
-            <h2 className="text-[clamp(2rem,8vw,4.5rem)] font-light tracking-[-0.04em] text-white leading-none mb-3 sm:mb-4 font-display">
-              Engineering <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#8A8A8A] to-[#FFFFFF]">Systems</span>
+            <h2 className="text-[clamp(2rem,8vw,4.5rem)] font-light tracking-[-0.04em] leading-none mb-3 sm:mb-4 font-display">
+              <span className="text-[#171A1F] dark:text-white">Engineering</span>{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#5F7692] dark:from-[#8A8A8A] dark:to-[#FFFFFF]">
+                Systems
+              </span>
             </h2>
             <p className="text-gray-400 font-sans max-w-2xl text-sm sm:text-base">
               Hover over cards for 3D perspective or click to reveal system architectures and implementation details.
@@ -44,9 +47,9 @@ export default function Enterprise() {
         </motion.div>
 
         {/* 3D Interactive Domino Flip Cards Row */}
-        <EngineeringCards3D 
-          activeId={activeId} 
-          onSelectCard={setActiveId} 
+        <EngineeringCards3D
+          activeId={activeId}
+          onSelectCard={setActiveId}
         />
 
         {/* Code Editor Visual Effect */}

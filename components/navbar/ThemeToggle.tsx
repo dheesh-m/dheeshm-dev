@@ -23,13 +23,7 @@ export default function ThemeToggle() {
       Math.max(y, window.innerHeight - y)
     );
 
-    // Trigger the unified continuous physics explosion & pass star element for direct GPU animation
-    toggleTheme({
-      x,
-      y,
-      maxRadius,
-      starElement: starRef.current,
-    });
+    toggleTheme({ x, y, maxRadius });
   };
 
   return (

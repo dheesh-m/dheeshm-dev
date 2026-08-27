@@ -58,21 +58,21 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
   return (
     <div ref={containerRef} className="relative w-full aspect-square max-w-[800px] mx-auto flex items-center justify-center select-none">
 
-      {/* Central Core - High-contrast, clearly visible */}
-      <div className="relative z-30 flex items-center justify-center w-36 h-36 rounded-full border border-purple-400/40 dark:border-white/20 bg-white/95 dark:bg-[#0c0c14]/90 backdrop-blur-md shadow-[0_8px_32px_rgba(147,51,234,0.18)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)] group">
-        <div className="absolute inset-0 rounded-full border border-purple-400/30 dark:border-white/15 animate-[spin_10s_linear_infinite]" />
-        <div className="absolute inset-2 rounded-full border border-dashed border-purple-500/40 dark:border-white/25 animate-[spin_15s_linear_infinite_reverse]" />
-        <div className="absolute inset-4 rounded-full bg-purple-500/10 dark:bg-white/5 blur-sm" />
-        <span className="relative z-10 text-[#1e1b4b] dark:text-white text-xs font-mono font-bold text-center px-4 leading-tight">
+      {/* Central Core - High-contrast, restrained engineering look */}
+      <div className="relative z-30 flex items-center justify-center w-36 h-36 rounded-full border border-slate-200 dark:border-white/15 bg-white/95 dark:bg-[#0c0c14]/90 backdrop-blur-md shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)] group">
+        <div className="absolute inset-0 rounded-full border border-slate-200/80 dark:border-white/10 animate-[spin_10s_linear_infinite]" />
+        <div className="absolute inset-2 rounded-full border border-dashed border-slate-300/80 dark:border-white/20 animate-[spin_15s_linear_infinite_reverse]" />
+        <div className="absolute inset-4 rounded-full bg-slate-400/5 dark:bg-white/5 blur-sm" />
+        <span className="relative z-10 text-gray-900 dark:text-white text-xs font-mono font-bold text-center px-4 leading-tight">
           {centerLabel}
         </span>
       </div>
 
-      {/* Orbit Rings - Clearly visible dashed rings */}
+      {/* Orbit Rings - Subtle dashed rings */}
       {[140, 210, 280].map((r, i) => (
         <div
           key={`ring-${i}`}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-purple-400/35 dark:border-white/15 pointer-events-none"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-slate-300/50 dark:border-white/10 pointer-events-none"
           style={{ width: r * 2, height: r * 2 }}
         />
       ))}

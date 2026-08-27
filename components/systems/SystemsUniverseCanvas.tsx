@@ -143,7 +143,7 @@ function SystemsUniverseCanvas({
   const hoveredNodeIdRef = useRef<string | null>(null);
   hoveredNodeIdRef.current = hoveredNodeId;
 
-  // Exact 4 clusters matching reference layout
+  // Exact 4 clusters matching reference layout with restrained graphite/silver palette
   const hubsRef = useRef<HubMeta[]>([
     {
       id: "ai",
@@ -151,10 +151,10 @@ function SystemsUniverseCanvas({
       code: "LLM",
       title: "AI & LLM INFRA",
       subtitle: "LLM ORCHESTRATION",
-      accentColor: "#a855f7",
-      glowColor: "rgba(168, 85, 247, 0.75)",
-      sphereColorDark: "#9333ea",
-      sphereColorLight: "#7c3aed",
+      accentColor: "#cbd5e1",
+      glowColor: "rgba(203, 213, 225, 0.18)",
+      sphereColorDark: "#334155",
+      sphereColorLight: "#e2e8f0",
       relX: -1,
       relY: -0.74,
       technologies: aiTechnologies,
@@ -165,10 +165,10 @@ function SystemsUniverseCanvas({
       code: "DATA",
       title: "DATA & CLOUD",
       subtitle: "DATA PIPELINES & CLOUD",
-      accentColor: "#3b82f6",
-      glowColor: "rgba(59, 130, 246, 0.75)",
-      sphereColorDark: "#2563eb",
-      sphereColorLight: "#1d4ed8",
+      accentColor: "#94a3b8",
+      glowColor: "rgba(148, 163, 184, 0.18)",
+      sphereColorDark: "#1e293b",
+      sphereColorLight: "#cbd5e1",
       relX: 1,
       relY: -0.70,
       technologies: systemTechnologies.filter(t => t.category === "Data & Cloud Infra"),
@@ -179,10 +179,10 @@ function SystemsUniverseCanvas({
       code: "API",
       title: "BACKEND & APIS",
       subtitle: "HIGH-PERFORMANCE APIs",
-      accentColor: "#06b6d4",
-      glowColor: "rgba(6, 182, 212, 0.75)",
-      sphereColorDark: "#0891b2",
-      sphereColorLight: "#0284c7",
+      accentColor: "#cbd5e1",
+      glowColor: "rgba(203, 213, 225, 0.18)",
+      sphereColorDark: "#1e293b",
+      sphereColorLight: "#e2e8f0",
       relX: -1,
       relY: 0.74,
       technologies: systemTechnologies.filter(t => t.category === "Backend & APIs"),
@@ -193,10 +193,10 @@ function SystemsUniverseCanvas({
       code: "STACK",
       title: "FULL-STACK",
       subtitle: "MODERN WEB EXPERIENCES",
-      accentColor: "#818cf8",
-      glowColor: "rgba(129, 140, 248, 0.75)",
-      sphereColorDark: "#4f46e5",
-      sphereColorLight: "#4338ca",
+      accentColor: "#a1a1aa",
+      glowColor: "rgba(161, 161, 170, 0.18)",
+      sphereColorDark: "#334155",
+      sphereColorLight: "#cbd5e1",
       relX: 1,
       relY: 0.74,
       technologies: systemTechnologies.filter(t => t.category === "Full-Stack"),
@@ -360,22 +360,20 @@ function SystemsUniverseCanvas({
       };
     });
 
-    // ── 1. Draw Central Cosmic Accretion Glow ────────────────────────────────
-    const corePulse = 1 + Math.sin(t * 1.6) * 0.08;
+    // ── 1. Draw Central Cosmic Accretion Glow (Restrained) ──────────────────
+    const corePulse = 1 + Math.sin(t * 1.4) * 0.04;
     const coreR = (isMobile ? 22 : 28) * zoom * corePulse;
 
-    // Layered central energy aura
-    const auraR = coreR * 5.5;
+    // Layered central energy aura (Reduced by 75%)
+    const auraR = coreR * 2.2;
     const auraGrd = ctx.createRadialGradient(coreProj.sx, coreProj.sy, 0, coreProj.sx, coreProj.sy, auraR);
     if (light) {
-      auraGrd.addColorStop(0, "rgba(147, 51, 234, 0.18)");
-      auraGrd.addColorStop(0.35, "rgba(59, 130, 246, 0.08)");
-      auraGrd.addColorStop(0.7, "rgba(6, 182, 212, 0.03)");
+      auraGrd.addColorStop(0, "rgba(147, 51, 234, 0.03)");
+      auraGrd.addColorStop(0.5, "rgba(148, 163, 184, 0.015)");
       auraGrd.addColorStop(1, "transparent");
     } else {
-      auraGrd.addColorStop(0, "rgba(168, 85, 247, 0.22)");
-      auraGrd.addColorStop(0.35, "rgba(59, 130, 246, 0.10)");
-      auraGrd.addColorStop(0.7, "rgba(6, 182, 212, 0.04)");
+      auraGrd.addColorStop(0, "rgba(255, 255, 255, 0.04)");
+      auraGrd.addColorStop(0.5, "rgba(148, 163, 184, 0.015)");
       auraGrd.addColorStop(1, "transparent");
     }
     ctx.fillStyle = auraGrd;
@@ -407,21 +405,21 @@ function SystemsUniverseCanvas({
 
       // Base Conduit Line
       ctx.strokeStyle = light
-        ? isEnergized ? hub.accentColor : "rgba(147, 51, 234, 0.22)"
-        : isEnergized ? hub.accentColor : "rgba(255, 255, 255, 0.14)";
-      ctx.lineWidth = (isEnergized ? 2.4 : 1.2) * zoom;
-      ctx.globalAlpha = isEnergized ? 0.9 : (light ? 0.45 : 0.35);
+        ? isEnergized ? "rgba(100, 116, 139, 0.65)" : "rgba(148, 163, 184, 0.22)"
+        : isEnergized ? "rgba(255, 255, 255, 0.65)" : "rgba(255, 255, 255, 0.12)";
+      ctx.lineWidth = (isEnergized ? 1.8 : 0.9) * zoom;
+      ctx.globalAlpha = isEnergized ? 0.9 : (light ? 0.4 : 0.3);
 
       ctx.beginPath();
       ctx.moveTo(startX, startY);
       ctx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, endX, endY);
       ctx.stroke();
 
-      // Outer soft glow for energized conduits
+      // Outer subtle glow for energized conduits
       if (isEnergized) {
-        ctx.strokeStyle = hub.glowColor;
-        ctx.lineWidth = 6 * zoom;
-        ctx.globalAlpha = 0.35;
+        ctx.strokeStyle = light ? "rgba(148, 163, 184, 0.18)" : "rgba(255, 255, 255, 0.12)";
+        ctx.lineWidth = 3.5 * zoom;
+        ctx.globalAlpha = 0.25;
         ctx.stroke();
       }
 
@@ -431,7 +429,7 @@ function SystemsUniverseCanvas({
     // ── 3. Draw Traveling Energy Photons along Conduits ───────────────────────
     conduitPhotonsRef.current.forEach((p) => {
       const hub = hubs[p.hubIndex];
-      p.progress += p.speed;
+      p.progress += p.speed * 0.85;
       if (p.progress >= 1) p.progress = 0;
 
       const prg = p.direction === 1 ? p.progress : 1 - p.progress;
@@ -457,19 +455,12 @@ function SystemsUniverseCanvas({
       const py = omt * omt * omt * startY + 3 * omt * omt * prg * cp1Y + 3 * omt * prg * prg * cp2Y + prg * prg * prg * endY;
 
       ctx.save();
-      ctx.fillStyle = light ? hub.accentColor : "#ffffff";
-      ctx.globalAlpha = light ? 0.75 : 0.85;
+      ctx.fillStyle = light ? "#64748b" : "#ffffff";
+      ctx.globalAlpha = light ? 0.45 : 0.45;
       ctx.beginPath();
-      ctx.arc(px, py, p.size * zoom, 0, Math.PI * 2);
+      ctx.arc(px, py, p.size * 0.7 * zoom, 0, Math.PI * 2);
       ctx.fill();
 
-      if (!light) {
-        ctx.fillStyle = hub.accentColor;
-        ctx.globalAlpha = 0.45;
-        ctx.beginPath();
-        ctx.arc(px, py, (p.size + 2) * zoom, 0, Math.PI * 2);
-        ctx.fill();
-      }
       ctx.restore();
     });
 
@@ -560,7 +551,7 @@ function SystemsUniverseCanvas({
       // Closer nodes are larger, hovered nodes scale up to ~1.15x
       const baseR = isMobile ? 4.5 : isTablet ? 6.5 : 8.5;
       const depthScale = (0.65 + depth * 0.65) * zoom;
-      const hoverScale = isHovered ? 1.25 : 1.0;
+      const hoverScale = isHovered ? 1.2 : 1.0;
       const r = Math.max(3.5, baseR * depthScale * hoverScale);
 
       const fontSize = Math.max(isMobile ? 7 : 8.5, r * 0.95);
@@ -582,7 +573,7 @@ function SystemsUniverseCanvas({
     // ── 5. Draw 3D Orbital Rings per Hub ─────────────────────────────────────
     hubs.forEach((hub) => {
       ctx.save();
-      ctx.lineWidth = 0.95 * zoom;
+      ctx.lineWidth = 0.85 * zoom;
       ctx.setLineDash([5, 4]);
 
       ORBIT_PLANES.forEach((mat, i) => {
@@ -603,8 +594,8 @@ function SystemsUniverseCanvas({
         });
         ctx.closePath();
 
-        ctx.strokeStyle = light ? hub.accentColor : "rgba(255, 255, 255, 0.16)";
-        ctx.globalAlpha = light ? 0.35 : 0.22;
+        ctx.strokeStyle = light ? "rgba(100, 116, 139, 0.25)" : "rgba(255, 255, 255, 0.14)";
+        ctx.globalAlpha = light ? 0.3 : 0.2;
         ctx.stroke();
       });
 
@@ -617,10 +608,10 @@ function SystemsUniverseCanvas({
       ctx.save();
       const isEnergized = node.isHovered || node.isActive;
       ctx.strokeStyle = light
-        ? isEnergized ? node.hub.accentColor : "rgba(147, 51, 234, 0.25)"
-        : isEnergized ? node.hub.accentColor : "rgba(255, 255, 255, 0.12)";
-      ctx.lineWidth = (isEnergized ? 1.8 : 0.85) * zoom;
-      ctx.globalAlpha = isEnergized ? 0.9 : (0.15 + node.depth * 0.25);
+        ? isEnergized ? "rgba(100, 116, 139, 0.6)" : "rgba(148, 163, 184, 0.18)"
+        : isEnergized ? "rgba(255, 255, 255, 0.6)" : "rgba(255, 255, 255, 0.1)";
+      ctx.lineWidth = (isEnergized ? 1.4 : 0.75) * zoom;
+      ctx.globalAlpha = isEnergized ? 0.85 : (0.15 + node.depth * 0.25);
 
       ctx.beginPath();
       ctx.moveTo(node.hub.proj.sx, node.hub.proj.sy);
@@ -691,17 +682,17 @@ function SystemsUniverseCanvas({
 
     // ── 8. Draw Swirling Accretion Dust Particles around Singularity ─────────
     cosmicDustRef.current.forEach((d) => {
-      d.angle += d.speed * 0.05;
+      d.angle += d.speed * 0.035;
       const dx = Math.cos(d.angle) * d.radius;
       const dy = Math.sin(d.angle) * d.radius * 0.45;
       const dustTrans = applyMat(globalUniverseMat, { x: dx, y: dy, z: Math.sin(d.angle * 2) * 15 });
       const dp = project(dustTrans, cx, cy, zoom);
 
       ctx.save();
-      ctx.fillStyle = light ? "#9333ea" : "#ffffff";
-      ctx.globalAlpha = d.alpha * (light ? 0.6 : 0.85);
+      ctx.fillStyle = light ? "#64748b" : "#ffffff";
+      ctx.globalAlpha = d.alpha * (light ? 0.3 : 0.35);
       ctx.beginPath();
-      ctx.arc(dp.sx, dp.sy, d.size * zoom, 0, Math.PI * 2);
+      ctx.arc(dp.sx, dp.sy, d.size * 0.7 * zoom, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     });
@@ -722,21 +713,21 @@ function SystemsUniverseCanvas({
   ) {
     ctx.save();
 
-    // Dynamic rotating energy rings on multiple axes
+    // Dynamic rotating energy rings on multiple axes (refined silver/slate)
     for (let i = 0; i < 3; i++) {
-      const ringAngle = t * (0.8 + i * 0.4) * (i % 2 === 0 ? 1 : -1);
+      const ringAngle = t * (0.5 + i * 0.25) * (i % 2 === 0 ? 1 : -1);
       ctx.save();
       ctx.translate(sx, sy);
       ctx.rotate(ringAngle);
       ctx.scale(1, 0.45 + i * 0.2);
 
       ctx.strokeStyle = light
-        ? (i === 0 ? "#9333ea" : i === 1 ? "#3b82f6" : "#06b6d4")
-        : (i === 0 ? "rgba(168, 85, 247, 0.6)" : i === 1 ? "rgba(59, 130, 246, 0.6)" : "rgba(6, 182, 212, 0.6)");
-      ctx.lineWidth = 1.2;
-      ctx.globalAlpha = light ? 0.45 : 0.6;
+        ? "rgba(100, 116, 139, 0.35)"
+        : "rgba(255, 255, 255, 0.25)";
+      ctx.lineWidth = 0.9;
+      ctx.globalAlpha = light ? 0.35 : 0.35;
       ctx.beginPath();
-      ctx.arc(0, 0, r * (1.6 + i * 0.4), 0, Math.PI * 2);
+      ctx.arc(0, 0, r * (1.5 + i * 0.35), 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
     }
@@ -745,14 +736,15 @@ function SystemsUniverseCanvas({
     const coreGrd = ctx.createRadialGradient(sx - r * 0.25, sy - r * 0.25, 0, sx, sy, r);
     if (light) {
       coreGrd.addColorStop(0, "#ffffff");
-      coreGrd.addColorStop(0.3, "#a855f7");
-      coreGrd.addColorStop(0.8, "#6b21a8");
-      coreGrd.addColorStop(1, "#3b0764");
+      coreGrd.addColorStop(0.3, "#f1f5f9");
+      coreGrd.addColorStop(0.7, "#cbd5e1");
+      coreGrd.addColorStop(1, "#475569");
     } else {
       coreGrd.addColorStop(0, "#ffffff");
-      coreGrd.addColorStop(0.3, "#c084fc");
-      coreGrd.addColorStop(0.7, "#7c3aed");
-      coreGrd.addColorStop(1, "#1e1b4b");
+      coreGrd.addColorStop(0.2, "#94a3b8");
+      coreGrd.addColorStop(0.55, "#334155");
+      coreGrd.addColorStop(0.85, "#0f172a");
+      coreGrd.addColorStop(1, "#020617");
     }
 
     ctx.fillStyle = coreGrd;
@@ -762,9 +754,9 @@ function SystemsUniverseCanvas({
 
     // Center Hot Singularity Point
     ctx.fillStyle = "#ffffff";
-    ctx.globalAlpha = 0.95;
+    ctx.globalAlpha = 0.9;
     ctx.beginPath();
-    ctx.arc(sx, sy, r * 0.35, 0, Math.PI * 2);
+    ctx.arc(sx, sy, r * 0.28, 0, Math.PI * 2);
     ctx.fill();
 
     ctx.restore();
@@ -781,39 +773,57 @@ function SystemsUniverseCanvas({
   ) {
     ctx.save();
 
-    // Ambient Halo
-    const haloGrd = ctx.createRadialGradient(sx, sy, r * 0.6, sx, sy, r * 2.2);
-    haloGrd.addColorStop(0, hub.glowColor);
+    // Ambient Halo (Subtle & restrained)
+    const haloGrd = ctx.createRadialGradient(sx, sy, r * 0.6, sx, sy, r * 1.4);
+    haloGrd.addColorStop(0, light ? "rgba(113, 136, 163, 0.08)" : "rgba(255, 255, 255, 0.08)");
     haloGrd.addColorStop(1, "transparent");
     ctx.fillStyle = haloGrd;
     ctx.beginPath();
-    ctx.arc(sx, sy, r * 2.2, 0, Math.PI * 2);
+    ctx.arc(sx, sy, r * 1.4, 0, Math.PI * 2);
     ctx.fill();
 
     // 3D Glass Sphere Body
     const sphereGrd = ctx.createRadialGradient(sx - r * 0.3, sy - r * 0.3, 0, sx, sy, r);
-    sphereGrd.addColorStop(0, "#ffffff");
-    sphereGrd.addColorStop(0.35, light ? hub.sphereColorLight : hub.sphereColorDark);
-    sphereGrd.addColorStop(1, light ? hub.sphereColorDark : "#090a14");
+    if (light) {
+      sphereGrd.addColorStop(0, "#CBD5E1");
+      sphereGrd.addColorStop(0.35, "#94A3B8");
+      sphereGrd.addColorStop(0.70, "#7188A3");
+      sphereGrd.addColorStop(1, "#5F7692");
+    } else {
+      sphereGrd.addColorStop(0, "#ffffff");
+      sphereGrd.addColorStop(0.25, "#64748b");
+      sphereGrd.addColorStop(0.60, "#1e293b");
+      sphereGrd.addColorStop(1, "#0b0f19");
+    }
     ctx.fillStyle = sphereGrd;
     ctx.beginPath();
     ctx.arc(sx, sy, r, 0, Math.PI * 2);
     ctx.fill();
 
+    // Core Rim stroke
+    ctx.strokeStyle = light ? "rgba(255, 255, 255, 0.85)" : "rgba(255, 255, 255, 0.75)";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
     // Core Code Label (LLM, DATA, API, STACK)
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = light ? "#ffffff" : "#ffffff";
     ctx.font = `bold ${isMobile ? 9 : 11}px "Manrope", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.globalAlpha = 0.98;
     ctx.letterSpacing = "0.8px";
-    ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
-    ctx.shadowBlur = 6;
+    if (!light) {
+      ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
+      ctx.shadowBlur = 5;
+    } else {
+      ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
+      ctx.shadowBlur = 3;
+    }
     ctx.fillText(hub.code, sx, sy);
 
     // Subtle Subtitle under core (e.g. LLM ORCHESTRATION)
     if (hub.subtitle) {
-      ctx.fillStyle = light ? "rgba(107, 33, 168, 0.75)" : "rgba(216, 180, 254, 0.65)";
+      ctx.fillStyle = light ? "#5F7692" : "#94a3b8";
       ctx.font = `600 ${isMobile ? 6 : 7.5}px "JetBrains Mono", monospace`;
       ctx.letterSpacing = "0.6px";
       ctx.fillText(hub.subtitle, sx, sy + r + (isMobile ? 8 : 11));
@@ -836,10 +846,10 @@ function SystemsUniverseCanvas({
     ctx.save();
     ctx.globalAlpha = isHovered ? 1.0 : alpha;
 
-    // Outer Glow
-    const haloRadius = r * (isHovered ? 3.0 : 2.0);
+    // Outer Glow (Minimal)
+    const haloRadius = r * (isHovered ? 1.6 : 1.35);
     const haloGrd = ctx.createRadialGradient(sx, sy, 0, sx, sy, haloRadius);
-    haloGrd.addColorStop(0, glowColor);
+    haloGrd.addColorStop(0, light ? "rgba(113, 136, 163, 0.08)" : "rgba(255, 255, 255, 0.08)");
     haloGrd.addColorStop(1, "transparent");
     ctx.fillStyle = haloGrd;
     ctx.beginPath();
@@ -848,9 +858,17 @@ function SystemsUniverseCanvas({
 
     // 3D Luminous Sphere with specular reflection
     const sphereGrd = ctx.createRadialGradient(sx - r * 0.35, sy - r * 0.35, 0, sx, sy, r);
-    sphereGrd.addColorStop(0, "#ffffff");
-    sphereGrd.addColorStop(0.4, light ? accentColor : accentColor);
-    sphereGrd.addColorStop(1, light ? "#3b0764" : "#0d0e18");
+    if (light) {
+      sphereGrd.addColorStop(0, "#ffffff");
+      sphereGrd.addColorStop(0.35, "#f8fafc");
+      sphereGrd.addColorStop(0.70, "#cbd5e1");
+      sphereGrd.addColorStop(1, "#475569");
+    } else {
+      sphereGrd.addColorStop(0, "#ffffff");
+      sphereGrd.addColorStop(0.30, "#94a3b8");
+      sphereGrd.addColorStop(0.70, "#334155");
+      sphereGrd.addColorStop(1, "#0f172a");
+    }
 
     ctx.fillStyle = sphereGrd;
     ctx.beginPath();
@@ -858,8 +876,8 @@ function SystemsUniverseCanvas({
     ctx.fill();
 
     if (isHovered) {
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = light ? "#334155" : "#ffffff";
+      ctx.lineWidth = 1.2;
       ctx.stroke();
     }
 
@@ -880,19 +898,19 @@ function SystemsUniverseCanvas({
     ctx.save();
     ctx.globalAlpha = isHovered ? 1.0 : Math.min(1.0, alpha * 1.35);
     ctx.fillStyle = isHovered
-      ? (light ? "#000000" : "#ffffff")
-      : (light ? "#1e1b4b" : "#e2e8f0");
+      ? (light ? "#0f172a" : "#ffffff")
+      : (light ? "#1e293b" : "#e2e8f0");
     ctx.font = `bold ${fontSize}px "Manrope", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
     ctx.letterSpacing = "0.5px";
 
     if (!light) {
-      ctx.shadowColor = "rgba(0, 0, 0, 0.9)";
+      ctx.shadowColor = "rgba(0, 0, 0, 0.95)";
       ctx.shadowBlur = 5;
       ctx.shadowOffsetY = 1;
     } else {
-      ctx.shadowColor = "rgba(255, 255, 255, 0.8)";
+      ctx.shadowColor = "rgba(255, 255, 255, 0.85)";
       ctx.shadowBlur = 3;
     }
 
