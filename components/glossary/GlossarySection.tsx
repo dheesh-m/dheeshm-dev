@@ -10,7 +10,7 @@ export default function GlossarySection() {
     <section id="glossary" className="relative w-full py-20 md:py-28 overflow-hidden">
       <TechBackground />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}

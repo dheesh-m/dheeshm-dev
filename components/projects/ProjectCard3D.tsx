@@ -15,6 +15,7 @@ import {
   RotateCcw,
   CheckCircle2,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const GithubIcon = ({ className = "w-3.5 h-3.5" }: { className?: string }) => (
   <svg
@@ -43,54 +44,51 @@ interface ProjectCard3DProps {
 // ── FarmLens Diagram Visual Component ─────────────────────────────────────────
 const FarmLensDiagram = ({ on }: { on: boolean }) => (
   <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0a0b12] dark:bg-[#07070c] overflow-hidden p-3.5 gap-2 select-none">
-    {/* Subtle radial ambient illumination */}
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.05),transparent_70%)] pointer-events-none" />
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.08),transparent_70%)] pointer-events-none" />
 
     {/* 01 Leaf Upload Step */}
     <motion.div
-      className="w-full max-w-[200px] border border-slate-200 dark:border-white/10 rounded-lg p-2 bg-white/90 dark:bg-white/[0.04] backdrop-blur-md relative overflow-hidden"
-      animate={on ? { borderColor: ["rgba(255,255,255,0.1)", "rgba(255,255,255,0.25)", "rgba(255,255,255,0.1)"] } : {}}
+      className="w-full max-w-[200px] border border-slate-200 dark:border-white/10 rounded-lg p-2 bg-white/90 dark:bg-[#0f1016]/90 backdrop-blur-md relative overflow-hidden"
+      animate={on ? { borderColor: ["rgba(255,255,255,0.1)", "rgba(167,139,250,0.4)", "rgba(255,255,255,0.1)"] } : {}}
       transition={{ duration: 4, repeat: Infinity }}
     >
-      <div className="text-[8px] font-mono uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">01 · LEAF UPLOAD</div>
-      <div className="flex items-center justify-between text-[9px] font-mono text-gray-700 dark:text-gray-300">
-        <span className="font-semibold text-gray-900 dark:text-white">Image</span>
-        <span className="text-gray-400">→</span>
+      <div className="text-[8px] font-mono uppercase tracking-widest text-[#64748B] mb-1">01 · LEAF UPLOAD</div>
+      <div className="flex items-center justify-between text-[9px] font-mono text-[#CBD5E1]">
+        <span className="font-semibold text-white">Image</span>
+        <span className="text-[#64748B]">→</span>
         <span>Preprocess</span>
-        <span className="text-gray-400">→</span>
-        <span className="font-bold text-gray-900 dark:text-white">Infer</span>
+        <span className="text-[#64748B]">→</span>
+        <span className="font-bold text-white">Infer</span>
       </div>
 
-      {/* Subtle scanning laser line */}
       <motion.div
-        className="absolute inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-slate-400/50 dark:via-white/40 to-transparent pointer-events-none"
+        className="absolute inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#A78BFA]/70 to-transparent pointer-events-none"
         animate={on ? { top: ["0%", "100%", "0%"] } : { top: "0%" }}
         transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
       />
     </motion.div>
 
-    {/* Downward connecting line */}
-    <div className="w-px h-2.5 bg-gradient-to-b from-slate-300 dark:from-white/20 to-transparent" />
+    <div className="w-px h-2.5 bg-gradient-to-b from-[#8B5CF6]/40 to-transparent" />
 
     {/* 02 Prediction Record */}
     <motion.div
-      className="w-full max-w-[220px] border border-slate-200 dark:border-white/10 rounded-lg p-2 bg-white/90 dark:bg-white/[0.04] backdrop-blur-md"
+      className="w-full max-w-[220px] border border-slate-200 dark:border-white/10 rounded-lg p-2 bg-white/90 dark:bg-[#0f1016]/90 backdrop-blur-md"
       initial={{ opacity: 0.9 }}
       animate={on ? { opacity: [0.9, 1, 0.9] } : {}}
       transition={{ duration: 4, repeat: Infinity, delay: 0.8 }}
     >
-      <div className="text-[8px] font-mono uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">02 · PREDICTION RECORD</div>
+      <div className="text-[8px] font-mono uppercase tracking-widest text-[#64748B] mb-1">02 · PREDICTION RECORD</div>
       <div className="flex justify-between items-center mb-1">
         <div className="flex flex-col">
-          <span className="text-[7.5px] text-gray-500 uppercase tracking-wider">Condition</span>
-          <span className="text-[10.5px] font-semibold text-gray-900 dark:text-white">Tomato — Early Blight</span>
+          <span className="text-[7.5px] text-[#64748B] uppercase tracking-wider">Condition</span>
+          <span className="text-[10.5px] font-semibold text-white">Tomato — Early Blight</span>
         </div>
         <div className="flex flex-col text-right">
-          <span className="text-[7.5px] text-gray-500 uppercase tracking-wider">Confidence</span>
-          <span className="text-[11px] font-mono font-bold text-emerald-500 dark:text-emerald-400">91.4%</span>
+          <span className="text-[7.5px] text-[#64748B] uppercase tracking-wider">Confidence</span>
+          <span className="text-[11px] font-mono font-bold text-emerald-400">91.4%</span>
         </div>
       </div>
-      <div className="text-[7.5px] font-mono text-gray-500 dark:text-gray-400 border-t border-slate-200 dark:border-white/10 pt-0.5">
+      <div className="text-[7.5px] font-mono text-[#94A3B8] border-t border-slate-200 dark:border-white/10 pt-0.5">
         Treatment recommended · logged
       </div>
     </motion.div>
@@ -107,45 +105,35 @@ const ProjectVisual = ({ id, imageUrl, title, isHovered }: { id: string; imageUr
 
   return (
     <div className="absolute inset-0 bg-[#0a0b12] dark:bg-[#07070c] overflow-hidden">
-      {/* Subtle radial ambient illumination */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.05),transparent_70%)] z-10 pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.06),transparent_70%)] z-10 pointer-events-none" />
 
       <motion.img
         src={src}
         alt={title}
         className="w-full h-full object-cover object-center filter brightness-95 contrast-105"
-        animate={{ scale: isHovered ? 1.03 : 1.0 }}
+        animate={{ scale: isHovered ? 1.04 : 1.0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       />
 
-      {/* Gradient vignette overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c14]/80 via-transparent to-black/20 pointer-events-none z-10" />
-
-      {/* Restrained laser scanline */}
-      <motion.div
-        className="absolute inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/35 to-transparent z-20 pointer-events-none"
-        animate={isHovered ? { top: ["0%", "100%", "0%"] } : { top: "0%" }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: "linear" }}
-      />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0f1016] via-transparent to-transparent opacity-60 z-10" />
     </div>
   );
 };
 
-// ── Project Icon Resolver ─────────────────────────────────────────────────────
 const ProjectIcon = ({ name }: { name?: string }) => {
   switch (name) {
     case "leaf":
-      return <Leaf className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
+      return <Leaf className="w-3.5 h-3.5 text-gray-700 dark:text-[#A78BFA]" />;
     case "bot":
-      return <Bot className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
+      return <Bot className="w-3.5 h-3.5 text-gray-700 dark:text-[#A78BFA]" />;
     case "zap":
-      return <Zap className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
+      return <Zap className="w-3.5 h-3.5 text-gray-700 dark:text-[#A78BFA]" />;
     case "flask":
-      return <FlaskConical className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
+      return <FlaskConical className="w-3.5 h-3.5 text-gray-700 dark:text-[#A78BFA]" />;
     case "film":
-      return <Film className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
+      return <Film className="w-3.5 h-3.5 text-gray-700 dark:text-[#A78BFA]" />;
     default:
-      return <Film className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />;
+      return <Film className="w-3.5 h-3.5 text-gray-700 dark:text-[#A78BFA]" />;
   }
 };
 
@@ -153,18 +141,19 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
-  // 3D Motion & Spring Tilt Setup (Max ±5°)
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+  // Smooth cursor tracking across the card (0 to 100%)
+  const mouseX = useMotionValue(50);
+  const mouseY = useMotionValue(50);
 
-  const rotateX = useSpring(useTransform(mouseY, [-0.5, 0.5], [5, -5]), {
-    stiffness: 280,
-    damping: 24,
-  });
-  const rotateY = useSpring(useTransform(mouseX, [-0.5, 0.5], [-5, 5]), {
-    stiffness: 280,
-    damping: 24,
-  });
+  const springConfig = { stiffness: 220, damping: 24, mass: 0.2 };
+  const smoothMouseX = useSpring(mouseX, springConfig);
+  const smoothMouseY = useSpring(mouseY, springConfig);
+
+  // Restrained 3D tilt (max ±3.5°)
+  const tiltX = useMotionValue(0);
+  const tiltY = useMotionValue(0);
+  const rotateX = useSpring(tiltY, springConfig);
+  const rotateY = useSpring(tiltX, springConfig);
 
   const rectRef = useRef<DOMRect | null>(null);
 
@@ -183,25 +172,25 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
     }
     if (!rect) return;
 
-    const relX = e.clientX - rect.left;
-    const relY = e.clientY - rect.top;
-    const x = relX / rect.width - 0.5;
-    const y = relY / rect.height - 0.5;
-    mouseX.set(x);
-    mouseY.set(y);
+    const px = ((e.clientX - rect.left) / rect.width) * 100;
+    const py = ((e.clientY - rect.top) / rect.height) * 100;
+    mouseX.set(px);
+    mouseY.set(py);
 
-    if (cardRef.current) {
-      cardRef.current.style.setProperty("--spotlight-x", `${relX}px`);
-      cardRef.current.style.setProperty("--spotlight-y", `${relY}px`);
-    }
-  }, [mouseX, mouseY]);
+    const normX = (e.clientX - rect.left) / rect.width - 0.5;
+    const normY = (e.clientY - rect.top) / rect.height - 0.5;
+    tiltX.set(normX * 5.0);
+    tiltY.set(-normY * 5.0);
+  }, [mouseX, mouseY, tiltX, tiltY]);
 
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
     rectRef.current = null;
-    mouseX.set(0);
-    mouseY.set(0);
-  }, [mouseX, mouseY]);
+    tiltX.set(0);
+    tiltY.set(0);
+    mouseX.set(50);
+    mouseY.set(50);
+  }, [tiltX, tiltY, mouseX, mouseY]);
 
   const handleCardClick = useCallback(() => {
     onFlipToggle(project.id);
@@ -210,218 +199,240 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
   const projectNum = project.number || `0${index + 1}`;
 
   return (
-    <div
-      ref={cardRef}
-      style={{
-        ["--spotlight-x" as string]: "150px",
-        ["--spotlight-y" as string]: "150px",
-      }}
-      className="relative w-full h-[330px] sm:h-[460px] lg:h-[505px] perspective-1200 cursor-pointer select-none group"
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleCardClick}
-    >
-      {/* ── TILT WRAPPER: reacts to mouse, disabled when flipped ── */}
-      <motion.div
+    <div className="relative group/card flex flex-col items-center w-full">
+      {/* ══════════════════════════════════════════════════════════════════
+          LAYER 0: DIFFUSE ATMOSPHERIC VIOLET/SMOKE GLOW BEHIND CARD (Magic Bento)
+          ══════════════════════════════════════════════════════════════════ */}
+      <div
+        className={cn(
+          "absolute -inset-2 sm:-inset-3 rounded-[28px] pointer-events-none transition-all duration-700 -z-10",
+          isHovered ? "opacity-100 scale-105" : "opacity-35 scale-95"
+        )}
         style={{
-          rotateX: isFlipped ? 0 : rotateX,
-          rotateY: isFlipped ? 0 : rotateY,
-          transformStyle: "preserve-3d",
-          width: "100%",
-          height: "100%",
+          background: isHovered
+            ? "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.22) 0%, rgba(109, 40, 217, 0.10) 45%, rgba(15, 16, 22, 0) 75%)"
+            : "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.08) 0%, rgba(109, 40, 217, 0.02) 50%, rgba(15, 16, 22, 0) 75%)",
+          filter: "blur(28px)",
         }}
+      />
+
+      <div
+        ref={cardRef}
+        className="relative w-full h-[450px] sm:h-[480px] lg:h-[505px] perspective-1200 cursor-pointer select-none"
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleCardClick}
       >
-        {/* ── FLIP WRAPPER: handles click-to-flip only ── */}
+        {/* Tilt Wrapper */}
         <motion.div
-          animate={{ rotateY: isFlipped ? 180 : 0 }}
-          transition={{ duration: 0.65, ease: [0.23, 1, 0.32, 1] }}
-          className="relative w-full h-full rounded-2xl preserve-3d"
-        >
-        {/* ══════════════════════════════════════════════════════════════════════
-            FRONT FACE OF CARD
-           ══════════════════════════════════════════════════════════════════════ */}
-        <div
-          className="absolute inset-0 w-full h-full rounded-2xl bg-[#FAFBFC]/95 dark:bg-[#0a0b12]/90 backdrop-blur-xl border border-[#D9DEE4] dark:border-white/10 group-hover:border-[#394E6E] dark:group-hover:border-white/20 shadow-[0_8px_30px_rgba(57,78,110,0.06)] dark:shadow-[0_12px_36px_rgba(0,0,0,0.7)] group-hover:shadow-[0_12px_36px_rgba(57,78,110,0.12)] dark:group-hover:shadow-[0_16px_44px_rgba(0,0,0,0.9)] flex flex-col justify-between overflow-hidden backface-hidden transition-all duration-300"
-        >
-          {/* Dynamic Cursor Spotlight Overlay */}
-          <div
-            className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30"
-            style={{
-              background: `radial-gradient(320px circle at var(--spotlight-x, 150px) var(--spotlight-y, 150px), rgba(255, 255, 255, 0.05), transparent 80%)`,
-            }}
-          />
-
-          {/* ── TOP IMAGE / DIAGRAM AREA (~40% of height) ─────────────────── */}
-          <div className="relative w-full h-[120px] sm:h-[180px] lg:h-[190px] border-b border-[#D9DEE4] dark:border-white/10 overflow-hidden rounded-t-2xl">
-            <ProjectVisual
-              id={project.id}
-              imageUrl={project.imageUrl}
-              title={project.title}
-              isHovered={isHovered}
-            />
-
-            {/* Top-Left: Project Number Badge */}
-            <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-20">
-              <span className="px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest text-white bg-black/75 backdrop-blur-md rounded-md border border-white/15 shadow-sm">
-                {projectNum}
-              </span>
-            </div>
-
-            {/* Bottom-Left: Floating Refined Icon Badge */}
-            <div className="absolute bottom-2 left-2.5 sm:bottom-2.5 sm:left-3 z-20 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#FAFBFC]/90 dark:bg-[#0c0c14]/90 backdrop-blur-md border border-[#D9DEE4] dark:border-white/15 shadow-[0_4px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.2)] group-hover:scale-105 transition-transform">
-              <ProjectIcon name={project.iconName} />
-            </div>
-
-            {/* Bottom-Right: Category Badge */}
-            {project.categoryBadge && (
-              <div className="absolute bottom-2 right-2.5 sm:bottom-2.5 sm:right-3 z-20">
-                <span className="px-1.5 sm:px-2 py-0.5 text-[7.5px] sm:text-[8.5px] font-mono font-bold uppercase tracking-wider text-[#334155] dark:text-gray-300 bg-[#FAFBFC]/90 dark:bg-[#0c0c14]/90 backdrop-blur-md rounded border border-[#D9DEE4] dark:border-white/15">
-                  {project.categoryBadge}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* ── CONTENT AREA (~60% of height) ─────────────────────────────── */}
-          <div className="p-3 sm:p-4 lg:p-4.5 flex flex-col flex-grow justify-between">
-            {/* Title & Description */}
-            <div>
-              <h3 className="text-[13.5px] sm:text-base md:text-lg font-bold text-[#171A1F] dark:text-white tracking-tight font-display mb-1 sm:mb-1.5 group-hover:text-[#394E6E] dark:group-hover:text-zinc-200 transition-colors">
-                {project.title}
-              </h3>
-              <p className="text-[10.5px] sm:text-[11.5px] lg:text-xs text-[#66717D] dark:text-gray-400 leading-snug sm:leading-relaxed font-sans line-clamp-2 sm:line-clamp-3 mb-2 sm:mb-3">
-                {project.description}
-              </p>
-            </div>
-
-            {/* Tech Tags */}
-            <div className="flex flex-wrap gap-1 mb-2 sm:mb-3">
-              {project.technologies.slice(0, 5).map((tech) => (
-                <span
-                  key={tech}
-                  className="px-1.5 sm:px-2 py-0.5 text-[8px] sm:text-[9px] font-mono rounded bg-[#E9EDF1] dark:bg-white/[0.04] border border-[#D9DEE4] dark:border-white/10 text-[#334155] dark:text-gray-300 group-hover:border-[#394E6E] dark:group-hover:border-white/20 transition-colors"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-
-            {/* Footer Row */}
-            <div className="flex items-center justify-between text-[10px] sm:text-xs font-semibold">
-              <div className="flex items-center gap-2 sm:gap-3">
-                {project.githubUrl === "private" ? (
-                  <div className="flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] text-gray-500 dark:text-gray-400">
-                    <Lock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-gray-400" />
-                    <span>Private source</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-1 text-[10px] sm:text-[11px] text-[#66717D] dark:text-gray-400 group-hover:text-[#171A1F] dark:group-hover:text-white transition-colors">
-                    <GithubIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                    <span>Source</span>
-                  </div>
-                )}
-
-                {project.liveUrl && (
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-[#394E6E] dark:text-gray-300 hover:text-[#171A1F] dark:hover:text-white transition-colors hover:underline"
-                  >
-                    <span>Live</span>
-                    <ExternalLink className="w-2.5 h-2.5" />
-                  </a>
-                )}
-              </div>
-
-              <div className="flex items-center gap-1 text-[10.5px] sm:text-[11.5px] font-bold text-[#171A1F] dark:text-gray-300 group-hover:text-[#394E6E] dark:group-hover:text-white transition-colors">
-                <span>View More</span>
-                <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════════════════
-            BACK FACE OF CARD ("WHAT I BUILT")
-           ══════════════════════════════════════════════════════════════════════ */}
-        <div
-          className="absolute inset-0 w-full h-full rounded-2xl bg-[#FAFBFC]/95 dark:bg-[#0a0b12]/95 backdrop-blur-xl border border-[#D9DEE4] dark:border-white/20 p-3.5 sm:p-5 flex flex-col justify-between overflow-hidden backface-hidden shadow-[0_12px_36px_rgba(57,78,110,0.1)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.8)]"
           style={{
-            transform: "rotateY(180deg)",
+            rotateX: isFlipped ? 0 : rotateX,
+            rotateY: isFlipped ? 0 : rotateY,
+            transformStyle: "preserve-3d",
+            width: "100%",
+            height: "100%",
+          }}
+          animate={{
+            scale: isHovered ? 1.02 : 1,
+            y: isHovered ? -5 : 0,
+          }}
+          transition={{
+            scale: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+            y: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
           }}
         >
-          {/* Header */}
-          <div>
-            <div className="flex items-center justify-between border-b border-[#D9DEE4] dark:border-white/10 pb-1.5 sm:pb-2 mb-2 sm:mb-3">
-              <span className="px-2 py-0.5 text-[8.5px] sm:text-[9.5px] font-mono font-bold tracking-widest text-[#171A1F] dark:text-gray-300 bg-[#E9EDF1] dark:bg-white/5 rounded border border-[#D9DEE4] dark:border-white/10">
-                {projectNum} · WHAT I BUILT
-              </span>
-              <div className="flex items-center gap-1 text-[9px] sm:text-[10px] font-mono text-[#66717D] dark:text-gray-400">
-                <RotateCcw className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                <span>Return</span>
+          {/* Flip Wrapper */}
+          <motion.div
+            animate={{ rotateY: isFlipped ? 180 : 0 }}
+            transition={{ duration: 0.65, ease: [0.23, 1, 0.32, 1] }}
+            className="relative w-full h-full rounded-2xl preserve-3d"
+          >
+            {/* ══════════════════════════════════════════════════════════════════════
+                FRONT FACE OF CARD
+               ══════════════════════════════════════════════════════════════════════ */}
+            <div
+              className={cn(
+                "absolute inset-0 w-full h-full rounded-2xl bg-[#0f1016]/80 backdrop-blur-2xl border transition-colors duration-500 flex flex-col justify-between overflow-hidden backface-hidden",
+                isHovered
+                  ? "border-[#A78BFA]/35 shadow-[0_20px_45px_-10px_rgba(0,0,0,0.85),0_0_20px_rgba(139,92,246,0.12)]"
+                  : "border-white/[0.14] hover:border-white/25 shadow-[0_16px_40px_-15px_rgba(0,0,0,0.75)]"
+              )}
+            >
+              {/* Magic Bento Internal Spotlight */}
+              <motion.div
+                className="absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300 z-30"
+                style={{
+                  opacity: isHovered ? 1 : 0,
+                  background: useTransform(
+                    [smoothMouseX, smoothMouseY],
+                    ([x, y]) =>
+                      `radial-gradient(420px circle at ${x}% ${y}%, rgba(167, 139, 250, 0.12), rgba(109, 40, 217, 0.05) 40%, transparent 70%)`
+                  ),
+                }}
+              />
+
+              {/* Top Edge Specular Highlight */}
+              <div
+                className="absolute inset-x-0 top-0 h-[1px] rounded-t-2xl pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity duration-500 z-30"
+                style={{
+                  background: "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.25) 30%, rgba(167, 139, 250, 0.4) 50%, rgba(255, 255, 255, 0.25) 70%, transparent 100%)",
+                }}
+              />
+
+              {/* ── TOP IMAGE / DIAGRAM AREA (~40% of height) ─────────────────── */}
+              <div className="relative w-full h-[150px] sm:h-[180px] lg:h-[190px] border-b border-white/[0.10] overflow-hidden rounded-t-2xl">
+                <ProjectVisual
+                  id={project.id}
+                  imageUrl={project.imageUrl}
+                  title={project.title}
+                  isHovered={isHovered}
+                />
+
+                {/* Top-Left: Project Number Badge */}
+                <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-20">
+                  <span className="px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest text-[#CBD5E1] bg-black/75 backdrop-blur-md rounded-md border border-white/15 shadow-sm">
+                    {projectNum}
+                  </span>
+                </div>
+
+                {/* Bottom-Left: Floating Refined Icon Badge */}
+                <div className="absolute bottom-2 left-2.5 sm:bottom-2.5 sm:left-3 z-20 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#0f1016]/90 backdrop-blur-md border border-white/[0.12] shadow-[0_4px_12px_rgba(0,0,0,0.3)] group-hover:scale-105 group-hover:border-[#8B5CF6]/40 transition-all">
+                  <ProjectIcon name={project.iconName} />
+                </div>
+
+                {/* Bottom-Right: Category Badge */}
+                {project.categoryBadge && (
+                  <div className="absolute bottom-2 right-2.5 sm:bottom-2.5 sm:right-3 z-20">
+                    <span className="px-1.5 sm:px-2 py-0.5 text-[7.5px] sm:text-[8.5px] font-mono font-bold uppercase tracking-wider text-[#CBD5E1] bg-[#0f1016]/90 backdrop-blur-md rounded border border-white/[0.12]">
+                      {project.categoryBadge}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* ── CONTENT AREA (~60% of height) ─────────────────────────────── */}
+              <div className="p-4 sm:p-4.5 lg:p-5 flex flex-col flex-grow justify-between relative z-10">
+                {/* Title & Description */}
+                <div>
+                  <h3 className="text-base sm:text-lg font-bold text-[#CBD5E1] group-hover:text-white tracking-tight font-display mb-1.5 transition-colors">
+                    {project.title}
+                  </h3>
+                  <p className="text-xs sm:text-[12.5px] lg:text-[13px] text-[#94A3B8] leading-relaxed font-sans line-clamp-2 sm:line-clamp-3 mb-2.5 sm:mb-3">
+                    {project.description}
+                  </p>
+                </div>
+
+                {/* Tech Tags */}
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {project.technologies.slice(0, 5).map((tech) => (
+                    <span
+                      key={tech}
+                      className="px-2 py-0.5 text-[9px] sm:text-[10px] font-mono rounded bg-white/[0.04] border border-white/[0.10] text-[#CBD5E1] group-hover:border-[#8B5CF6]/30 transition-colors"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Footer Row */}
+                <div className="flex items-center justify-between text-[11px] sm:text-xs font-semibold pt-1 border-t border-white/[0.08]">
+                  <div className="flex items-center gap-3">
+                    {project.githubUrl === "private" ? (
+                      <div className="flex items-center gap-1 text-[11px] text-[#64748B]">
+                        <Lock className="w-3 h-3 text-[#64748B]" />
+                        <span>Private source</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 text-[11px] text-[#94A3B8] group-hover:text-white transition-colors">
+                        <GithubIcon className="w-3.5 h-3.5" />
+                        <span>Source</span>
+                      </div>
+                    )}
+
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-1 text-[11px] font-semibold text-[#A78BFA] hover:text-white transition-colors hover:underline"
+                      >
+                        <span>Live</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1 text-[11.5px] font-bold text-[#CBD5E1] group-hover:text-white transition-colors">
+                    <span>View More</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-[#94A3B8] group-hover:text-white group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
               </div>
             </div>
 
-            <h4 className="text-sm sm:text-base font-bold text-[#171A1F] dark:text-white font-display mb-1.5 sm:mb-2.5">
-              {project.title}
-            </h4>
-
-            {/* Checklist of Engineering Achievements */}
-            <ul className="space-y-1 sm:space-y-1.5 mb-2 sm:mb-3">
-              {(project.whatIBuilt || project.engineeringFocus || []).slice(0, 5).map((item, i) => (
-                <li key={i} className="flex items-start gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] text-[#334155] dark:text-gray-300 leading-snug">
-                  <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#394E6E] dark:text-gray-400 shrink-0 mt-0.5" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Back Action Links */}
-          <div className="pt-2 sm:pt-2.5 border-t border-[#D9DEE4] dark:border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-3">
-              {project.githubUrl && project.githubUrl !== "private" && (
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-[#66717D] dark:text-gray-300 hover:text-[#171A1F] dark:hover:text-white transition-colors"
-                >
-                  <GithubIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  <span>GitHub</span>
-                </a>
+            {/* ══════════════════════════════════════════════════════════════════════
+                BACK FACE OF CARD ("WHAT I BUILT")
+               ══════════════════════════════════════════════════════════════════════ */}
+            <div
+              className={cn(
+                "absolute inset-0 w-full h-full rounded-2xl bg-[#0f1016]/85 backdrop-blur-2xl border border-white/[0.14] p-4 sm:p-5 flex flex-col justify-between overflow-hidden backface-hidden shadow-[0_16px_40px_rgba(0,0,0,0.85)]",
+                isHovered && "border-[#A78BFA]/35"
               )}
-              {project.liveUrl && (
-                <a
-                  href={project.liveUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold text-[#171A1F] dark:text-white hover:text-[#394E6E] hover:underline"
-                >
-                  <span>Live Demo</span>
-                  <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-                </a>
-              )}
-            </div>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onFlipToggle(project.id);
+              style={{
+                transform: "rotateY(180deg)",
               }}
-              className="text-[9px] sm:text-[10px] font-mono uppercase px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-[#E9EDF1] dark:bg-white/10 text-[#171A1F] dark:text-white hover:bg-[#D9DEE4] dark:hover:bg-white/20 transition-colors font-semibold"
             >
-              Flip Back ↺
-            </button>
-          </div>
-        </div>
-      </motion.div>   {/* end flip wrapper */}
-      </motion.div>   {/* end tilt wrapper */}
+              {/* Header */}
+              <div>
+                <div className="flex items-center justify-between border-b border-white/[0.10] pb-2 mb-2.5 sm:mb-3">
+                  <span className="px-2 py-0.5 text-[9px] sm:text-[9.5px] font-mono font-bold tracking-widest text-[#CBD5E1] bg-white/5 rounded border border-white/10">
+                    {projectNum} · WHAT I BUILT
+                  </span>
+                  <div className="flex items-center gap-1 text-[10px] font-mono text-[#64748B]">
+                    <RotateCcw className="w-3 h-3" />
+                    <span>Return</span>
+                  </div>
+                </div>
+
+                <h4 className="text-base font-bold text-[#CBD5E1] font-display mb-2 sm:mb-2.5">
+                  {project.title}
+                </h4>
+
+                <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-[12.5px] text-[#94A3B8] font-sans leading-relaxed">
+                  {project.whatIBuilt?.map((point, idx) => (
+                    <div key={idx} className="flex items-start gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#A78BFA] shrink-0 mt-0.5" />
+                      <span>{point}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Bottom Actions */}
+              <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between">
+                <span className="text-[10px] font-mono text-[#64748B]">
+                  Click to flip back
+                </span>
+                <span className="text-[10px] font-mono text-[#A78BFA] hover:underline">
+                  Close Details →
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════════════════
+          GROUND FLOOR MIRROR REFLECTION WITH VIOLET AMBIENT TINT
+          ══════════════════════════════════════════════════════════════════ */}
+      <div
+        className="w-[85%] h-8 mt-1 rounded-full opacity-25 blur-md pointer-events-none transition-all duration-500 group-hover/card:opacity-50 group-hover/card:scale-105"
+        style={{
+          background: "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.15) 0%, rgba(255, 255, 255, 0.04) 40%, transparent 75%)",
+        }}
+      />
     </div>
   );
 }

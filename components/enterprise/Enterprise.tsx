@@ -14,6 +14,22 @@ export default function Enterprise() {
 
   return (
     <section id="expertise" className="relative w-full py-12 sm:py-20 md:py-28 overflow-hidden">
+      {/* ── Subtle Atmospheric Violet Smoke Clouds behind section (Reference 1) ── */}
+      <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div
+          className="absolute top-1/3 left-1/4 w-[500px] h-[350px] rounded-full opacity-[0.07] dark:opacity-[0.14] blur-[90px]"
+          style={{
+            background: "radial-gradient(circle, #6D28D9 0%, #8B5CF6 50%, transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute top-1/2 right-1/4 w-[450px] h-[300px] rounded-full opacity-[0.05] dark:opacity-[0.10] blur-[80px]"
+          style={{
+            background: "radial-gradient(circle, #8B5CF6 0%, #A78BFA 50%, transparent 70%)",
+          }}
+        />
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0 }}
@@ -32,15 +48,13 @@ export default function Enterprise() {
           className="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4"
         >
           <div>
-            <h2 className="text-[clamp(2rem,8vw,4.5rem)] font-light tracking-[-0.04em] leading-none mb-3 sm:mb-4 font-display text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:via-[#D1D5DB] dark:to-[#FFFFFF]">
+            <h2 className="text-[clamp(2rem,8vw,4.5rem)] font-light tracking-[-0.04em] leading-none mb-3 sm:mb-4 font-display text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F1F5F9] dark:to-[#CBD5E1]">
               Engineering Systems
             </h2>
-            <p className="text-gray-400 font-sans max-w-2xl text-sm sm:text-base">
-              Hover over cards for 3D perspective or click to reveal system architectures and implementation details.
+            <p className="text-[#94A3B8] font-sans max-w-2xl text-sm sm:text-base">
+              Hover over cards for reactive 3D perspective or click to reveal system architectures and implementation details.
             </p>
           </div>
-
-
         </motion.div>
 
         {/* 3D Interactive Domino Flip Cards Row */}

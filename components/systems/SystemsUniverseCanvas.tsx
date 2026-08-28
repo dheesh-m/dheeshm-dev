@@ -1083,16 +1083,73 @@ function SystemsUniverseCanvas({
     }
   }, []);
 
+  // ── Mobile Touch Support ──────────────────────────────────────────────────
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      isDraggingRef.current = true;
+      dragStartRef.current = { x: touch.clientX, y: touch.clientY };
+      rotVelRef.current = { x: 0, y: 0 };
+    }
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 1 && isDraggingRef.current) {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      const touch = e.touches[0];
+      const dx = touch.clientX - dragStartRef.current.x;
+      const dy = touch.clientY - dragStartRef.current.y;
+      dragStartRef.current = { x: touch.clientX, y: touch.clientY };
+
+      const rotDeltaY = (dx / rect.width) * Math.PI * 1.4;
+      const rotDeltaX = (dy / rect.height) * Math.PI * 1.4;
+
+      rotRef.current.y += rotDeltaY;
+      rotRef.current.x -= rotDeltaX;
+
+      rotVelRef.current = { x: -rotDeltaX * 0.6, y: rotDeltaY * 0.6 };
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      isDraggingRef.current = false;
+      if (e.changedTouches.length === 1) {
+        const rect = containerRef.current?.getBoundingClientRect();
+        if (!rect) return;
+        const touch = e.changedTouches[0];
+        const clientX = touch.clientX - rect.left;
+        const clientY = touch.clientY - rect.top;
+        for (const target of hitTargetsRef.current) {
+          const d = Math.hypot(clientX - target.sx, clientY - target.sy);
+          if (d <= target.r + 22) {
+            onNodeClick(target.tech);
+            onNodeHover(target.tech, rect);
+            onHubHover(target.hubId);
+            break;
+          }
+        }
+      }
+    },
+    [onNodeClick, onNodeHover, onHubHover]
+  );
+
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-[580px] sm:h-[660px] lg:h-[760px] select-none cursor-grab active:cursor-grabbing overflow-hidden"
+      style={{ touchAction: "pan-y" }}
+      className="relative w-full h-[440px] xs:h-[500px] sm:h-[660px] lg:h-[760px] select-none cursor-grab active:cursor-grabbing overflow-hidden"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
       onWheel={handleWheel}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <canvas ref={canvasRef} className="w-full h-full block pointer-events-none" />
     </div>

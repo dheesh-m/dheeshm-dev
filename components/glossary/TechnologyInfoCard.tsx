@@ -9,6 +9,21 @@ interface TechnologyInfoCardProps {
 }
 
 export default function TechnologyInfoCard({ technology, position }: TechnologyInfoCardProps) {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+  
+  // Viewport-safe coordinates
+  const leftPos = position
+    ? isMobile
+      ? Math.max(16, Math.min(window.innerWidth - 304, (window.innerWidth - 288) / 2))
+      : Math.min(Math.max(16, position.x + 20), (typeof window !== "undefined" ? window.innerWidth : 1200) - 304)
+    : 0;
+
+  const topPos = position
+    ? isMobile
+      ? Math.max(80, Math.min(position.y - 120, (typeof window !== "undefined" ? window.innerHeight : 800) - 240))
+      : Math.max(20, Math.min(position.y - 40, (typeof window !== "undefined" ? window.innerHeight : 800) - 260))
+    : 0;
+
   return (
     <AnimatePresence>
       {technology && position && (
@@ -18,28 +33,45 @@ export default function TechnologyInfoCard({ technology, position }: TechnologyI
           exit={{ opacity: 0, y: 10, scale: 0.95 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
           style={{
-            left: position.x + 30, // Offset from mouse/node
-            top: position.y - 40,
+            left: leftPos,
+            top: topPos,
           }}
-          className="fixed z-50 w-72 pointer-events-none"
+          className="fixed z-50 w-[min(calc(100vw-32px),288px)] pointer-events-none"
         >
-          <div className="bg-white/95 dark:bg-[#050505]/90 backdrop-blur-xl border border-[#D9DEE4] dark:border-white/10 rounded-xl p-5 shadow-[0_12px_36px_rgba(57,78,110,0.15)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)]">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-2 h-2 rounded-full bg-[#394E6E] dark:bg-white shadow-[0_0_8px_rgba(57,78,110,0.8)] dark:shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-              <h4 className="text-[#171A1F] dark:text-white font-mono font-bold tracking-tight text-sm">
+          {/* Ambient Violet Glow */}
+          <div
+            className="absolute -inset-2 rounded-2xl pointer-events-none -z-10"
+            style={{
+              background: "radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(109, 40, 217, 0.10) 50%, transparent 70%)",
+              filter: "blur(20px)",
+            }}
+          />
+
+          <div className="bg-[#0f1016]/90 backdrop-blur-2xl border border-white/[0.14] rounded-2xl p-5 shadow-[0_16px_40px_rgba(0,0,0,0.85),0_0_20px_rgba(139,92,246,0.15)] relative overflow-hidden">
+            {/* Top edge highlight */}
+            <div
+              className="absolute inset-x-0 top-0 h-[1px] rounded-t-2xl pointer-events-none"
+              style={{
+                background: "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 30%, rgba(167, 139, 250, 0.4) 50%, rgba(255, 255, 255, 0.3) 70%, transparent 100%)",
+              }}
+            />
+
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-2 h-2 rounded-full bg-[#A78BFA] shadow-[0_0_10px_rgba(167,139,250,0.8)]" />
+              <h4 className="text-[#CBD5E1] font-mono font-bold tracking-tight text-sm">
                 {technology.name}
               </h4>
             </div>
             
-            <p className="text-[#66717D] dark:text-gray-400 text-xs leading-relaxed mb-4 font-sans">
+            <p className="text-[#94A3B8] text-xs leading-relaxed mb-4 font-sans">
               {technology.description}
             </p>
 
-            <div className="space-y-1">
-              <span className="text-[9px] font-mono text-[#394E6E] dark:text-[#F5F5F5] uppercase tracking-widest font-bold">
+            <div className="space-y-1 pt-2 border-t border-white/[0.08]">
+              <span className="text-[9px] font-mono text-[#A78BFA] uppercase tracking-widest font-bold">
                 Primary Uses
               </span>
-              <ul className="text-[#334155] dark:text-gray-500 text-[11px] font-mono list-disc list-inside">
+              <ul className="text-[#94A3B8] text-[11px] font-mono list-disc list-inside space-y-0.5">
                 {technology.useCases.slice(0, 3).map((uc, i) => (
                   <li key={i}>{uc}</li>
                 ))}

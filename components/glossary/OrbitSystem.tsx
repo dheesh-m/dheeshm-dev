@@ -56,7 +56,7 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
   const activeRelated = activeNode?.related || [];
 
   return (
-    <div ref={containerRef} className="relative w-full aspect-square max-w-[800px] mx-auto flex items-center justify-center select-none">
+    <div ref={containerRef} className="relative w-full aspect-square max-w-[800px] mx-auto flex items-center justify-center select-none scale-[0.58] xs:scale-[0.72] sm:scale-[0.86] md:scale-100 origin-center my-[-70px] xs:my-[-40px] sm:my-0">
 
       {/* Central Core - Steel Blue in Light Mode, Dark in Dark Mode */}
       <div className="relative z-30 flex items-center justify-center w-36 h-36 rounded-full border border-[#394E6E]/30 dark:border-white/15 bg-gradient-to-br from-[#394E6E] to-[#2B3B52] dark:from-[#0c0c14]/90 dark:to-[#0c0c14]/90 backdrop-blur-md shadow-[0_12px_36px_rgba(57,78,110,0.3)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.6)] group">

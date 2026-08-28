@@ -7,6 +7,7 @@ import MobileMenu from "./MobileMenu";
 import NavItem from "./NavItem";
 import ThemeToggle from "./ThemeToggle";
 import NavbarEdgeLight from "./NavbarEdgeLight";
+import NavbarGhostCursor from "./NavbarGhostCursor";
 import { NAV_ITEMS, SECTION_IDS } from "./navItems";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
@@ -199,6 +200,9 @@ export default function Navbar() {
               : "bg-transparent border border-transparent shadow-none"
           )}
         >
+          {/* ── Atmospheric Violet Ghost Cursor Trail (Behind Navbar Content) ── */}
+          <NavbarGhostCursor />
+
           {/* ── Traveling Edge Light Overlay on Outer Border ── */}
           <NavbarEdgeLight />
 

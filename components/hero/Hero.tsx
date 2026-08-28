@@ -29,7 +29,7 @@ export default function Hero() {
       <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center max-w-7xl mx-auto">
         {/* ── LEFT COLUMN ── */}
         <div
-          className="flex flex-col items-start px-6"
+          className="flex flex-col items-start px-4 sm:px-6"
         >
           <div className="reveal-up">
             <SectionLabel number="01" text="INTRODUCTION" />
@@ -37,13 +37,13 @@ export default function Hero() {
 
           <h1 className="flex flex-col gap-2 mb-8 text-[clamp(2.5rem,12vw,4.5rem)] font-light tracking-[-0.04em] leading-none font-display">
             <span
-              className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#8A8A8A] dark:to-[#FFFFFF]"
+              className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
               style={delay(0.05)}
             >
               Dheesh
             </span>
             <span
-              className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#8A8A8A] dark:to-[#FFFFFF]"
+              className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
               style={delay(0.1)}
             >
               Medekar
@@ -61,11 +61,10 @@ export default function Hero() {
                     className={`w-6 h-[2px] hero-role-dash ${i === 0 ? "bg-[#394E6E] dark:bg-white" : "bg-[#394E6E]/60 dark:bg-white/30"}`}
                   />
                   <span
-                    className={`text-[11.5px] font-mono tracking-[0.2em] font-bold hero-role-text ${
-                      i === 0
+                    className={`text-[11.5px] font-mono tracking-[0.2em] font-bold hero-role-text ${i === 0
                         ? "text-[#394E6E] dark:text-white"
                         : "text-[#394E6E] dark:text-gray-300"
-                    }`}
+                      }`}
                   >
                     {role}
                   </span>

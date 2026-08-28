@@ -40,10 +40,11 @@ export default function Projects() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-md border border-slate-200 dark:border-white/10 text-[11px] font-mono text-gray-700 dark:text-gray-300 w-fit shadow-sm"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-md border border-slate-200 dark:border-white/10 text-[10px] sm:text-[11px] font-mono text-gray-700 dark:text-gray-300 w-fit shadow-sm"
           >
-            <MousePointer className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400" />
-            <span>Hover to tilt • Click to flip • Domino effect</span>
+            <MousePointer className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 shrink-0" />
+            <span className="hidden sm:inline">Hover to tilt • Click to flip • Domino effect</span>
+            <span className="sm:hidden">Tap card to flip • Domino effect</span>
           </motion.div>
         </div>
 
