@@ -8,6 +8,7 @@ import NavItem from "./NavItem";
 import ThemeToggle from "./ThemeToggle";
 import NavbarEdgeLight from "./NavbarEdgeLight";
 import NavbarGhostCursor from "./NavbarGhostCursor";
+import GooeyNavEffect from "./GooeyNavEffect";
 import { NAV_ITEMS, SECTION_IDS } from "./navItems";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
@@ -23,6 +24,7 @@ export default function Navbar() {
   activeRef.current = active;
   const isProgrammaticScrollRef = useRef(false);
   const scrollLockTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     let ticking = false;
@@ -230,6 +232,7 @@ export default function Navbar() {
 
           {/* ── 2. Center: Compact Navigation Pill ──────────────────────────── */}
           <nav
+            ref={navRef}
             aria-label="Primary"
             className={cn(
               "relative z-30 hidden md:flex items-center rounded-full transition-[background-color,border-color,box-shadow,padding,gap] duration-250 ease-out",
@@ -242,6 +245,21 @@ export default function Navbar() {
                   : "bg-white/10 backdrop-blur-2xl backdrop-saturate-[180%] border border-white/20 px-2 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.3)] gap-1"
             )}
           >
+            {/* GooeyNav Effect Layer behind links */}
+            <GooeyNavEffect
+              navRef={navRef}
+              activeLabel={active}
+              isLightMode={isLightMode}
+              isScrolled={isScrolled}
+              particleCount={18}
+              particleDistances={[140, 25]}
+              particleR={160}
+              animationTime={750}
+              timeVariance={350}
+              emissionDelay={120}
+              colors={[1, 2, 3, 1, 2, 3, 1, 4]}
+            />
+
             {NAV_ITEMS.map((item) => (
               <NavItem
                 key={item.id}
