@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/navbar/Navbar";
 import Hero from "@/components/hero/Hero";
-import About from "@/components/about/About";
 import Enterprise from "@/components/enterprise/Enterprise";
 import Projects from "@/components/projects/Projects";
 import GlossarySection from "@/components/glossary/GlossarySection";
@@ -93,10 +92,6 @@ export default function Home() {
         <main className="relative z-10 flex flex-col items-center w-full mx-auto overflow-x-hidden">
           <ScrollSectionWrapper isFirst>
             <Hero />
-          </ScrollSectionWrapper>
-
-          <ScrollSectionWrapper>
-            <About />
           </ScrollSectionWrapper>
 
           <ScrollSectionWrapper>

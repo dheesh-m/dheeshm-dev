@@ -85,7 +85,7 @@ export default function Contact() {
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center w-full">
         <div>
-          <SectionLabel number="07" text="CONTACT" />
+          <SectionLabel number="06" text="CONTACT" />
 
           <motion.h2
             initial={{ opacity: 0, y: 45 }}

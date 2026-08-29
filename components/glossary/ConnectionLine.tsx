@@ -1,63 +1,52 @@
 "use client";
 
 import { memo } from "react";
-import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface ConnectionLineProps {
   radius: number;
-  angleOffset: number;
-  speed: number;
-  isClockwise: boolean;
   isActive: boolean;
   isRelated: boolean;
-  /** Orbits only run while the section is on screen. */
-  isAnimating: boolean;
+  isPaused: boolean;
+  lineRef: (el: HTMLDivElement | null) => void;
 }
 
 function ConnectionLine({
   radius,
-  angleOffset,
-  speed,
-  isClockwise,
   isActive,
   isRelated,
-  isAnimating
+  isPaused,
+  lineRef,
 }: ConnectionLineProps) {
-  const direction = isClockwise ? 1 : -1;
-  const duration = speed * (isActive ? 3 : 1);
-  const spin = isAnimating
-    ? ({ duration, repeat: Infinity, ease: "linear" } as const)
-    : ({ duration: 0 } as const);
-
-  // We rotate a line that extends from center (0,0) to the node's radius
   return (
-    <motion.div
-      className="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none"
-      initial={false}
-      animate={{ rotate: isAnimating ? angleOffset + 360 * direction : angleOffset }}
-      transition={spin}
+    <div
+      ref={lineRef}
+      className="absolute top-1/2 left-1/2 w-0 h-0 pointer-events-none origin-center will-change-transform"
     >
-      <div 
+      <div
         className="absolute top-0 left-0 h-[1px] origin-left"
-        style={{ 
-          width: radius, 
+        style={{
+          width: radius,
           backgroundColor: isActive || isRelated
             ? "rgba(57, 78, 110, 0.85)"
             : "rgba(57, 78, 110, 0.35)",
-          transition: "background-color 0.3s ease"
+          transition: "background-color 0.3s ease",
         }}
       >
         {/* Animated Data Particle moving along the line */}
-        {isAnimating && (isActive || isRelated) && (
-          <motion.div
-            className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#394E6E] dark:bg-white shadow-[0_0_8px_rgba(57,78,110,0.8)] dark:shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-            initial={{ left: 0, opacity: 0 }}
-            animate={{ left: radius, opacity: [0, 1, 1, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        {(isActive || isRelated) && (
+          <div
+            className={cn(
+              "absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#394E6E] dark:bg-white shadow-[0_0_8px_rgba(57,78,110,0.8)] dark:shadow-[0_0_8px_rgba(255,255,255,0.8)]",
+              "animate-[pulseParticle_2s_linear_infinite]"
+            )}
+            style={{
+              animationPlayState: isPaused ? "paused" : "running",
+            }}
           />
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 

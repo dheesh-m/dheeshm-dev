@@ -31,7 +31,7 @@ export default function Enterprise() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <SectionLabel number="03" text="MY EXPERTISE" />
+          <SectionLabel number="02" text="MY EXPERTISE" />
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

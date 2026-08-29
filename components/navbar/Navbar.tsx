@@ -16,6 +16,7 @@ const MOBILE_MENU_ID = "primary-mobile-menu";
 export default function Navbar() {
   const { isLightMode } = useTheme();
   const [active, setActive] = useState("HOME");
+  const [hoveredLabel, setHoveredLabel] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const isScrolledRef = useRef(false);
@@ -24,6 +25,9 @@ export default function Navbar() {
   const isProgrammaticScrollRef = useRef(false);
   const scrollLockTimerRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLElement>(null);
+
+  const effectiveLabel = hoveredLabel ?? active;
+
 
   useEffect(() => {
     let ticking = false;
@@ -214,7 +218,7 @@ export default function Navbar() {
             "relative flex w-full items-center justify-between pointer-events-auto rounded-full transition-[background-color,border-color,box-shadow] duration-250 ease-out",
             isScrolled
               ? isLightMode
-                ? "bg-white/40 backdrop-blur-2xl backdrop-saturate-[190%] border border-white/50 shadow-[0_16px_40px_-8px_rgba(0,0,0,0.12),0_2px_10px_rgba(0,0,0,0.04)]"
+                ? "bg-[#F8F9FB]/95 backdrop-blur-2xl border border-black/[0.08] shadow-[0_12px_36px_-6px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.03)]"
                 : "bg-[#0f0f16]/65 backdrop-blur-2xl backdrop-saturate-[190%] border border-white/15 shadow-[0_20px_48px_-8px_rgba(0,0,0,0.6)]"
               : "bg-transparent border border-transparent shadow-none"
           )}
@@ -236,7 +240,7 @@ export default function Navbar() {
               <span
                 className={cn(
                   "brand-logo font-display text-base sm:text-lg font-bold tracking-tight transition-colors duration-200",
-                  isLightMode ? "text-[#000000]" : "text-[#ffffff]"
+                  isLightMode ? "text-[#0F172A]" : "text-[#ffffff]"
                 )}
               >
                 dhees_h
@@ -248,30 +252,24 @@ export default function Navbar() {
           <nav
             ref={navRef}
             aria-label="Primary"
+            onMouseLeave={() => setHoveredLabel(null)}
             className={cn(
               "relative z-30 hidden md:flex items-center rounded-full transition-[background-color,border-color,box-shadow,padding,gap] duration-250 ease-out",
               isScrolled
                 ? isLightMode
-                  ? "bg-white/35 backdrop-blur-xl backdrop-saturate-[180%] border border-white/45 px-1.5 py-1 shadow-inner gap-0.5"
+                  ? "bg-[#F8F9FB]/96 backdrop-blur-xl border border-black/[0.08] px-1.5 py-1 shadow-[0_2px_12px_rgba(0,0,0,0.04)] gap-0.5"
                   : "bg-white/10 backdrop-blur-xl backdrop-saturate-[180%] border border-white/15 px-1.5 py-1 shadow-inner gap-0.5"
                 : isLightMode
-                  ? "bg-white/15 backdrop-blur-2xl backdrop-saturate-[180%] border border-white/35 px-2 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.06)] gap-1"
+                  ? "bg-[#F8F9FB]/94 backdrop-blur-xl border border-black/[0.08] px-2 py-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.03)] gap-1"
                   : "bg-white/10 backdrop-blur-2xl backdrop-saturate-[180%] border border-white/20 px-2 py-1.5 shadow-[0_4px_24px_rgba(0,0,0,0.3)] gap-1"
             )}
           >
             {/* GooeyNav Effect Layer behind links */}
             <GooeyNavEffect
               navRef={navRef}
-              activeLabel={active}
+              activeLabel={effectiveLabel}
               isLightMode={isLightMode}
               isScrolled={isScrolled}
-              particleCount={18}
-              particleDistances={[140, 25]}
-              particleR={160}
-              animationTime={750}
-              timeVariance={350}
-              emissionDelay={120}
-              colors={[1, 2, 3, 1, 2, 3, 1, 4]}
             />
 
             {NAV_ITEMS.map((item) => (
@@ -282,6 +280,8 @@ export default function Navbar() {
                 title={item.title}
                 href={item.href}
                 isActive={active === item.label}
+                isBlobUnder={effectiveLabel === item.label}
+                onMouseEnter={() => setHoveredLabel(item.label)}
                 onClick={() => handleNavClick(item.label, item.href)}
                 isScrolled={isScrolled}
               />
@@ -296,11 +296,11 @@ export default function Navbar() {
             <a
               href="#contact"
               className={cn(
-                "navbar-cta-resume hidden sm:inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[13px] font-sans font-medium transition-[color,background-color,border-color,box-shadow] duration-200 ease-out whitespace-nowrap outline-none",
+                "navbar-cta-resume hidden sm:inline-flex items-center justify-center px-4 py-1.5 rounded-full text-[13px] font-sans font-semibold transition-[color,background-color,border-color,box-shadow] duration-200 ease-out whitespace-nowrap outline-none",
                 isLightMode
                   ? isScrolled
-                    ? "bg-white/75 text-[#000000] border border-white/50 shadow-sm hover:bg-white hover:shadow"
-                    : "bg-white/30 backdrop-blur-xl text-[#000000] border border-white/35 shadow-sm hover:bg-white/40"
+                    ? "bg-[#F8F9FB] text-[#0F172A] border border-black/10 shadow-sm hover:bg-[#000000] hover:text-[#FFFFFF]"
+                    : "bg-[#F8F9FB]/94 backdrop-blur-xl text-[#0F172A] border border-black/10 shadow-sm hover:bg-[#000000] hover:text-[#FFFFFF]"
                   : isScrolled
                     ? "bg-white/15 text-[#ffffff] border border-white/20 shadow-sm hover:bg-white/25 hover:shadow"
                     : "bg-white/10 backdrop-blur-xl text-[#ffffff] border border-white/20 shadow-sm hover:bg-white/20"
@@ -317,8 +317,8 @@ export default function Navbar() {
                 "flex h-9 w-9 flex-col items-center justify-center md:hidden rounded-full border transition-[color,background-color,border-color] duration-200 ease-out",
                 isLightMode
                   ? isScrolled
-                    ? "bg-white/40 border-white/40 text-[#000000]"
-                    : "bg-white/20 backdrop-blur-md border-white/30 text-[#000000]"
+                    ? "bg-[#F8F9FB] border-black/10 text-[#0F172A] shadow-sm"
+                    : "bg-[#F8F9FB]/94 backdrop-blur-md border-black/10 text-[#0F172A] shadow-sm"
                   : isScrolled
                     ? "bg-white/10 border-white/20 text-[#ffffff]"
                     : "bg-white/10 backdrop-blur-md border-white/20 text-[#ffffff]"

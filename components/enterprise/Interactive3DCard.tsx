@@ -185,8 +185,8 @@ export default function Interactive3DCard({
               rotateY: isFlipped ? 180 : 0,
             }}
             transition={{
-              duration: 0.8,
-              delay: flipDelay,
+              duration: 0.6,
+              delay: 0,
               ease: [0.16, 1, 0.3, 1],
             }}
             className="w-full h-full preserve-3d relative rounded-[16px] sm:rounded-[22px]"
@@ -203,11 +203,11 @@ export default function Interactive3DCard({
                   : "bg-[#0f1016]/80 backdrop-blur-2xl",
                 isActive
                   ? isLightMode
-                    ? "border-[#8B5CF6]/50 shadow-[0_10px_30px_rgba(57,78,110,0.08),0_2px_8px_rgba(0,0,0,0.04)]"
-                    : "border-[#8B5CF6]/40 shadow-[0_20px_50px_-10px_rgba(0,0,0,0.9),0_0_24px_rgba(139,92,246,0.15)]"
+                    ? "border-[#8B5CF6]/60 shadow-[0_0_24px_rgba(139,92,246,0.25),0_10px_30px_rgba(57,78,110,0.08)]"
+                    : "border-violet-400 shadow-[0_0_35px_rgba(168,85,247,0.45),0_20px_50px_-10px_rgba(0,0,0,0.9)]"
                   : isLightMode
-                    ? "border-[#D0D5DD] shadow-[0_4px_20px_rgba(57,78,110,0.04)]"
-                    : "border-white/[0.14] shadow-[0_16px_40px_-15px_rgba(0,0,0,0.75)]"
+                    ? "border-violet-300/60 shadow-[0_0_18px_rgba(139,92,246,0.18),0_4px_20px_rgba(57,78,110,0.04)] hover:border-violet-400"
+                    : "border-violet-500/35 shadow-[0_0_24px_rgba(168,85,247,0.22),0_16px_40px_-15px_rgba(0,0,0,0.75)] hover:border-violet-400 hover:shadow-[0_0_35px_rgba(168,85,247,0.4)]"
               )}
             >
               {/* Magic Bento Internal Spotlight — opacity via motion value */}

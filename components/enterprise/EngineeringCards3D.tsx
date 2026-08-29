@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { enterpriseData, EnterpriseSection } from "@/data/enterpriseData";
 import Interactive3DCard from "./Interactive3DCard";
@@ -14,42 +14,15 @@ export default function EngineeringCards3D({
   activeId,
   onSelectCard,
 }: EngineeringCards3DProps) {
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [clickedIndex, setClickedIndex] = useState(0);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  // Check reduced motion
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mediaQuery.matches);
-    const handleChange = () => setPrefersReducedMotion(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  // Compute domino delay for each card (80-120ms stagger)
-  const getDelay = useCallback(
-    (cardIndex: number) => {
-      if (prefersReducedMotion) return 0;
-      const STAGGER = 0.095; // 95ms between domino cascade steps
-
-      if (!isFlipped) {
-        // Flipping to BACK: clicked card starts first, then cascades forward
-        const step = (cardIndex - clickedIndex + 4) % 4;
-        return step * STAGGER;
-      } else {
-        // Flipping back to FRONT (Reverse sequence: 04 → 03 → 02 → 01)
-        const step = 3 - cardIndex;
-        return step * STAGGER;
-      }
-    },
-    [isFlipped, clickedIndex, prefersReducedMotion]
-  );
+  // Independent flip state for each card (no domino cascade)
+  const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
 
   const handleCardClick = useCallback(
-    (index: number, item: EnterpriseSection) => {
-      setClickedIndex(index);
-      setIsFlipped((prev) => !prev);
+    (item: EnterpriseSection) => {
+      setFlippedCards((prev) => ({
+        ...prev,
+        [item.id]: !prev[item.id],
+      }));
       onSelectCard(item.id);
     },
     [onSelectCard]
@@ -82,10 +55,10 @@ export default function EngineeringCards3D({
             <Interactive3DCard
               item={item}
               index={i}
-              isFlipped={isFlipped}
-              flipDelay={getDelay(i)}
+              isFlipped={Boolean(flippedCards[item.id])}
+              flipDelay={0}
               isActive={activeId === item.id}
-              onCardClick={() => handleCardClick(i, item)}
+              onCardClick={() => handleCardClick(item)}
               onCardHover={() => handleCardHover(item)}
             />
           </motion.div>

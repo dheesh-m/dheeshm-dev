@@ -2,6 +2,7 @@
 
 import { useRef, type CSSProperties } from "react";
 import MagneticButton from "../ui/MagneticButton";
+import HeroSpotlightCTA from "./HeroSpotlightCTA";
 import { SOCIALS } from "@/data/socials";
 import SectionLabel from "../ui/SectionLabel";
 import SystemGraph from "./SystemGraph";
@@ -87,14 +88,13 @@ export default function Hero() {
           </p>
 
           <div
-            className="hero-buttons reveal-up flex flex-col xs:flex-row items-stretch sm:items-center w-full sm:w-auto gap-3 sm:gap-4 mb-8 sm:mb-12"
+            className="hero-buttons reveal-up flex flex-col xs:flex-row items-stretch sm:items-center w-full sm:w-auto gap-3 sm:gap-3.5 mb-8 sm:mb-12"
             style={delay(0.25)}
           >
-            {/* Native anchor navigation; scroll-behavior and scroll-padding-top
-                in globals.css handle the smooth scroll and header offset. */}
+            {/* 1. Primary White CTA: VIEW PROJECTS */}
             <MagneticButton
               href="#projects"
-              className="hero-btn-primary group inline-flex h-11 sm:h-12 items-center justify-center gap-2 px-5 sm:px-6 rounded-lg bg-white text-[#050505] text-xs sm:text-sm font-semibold hover:bg-gray-200 transition-colors shadow-sm"
+              className="hero-btn-primary group inline-flex h-11 sm:h-12 items-center justify-center gap-2 px-5 sm:px-6 rounded-lg bg-white text-[#050505] text-xs sm:text-sm font-semibold hover:bg-gray-200 transition-colors shadow-sm shrink-0"
             >
               VIEW PROJECTS
               <svg
@@ -114,12 +114,9 @@ export default function Hero() {
                 />
               </svg>
             </MagneticButton>
-            <MagneticButton
-              href="#contact"
-              className="hero-btn-secondary inline-flex h-11 sm:h-12 items-center justify-center px-5 sm:px-6 rounded-lg border border-white/10 text-white text-xs sm:text-sm font-semibold hover:border-white/20 hover:bg-white/5 transition-colors shadow-sm"
-            >
-              CONTACT ME
-            </MagneticButton>
+
+            {/* 2. Interactive Spotlight CTA: ✦ ABOUT ME → */}
+            <HeroSpotlightCTA href="/know-me-more" />
           </div>
 
           <div className="reveal-up flex items-center gap-5 sm:gap-6 flex-wrap" style={delay(0.3)}>
@@ -151,13 +148,14 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* ── RIGHT COLUMN: 3D Orbital System ── */}
+        {/* ── RIGHT COLUMN: AI System Architecture ── */}
         <div
-          className="relative flex items-center justify-center w-full max-w-[500px] lg:max-w-none h-[380px] xs:h-[420px] sm:h-[480px] lg:h-[560px] mx-auto mt-2 lg:-mt-8 overflow-hidden"
+          className="relative flex items-center justify-center w-full max-w-[540px] lg:max-w-none h-auto min-h-[380px] sm:h-[480px] lg:h-[560px] mx-auto mt-2 lg:-mt-8 overflow-visible"
         >
           <SystemGraph />
         </div>
       </div>
     </section>
+
   );
 }

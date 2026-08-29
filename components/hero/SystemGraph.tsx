@@ -1,11 +1,14 @@
 "use client";
 
-import OrbitalSystem3D from "./OrbitalSystem3D";
+import HeroAiArchitecture from "./HeroAiArchitecture";
 
 export default function SystemGraph() {
   return (
-    <div className="w-full h-full">
-      <OrbitalSystem3D />
+    <div className="w-full h-full flex items-center justify-center">
+      <HeroAiArchitecture />
     </div>
   );
 }
+
+
+

@@ -282,8 +282,8 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
               className={cn(
                 "absolute inset-0 w-full h-full rounded-2xl border flex flex-col justify-between overflow-hidden backface-hidden transition-[background-color,border-color,box-shadow] duration-300",
                 isLightMode
-                  ? "bg-[#E7E8EB] backdrop-blur-2xl border-[#D0D5DD] shadow-[0_4px_20px_rgba(57,78,110,0.04)]"
-                  : "bg-[#0f1016]/80 backdrop-blur-2xl border-white/[0.14] shadow-[0_16px_40px_-15px_rgba(0,0,0,0.75)]"
+                  ? "bg-[#E7E8EB] backdrop-blur-2xl border-violet-400/50 shadow-[0_0_22px_rgba(139,92,246,0.22),0_6px_24px_rgba(57,78,110,0.08)] hover:border-violet-500 hover:shadow-[0_0_32px_rgba(139,92,246,0.35)]"
+                  : "bg-[#0f1016]/90 backdrop-blur-2xl border-violet-500/45 shadow-[0_0_28px_rgba(168,85,247,0.32),0_16px_40px_-15px_rgba(0,0,0,0.85)] hover:border-violet-400 hover:shadow-[0_0_40px_rgba(168,85,247,0.5),0_20px_50px_rgba(0,0,0,0.9)]"
               )}
             >
               {/* Magic Bento Internal Spotlight */}
@@ -451,10 +451,10 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                ══════════════════════════════════════════════════════════════════════ */}
             <div
               className={cn(
-                "absolute inset-0 w-full h-full rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between overflow-hidden backface-hidden shadow-[0_16px_40px_rgba(0,0,0,0.85)] border transition-colors",
+                "absolute inset-0 w-full h-full rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between overflow-hidden backface-hidden border transition-all duration-300",
                 isLightMode
-                  ? "bg-[#E7E8EB] backdrop-blur-2xl border-[#D0D5DD]"
-                  : "bg-[#0f1016]/85 backdrop-blur-2xl border-white/[0.14] group-hover:border-[#A78BFA]/35"
+                  ? "bg-[#E7E8EB] backdrop-blur-2xl border-violet-400/50 shadow-[0_0_22px_rgba(139,92,246,0.22),0_6px_24px_rgba(57,78,110,0.08)]"
+                  : "bg-[#0f1016]/90 backdrop-blur-2xl border-violet-500/45 shadow-[0_0_28px_rgba(168,85,247,0.32),0_16px_40px_rgba(0,0,0,0.85)] group-hover:border-violet-400"
               )}
               style={{
                 transform: "rotateY(180deg)",

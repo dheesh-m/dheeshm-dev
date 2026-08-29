@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Manrope, JetBrains_Mono } from "next/font/google";
+import { Inter, Manrope, JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
 import MotionProvider from "@/components/providers/MotionProvider";
 import { siteMetadataBase, SITE_URL } from "@/lib/siteUrl";
@@ -90,6 +90,10 @@ export const viewport: Viewport = {
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 
 export default function RootLayout({
   children,
@@ -99,7 +103,7 @@ export default function RootLayout({
   return (
     // data-scroll-behavior is the documented Next 16 opt-in; the framework no
     // longer applies `scroll-behavior: smooth` on its own.
-    <html lang="en" className="dark" data-scroll-behavior="smooth">
+    <html lang="en" className={cn("dark", "font-sans", geist.variable)} data-scroll-behavior="smooth">
       <body
         className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#050505] text-[#F5F5F5] selection:bg-white/20`}
       >

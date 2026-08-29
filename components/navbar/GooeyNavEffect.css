@@ -2,13 +2,13 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
   overflow: visible;
 }
 
 .gooey-filter-wrapper {
   position: absolute;
-  inset: 0;
+  inset: -15px;
   filter: url(#gooey-nav-filter);
   pointer-events: none;
   overflow: visible;
@@ -16,25 +16,25 @@
 
 .gooey-pill-indicator {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 15px;
+  left: 15px;
   border-radius: 9999px;
   pointer-events: none;
-  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.25, 1),
-              width 0.42s cubic-bezier(0.2, 0.8, 0.25, 1),
-              height 0.42s cubic-bezier(0.2, 0.8, 0.25, 1),
+  transition: transform 0.38s cubic-bezier(0.2, 0.8, 0.25, 1),
+              width 0.38s cubic-bezier(0.2, 0.8, 0.25, 1),
+              height 0.38s cubic-bezier(0.2, 0.8, 0.25, 1),
               opacity 0.25s ease;
   will-change: transform, width, height;
 }
 
 .gooey-particle-emitter {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 15px;
+  left: 15px;
   pointer-events: none;
-  transition: transform 0.42s cubic-bezier(0.2, 0.8, 0.25, 1),
-              width 0.42s cubic-bezier(0.2, 0.8, 0.25, 1),
-              height 0.42s cubic-bezier(0.2, 0.8, 0.25, 1);
+  transition: transform 0.38s cubic-bezier(0.2, 0.8, 0.25, 1),
+              width 0.38s cubic-bezier(0.2, 0.8, 0.25, 1),
+              height 0.38s cubic-bezier(0.2, 0.8, 0.25, 1);
   will-change: transform, width, height;
   overflow: visible;
 }
@@ -56,7 +56,7 @@
   width: 100%;
   height: 100%;
   border-radius: 100%;
-  background: var(--particle-color, #A855F7);
+  background: var(--particle-color, #FFFFFF);
   animation: gooeyPointMotion var(--time, 600ms) ease forwards;
 }
 
@@ -85,12 +85,12 @@
     opacity: 0;
   }
   20% {
-    transform: scale(calc(var(--scale, 1) * 0.35));
+    transform: scale(calc(var(--scale, 1) * 0.4));
     opacity: 0.95;
   }
   60% {
     transform: scale(var(--scale, 1));
-    opacity: 0.85;
+    opacity: 0.9;
   }
   100% {
     transform: scale(0);

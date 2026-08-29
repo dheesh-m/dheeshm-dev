@@ -17,7 +17,7 @@ export default function ExperienceSection() {
           transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-16 md:mb-24 flex flex-col items-center"
         >
-          <SectionLabel number="06" text="EXPERIENCE" />
+          <SectionLabel number="05" text="EXPERIENCE" />
           <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] font-display mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:via-[#D1D5DB] dark:to-[#FFFFFF]">
             Professional<br />
             Experience

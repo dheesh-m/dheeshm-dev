@@ -14,7 +14,6 @@ interface GooeyNavEffectProps {
   animationTime?: number;
   timeVariance?: number;
   emissionDelay?: number;
-  colors?: number[];
 }
 
 export default function GooeyNavEffect({
@@ -22,13 +21,12 @@ export default function GooeyNavEffect({
   activeLabel,
   isLightMode,
   isScrolled,
-  particleCount = 18,
-  particleDistances = [140, 25],
-  particleR = 160,
-  animationTime = 750,
-  timeVariance = 350,
-  emissionDelay = 120,
-  colors = [1, 2, 3, 1, 2, 3, 1, 4],
+  particleCount = 14,
+  particleDistances = [90, 18],
+  particleR = 120,
+  animationTime = 550,
+  timeVariance = 250,
+  emissionDelay = 50,
 }: GooeyNavEffectProps) {
   const emitterRef = useRef<HTMLSpanElement>(null);
   const emissionTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -49,20 +47,8 @@ export default function GooeyNavEffect({
   const isInitialMount = useRef(true);
   const prevActiveRef = useRef(activeLabel);
 
-  // Theme-tailored palette mapping
-  const paletteMap: Record<number, string> = isLightMode
-    ? {
-        1: "#394E6E",
-        2: "#6366F1",
-        3: "#818CF8",
-        4: "#475569",
-      }
-    : {
-        1: "#A855F7",
-        2: "#C084FC",
-        3: "#9333EA",
-        4: "#DDD6FE",
-      };
+  // Light Mode: Lighter shade of steel blue; Dark Mode: Pure White
+  const blobColor = isLightMode ? "#4A6984" : "#FFFFFF";
 
   const noise = (n = 1) => n / 2 - Math.random() * n;
 
@@ -73,15 +59,13 @@ export default function GooeyNavEffect({
 
   const createParticle = (i: number, t: number, d: [number, number], r: number) => {
     const rotate = noise(r / 10);
-    const colorIndex = colors[Math.floor(Math.random() * colors.length)] || 1;
-    const color = paletteMap[colorIndex] || (isLightMode ? "#394E6E" : "#A855F7");
 
     return {
       start: getXY(d[0], particleCount - i, particleCount),
-      end: getXY(d[1] + noise(10), particleCount - i, particleCount),
+      end: getXY(d[1] + noise(8), particleCount - i, particleCount),
       time: t,
-      scale: 1.1 + noise(0.3),
-      color,
+      scale: 1.05 + noise(0.25),
+      color: blobColor,
       rotate: rotate > 0 ? (rotate + r / 20) * 10 : (rotate - r / 20) * 10,
     };
   };
@@ -137,20 +121,22 @@ export default function GooeyNavEffect({
               // ignore
             }
           }, t);
-        }, 20);
+        }, 15);
       }
     },
-    [particleCount, particleDistances, particleR, animationTime, timeVariance, colors, isLightMode]
+    [particleCount, particleDistances, particleR, animationTime, timeVariance, blobColor]
   );
 
   const updatePosition = useCallback(() => {
     if (!navRef.current) return;
     const nav = navRef.current;
-    const activeEl = nav.querySelector<HTMLElement>('a[aria-current="true"]');
+    const targetEl =
+      nav.querySelector<HTMLElement>(`a[data-label="${activeLabel}"]`) ||
+      nav.querySelector<HTMLElement>('a[aria-current="true"]');
 
-    if (activeEl) {
+    if (targetEl) {
       const navBox = nav.getBoundingClientRect();
-      const itemBox = activeEl.getBoundingClientRect();
+      const itemBox = targetEl.getBoundingClientRect();
 
       const newX = itemBox.left - navBox.left;
       const newY = itemBox.top - navBox.top;
@@ -165,7 +151,7 @@ export default function GooeyNavEffect({
         visible: true,
       });
     }
-  }, [navRef]);
+  }, [navRef, activeLabel]);
 
   // Position tracking and resize observation
   useEffect(() => {
@@ -185,7 +171,7 @@ export default function GooeyNavEffect({
     };
   }, [updatePosition, activeLabel, isScrolled]);
 
-  // Particle emission on active label change with delay
+  // Particle emission on active label change
   useEffect(() => {
     if (isInitialMount.current) {
       isInitialMount.current = false;
@@ -216,7 +202,7 @@ export default function GooeyNavEffect({
 
   return (
     <>
-      {/* SVG Gooey Filter Definition (Hidden, zero-size) with expanded coordinates */}
+      {/* SVG Gooey Filter Definition with clean thresholding */}
       <svg
         className="absolute w-0 h-0 pointer-events-none opacity-0"
         aria-hidden="true"
@@ -230,11 +216,11 @@ export default function GooeyNavEffect({
             height="300%"
             colorInterpolationFilters="sRGB"
           >
-            <feGaussianBlur in="SourceGraphic" stdDeviation="4.5" result="blur" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
             <feColorMatrix
               in="blur"
               mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -8"
               result="goo"
             />
             <feBlend in="SourceGraphic" in2="goo" />
@@ -253,16 +239,10 @@ export default function GooeyNavEffect({
               width: `${pillRect.width}px`,
               height: `${pillRect.height}px`,
               opacity: pillRect.visible ? 1 : 0,
-              backgroundColor: isLightMode
-                ? isScrolled
-                  ? "rgba(255, 255, 255, 0.85)"
-                  : "rgba(255, 255, 255, 0.55)"
-                : isScrolled
-                  ? "rgba(255, 255, 255, 0.18)"
-                  : "rgba(255, 255, 255, 0.22)",
+              backgroundColor: blobColor,
               boxShadow: isLightMode
-                ? "0 2px 8px -1px rgba(0, 0, 0, 0.08), 0 0 12px rgba(99, 102, 241, 0.12)"
-                : "0 2px 10px -1px rgba(0, 0, 0, 0.3), 0 0 14px rgba(168, 85, 247, 0.22)",
+                ? "0 2px 10px rgba(74, 105, 132, 0.28)"
+                : "0 2px 12px rgba(255, 255, 255, 0.35)",
             }}
           />
 
