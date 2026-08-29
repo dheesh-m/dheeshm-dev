@@ -97,6 +97,7 @@ const GhostCursor = ({
     uniform vec3  iBaseColor;
     uniform float iBrightness;
     uniform float iEdgeIntensity;
+    uniform float iIsMobile;
     varying vec2  vUv;
 
     float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7))) * 43758.5453123); }
@@ -117,20 +118,22 @@ const GhostCursor = ({
       }
       return v;
     }
+
+    // Exact original desktop tints (100% locked and restored)
     vec3 tint1(vec3 base){ return mix(base, vec3(0.9, 0.95, 1.0), 0.12); }
     vec3 tint2(vec3 base){ return mix(base, vec3(0.68, 0.75, 0.85), 0.20); }
 
-    vec4 blob(vec2 p, vec2 mousePos, float intensity, float activity) {
-      if (activity <= 0.001) return vec4(0.0);
+    // Desktop blob calculation (100% original)
+    vec4 desktopBlob(vec2 p, vec2 mousePos, float intensity) {
       float radius = 0.35 + 0.20 * (1.0 / iScale);
       float d = length(p - mousePos);
-      if (d > radius * activity) return vec4(0.0);
+      if (d > radius) return vec4(0.0);
 
       vec2 q = vec2(fbm(p * iScale + iTime * 0.1), fbm(p * iScale + vec2(5.2,1.3) + iTime * 0.1));
       vec2 r = vec2(fbm(p * iScale + q * 1.5 + iTime * 0.15), fbm(p * iScale + q * 1.5 + vec2(8.3,2.8) + iTime * 0.15));
 
       float smoke = fbm(p * iScale + r * 0.8);
-      float distFactor = 1.0 - smoothstep(0.0, radius * activity, d);
+      float distFactor = 1.0 - smoothstep(0.0, radius, d);
       float alpha = pow(smoke, 2.3) * distFactor * 0.85;
 
       vec3 c1 = tint1(iBaseColor);
@@ -140,48 +143,108 @@ const GhostCursor = ({
       return vec4(color * alpha * intensity, alpha * intensity);
     }
 
+    // Mobile localized touch blob calculation (Strictly 45-70px radius)
+    vec4 mobileTouchBlob(vec2 fragPx, vec2 touchPx, float intensity) {
+      float dpr = max(1.0, iResolution.x / max(1.0, iResolution.z));
+      float maxRadiusPx = 58.0 * dpr;  // ~58 CSS pixels radius = 116px total diameter
+      float coreRadiusPx = 20.0 * dpr; // ~20 CSS pixels core radius
+      float distPx = length(fragPx - touchPx);
+
+      if (distPx > maxRadiusPx) return vec4(0.0);
+
+      vec2 p = (fragPx / iResolution.xy * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
+      float smoke = fbm(p * 4.0 + iTime * 0.15);
+
+      float distFactor = 1.0 - smoothstep(coreRadiusPx * 0.3, maxRadiusPx, distPx);
+      float alpha = pow(smoke, 1.7) * distFactor;
+
+      // Color hierarchy: Center #C4B5FD (~22% opacity) -> Mid #A78BFA (~10%) -> Outer dark-violet
+      float tDist = clamp(distPx / maxRadiusPx, 0.0, 1.0);
+      vec3 coreColor = vec3(0.77, 0.71, 0.99); // #C4B5FD
+      vec3 midColor = vec3(0.65, 0.55, 0.98);  // #A78BFA
+      vec3 outerColor = vec3(0.38, 0.22, 0.60); // dark violet outer diffusion
+      vec3 color = mix(coreColor, midColor, smoothstep(0.0, 0.45, tDist));
+      color = mix(color, outerColor, smoothstep(0.45, 1.0, tDist));
+
+      float falloffAlpha = mix(0.24, 0.10, smoothstep(0.0, 0.45, tDist));
+      falloffAlpha = mix(falloffAlpha, 0.0, smoothstep(0.45, 1.0, tDist));
+
+      float finalAlpha = alpha * falloffAlpha * intensity;
+      return vec4(color * finalAlpha, finalAlpha);
+    }
+
     void main() {
       if (iOpacity <= 0.001) {
         gl_FragColor = vec4(0.0);
         return;
       }
 
-      vec2 uv = (gl_FragCoord.xy / iResolution.xy * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
-      vec2 mouse = (iMouse * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
-
       vec3 colorAcc = vec3(0.0);
       float alphaAcc = 0.0;
 
-      vec4 b = blob(uv, mouse, 1.0, iOpacity);
-      colorAcc += b.rgb;
-      alphaAcc += b.a;
+      if (iIsMobile > 0.5) {
+        // ── MOBILE TOUCH RENDERING ──
+        vec2 touchPx = iMouse.xy * iResolution.xy;
+        vec4 b = mobileTouchBlob(gl_FragCoord.xy, touchPx, 1.0);
+        colorAcc += b.rgb;
+        alphaAcc += b.a;
 
-      for (int i = 0; i < MAX_TRAIL_LENGTH; i++) {
-        vec2 pm = (iPrevMouse[i] * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
-        float t = 1.0 - float(i) / float(MAX_TRAIL_LENGTH);
-        t = pow(t, 2.0);
-        if (t > 0.01) {
-          vec4 bt = blob(uv, pm, t * 0.8, iOpacity);
-          colorAcc += bt.rgb;
-          alphaAcc += bt.a;
+        // Short touch trail (up to 12 nodes)
+        for (int i = 0; i < 12; i++) {
+          if (i >= MAX_TRAIL_LENGTH) break;
+          vec2 pmPx = iPrevMouse[i].xy * iResolution.xy;
+          float t = pow(1.0 - float(i) / 12.0, 2.2) * 0.70;
+          if (t > 0.02) {
+            vec4 bt = mobileTouchBlob(gl_FragCoord.xy, pmPx, t);
+            colorAcc += bt.rgb;
+            alphaAcc += bt.a;
+          }
         }
+
+        if (alphaAcc <= 0.001) {
+          gl_FragColor = vec4(0.0);
+          return;
+        }
+
+        float outAlpha = clamp(alphaAcc * iOpacity, 0.0, 1.0);
+        gl_FragColor = vec4(colorAcc * (iBrightness * 1.2), outAlpha);
+
+      } else {
+        // ── DESKTOP RENDERING (100% UNTOUCHED ORIGINAL) ──
+        vec2 uv = (gl_FragCoord.xy / iResolution.xy * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
+        vec2 mouse = (iMouse * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
+
+        vec4 b = desktopBlob(uv, mouse, 1.0);
+        colorAcc += b.rgb;
+        alphaAcc += b.a;
+
+        for (int i = 0; i < MAX_TRAIL_LENGTH; i++) {
+          vec2 pm = (iPrevMouse[i] * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
+          float t = 1.0 - float(i) / float(MAX_TRAIL_LENGTH);
+          t = pow(t, 2.0);
+          if (t > 0.01) {
+            vec4 bt = desktopBlob(uv, pm, t * 0.8);
+            colorAcc += bt.rgb;
+            alphaAcc += bt.a;
+          }
+        }
+
+        if (alphaAcc <= 0.001) {
+          gl_FragColor = vec4(0.0);
+          return;
+        }
+
+        colorAcc *= iBrightness;
+
+        vec2 uv01 = gl_FragCoord.xy / iResolution.xy;
+        float edgeDist = min(min(uv01.x, 1.0 - uv01.x), min(uv01.y, 1.0 - uv01.y));
+        float distFromEdge = clamp(edgeDist * 2.0, 0.0, 1.0);
+        float k = clamp(iEdgeIntensity, 0.0, 1.0);
+        float edgeMask = mix(1.0 - k, 1.0, distFromEdge);
+
+        float outAlpha = clamp(alphaAcc * iOpacity * edgeMask, 0.0, 1.0);
+        gl_FragColor = vec4(colorAcc, outAlpha);
       }
-
-      if (alphaAcc <= 0.001) {
-        gl_FragColor = vec4(0.0);
-        return;
-      }
-
-      colorAcc *= iBrightness;
-
-      vec2 uv01 = gl_FragCoord.xy / iResolution.xy;
-      float edgeDist = min(min(uv01.x, 1.0 - uv01.x), min(uv01.y, 1.0 - uv01.y));
-      float distFromEdge = clamp(edgeDist * 2.0, 0.0, 1.0);
-      float k = clamp(iEdgeIntensity, 0.0, 1.0);
-      float edgeMask = mix(1.0 - k, 1.0, distFromEdge);
-
-      float outAlpha = clamp(alphaAcc * iOpacity * edgeMask, 0.0, 1.0);
-      gl_FragColor = vec4(colorAcc, outAlpha);
     }
   `;
 
@@ -301,6 +364,11 @@ const GhostCursor = ({
 
     const baseColor = new THREE.Color(color);
 
+    const initialIsMobile = typeof window !== 'undefined' ? (window.innerWidth < 768 || window.matchMedia('(pointer: coarse)').matches) : false;
+
+    // Mobile starts hidden (fadeOpacity 0) until touch occurs
+    fadeOpacityRef.current = initialIsMobile ? 0.0 : 1.0;
+
     const material = new THREE.ShaderMaterial({
       defines: { MAX_TRAIL_LENGTH: maxTrail },
       uniforms: {
@@ -308,11 +376,12 @@ const GhostCursor = ({
         iResolution: { value: new THREE.Vector3(1, 1, 1) },
         iMouse: { value: new THREE.Vector2(0.5, 0.5) },
         iPrevMouse: { value: trailBufRef.current.map(v => v.clone()) },
-        iOpacity: { value: 1.0 },
+        iOpacity: { value: initialIsMobile ? 0.0 : 1.0 },
         iScale: { value: 1.0 },
         iBaseColor: { value: new THREE.Vector3(baseColor.r, baseColor.g, baseColor.b) },
         iBrightness: { value: brightness },
-        iEdgeIntensity: { value: edgeIntensity }
+        iEdgeIntensity: { value: edgeIntensity },
+        iIsMobile: { value: initialIsMobile ? 1.0 : 0.0 }
       },
       vertexShader: baseVertexShader,
       fragmentShader,
@@ -331,7 +400,12 @@ const GhostCursor = ({
     const renderPass = new RenderPass(scene, camera);
     composer.addPass(renderPass);
 
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(1, 1), bloomStrength, bloomRadius, bloomThreshold);
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(1, 1),
+      bloomStrength,
+      bloomRadius,
+      bloomThreshold
+    );
     bloomPassRef.current = bloomPass;
     composer.addPass(bloomPass);
 
@@ -353,6 +427,11 @@ const GhostCursor = ({
         return;
       }
 
+      const isMobile = cssW < 768 || window.matchMedia('(pointer: coarse)').matches;
+      if (materialRef.current) {
+        materialRef.current.uniforms.iIsMobile.value = isMobile ? 1.0 : 0.0;
+      }
+
       const currentDPR = Math.min(
         typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1,
         maxDevicePixelRatio
@@ -369,9 +448,17 @@ const GhostCursor = ({
 
       const wpx = Math.max(1, Math.floor(cssW * pixelRatio));
       const hpx = Math.max(1, Math.floor(cssH * pixelRatio));
-      material.uniforms.iResolution.value.set(wpx, hpx, 1);
+      material.uniforms.iResolution.value.set(wpx, hpx, cssW);
       material.uniforms.iScale.value = calculateScale(host);
       bloomPass.setSize(wpx, hpx);
+
+      if (isMobile) {
+        bloomPass.strength = 0.04;
+        bloomPass.radius = 0.2;
+      } else {
+        bloomPass.strength = bloomStrength;
+        bloomPass.radius = bloomRadius;
+      }
 
       hasValidSizeRef.current = true;
     };
@@ -401,21 +488,32 @@ const GhostCursor = ({
       const comp = composerRef.current;
       if (!mat || !comp) return;
 
+      const isMobile = typeof window !== 'undefined' ? (window.innerWidth < 768 || window.matchMedia('(pointer: coarse)').matches) : false;
+
       if (pointerActiveRef.current) {
+        const lerpFactor = isMobile ? 0.40 : 1.0;
         velocityRef.current.set(
           currentMouseRef.current.x - mat.uniforms.iMouse.value.x,
           currentMouseRef.current.y - mat.uniforms.iMouse.value.y
         );
-        mat.uniforms.iMouse.value.copy(currentMouseRef.current);
+        if (isMobile) {
+          mat.uniforms.iMouse.value.lerp(currentMouseRef.current, lerpFactor);
+        } else {
+          mat.uniforms.iMouse.value.copy(currentMouseRef.current);
+        }
         fadeOpacityRef.current = 1.0;
       } else {
-        velocityRef.current.multiplyScalar(inertia);
-        if (velocityRef.current.lengthSq() > 1e-6) {
-          mat.uniforms.iMouse.value.add(velocityRef.current);
+        if (!isMobile) {
+          velocityRef.current.multiplyScalar(inertia);
+          if (velocityRef.current.lengthSq() > 1e-6) {
+            mat.uniforms.iMouse.value.add(velocityRef.current);
+          }
         }
         const dt = now - lastMoveTimeRef.current;
-        if (dt > fadeDelay) {
-          const k = Math.min(1, (dt - fadeDelay) / fadeDuration);
+        const delay = isMobile ? 80 : fadeDelay;
+        const duration = isMobile ? 450 : fadeDuration;
+        if (dt > delay) {
+          const k = Math.min(1, (dt - delay) / duration);
           fadeOpacityRef.current = Math.max(0, 1 - k);
         }
       }
@@ -454,28 +552,86 @@ const GhostCursor = ({
       }
     };
 
-    const onPointerMove = (e: PointerEvent | MouseEvent) => {
+    const updatePointerPos = (clientX: number, clientY: number) => {
       const rect = host.getBoundingClientRect();
-      const x = THREE.MathUtils.clamp((e.clientX - rect.left) / Math.max(1, rect.width), 0, 1);
-      const y = THREE.MathUtils.clamp(1 - (e.clientY - rect.top) / Math.max(1, rect.height), 0, 1);
+      const x = THREE.MathUtils.clamp((clientX - rect.left) / Math.max(1, rect.width), 0, 1);
+      const y = THREE.MathUtils.clamp(1 - (clientY - rect.top) / Math.max(1, rect.height), 0, 1);
       currentMouseRef.current.set(x, y);
+    };
+
+    const onPointerDown = (e: PointerEvent) => {
+      updatePointerPos(e.clientX, e.clientY);
+      if (materialRef.current) {
+        materialRef.current.uniforms.iMouse.value.copy(currentMouseRef.current);
+        const N = trailBufRef.current.length;
+        for (let i = 0; i < N; i++) {
+          trailBufRef.current[i].copy(currentMouseRef.current);
+          materialRef.current.uniforms.iPrevMouse.value[i].copy(currentMouseRef.current);
+        }
+      }
       pointerActiveRef.current = true;
+      fadeOpacityRef.current = 1.0;
       lastMoveTimeRef.current = performance.now();
       ensureLoop();
     };
-    const onPointerEnter = () => {
+
+    const onPointerMove = (e: PointerEvent) => {
+      updatePointerPos(e.clientX, e.clientY);
       pointerActiveRef.current = true;
+      fadeOpacityRef.current = 1.0;
+      lastMoveTimeRef.current = performance.now();
       ensureLoop();
     };
-    const onPointerLeave = () => {
+
+    const onPointerUp = () => {
       pointerActiveRef.current = false;
       lastMoveTimeRef.current = performance.now();
       ensureLoop();
     };
 
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        updatePointerPos(e.touches[0].clientX, e.touches[0].clientY);
+        if (materialRef.current) {
+          materialRef.current.uniforms.iMouse.value.copy(currentMouseRef.current);
+          const N = trailBufRef.current.length;
+          for (let i = 0; i < N; i++) {
+            trailBufRef.current[i].copy(currentMouseRef.current);
+            materialRef.current.uniforms.iPrevMouse.value[i].copy(currentMouseRef.current);
+          }
+        }
+        pointerActiveRef.current = true;
+        fadeOpacityRef.current = 1.0;
+        lastMoveTimeRef.current = performance.now();
+        ensureLoop();
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        updatePointerPos(e.touches[0].clientX, e.touches[0].clientY);
+        pointerActiveRef.current = true;
+        fadeOpacityRef.current = 1.0;
+        lastMoveTimeRef.current = performance.now();
+        ensureLoop();
+      }
+    };
+
+    const onTouchEnd = () => {
+      pointerActiveRef.current = false;
+      lastMoveTimeRef.current = performance.now();
+      ensureLoop();
+    };
+
+    window.addEventListener('pointerdown', onPointerDown, { passive: true });
     window.addEventListener('pointermove', onPointerMove, { passive: true });
-    window.addEventListener('pointerenter', onPointerEnter, { passive: true });
-    window.addEventListener('pointerleave', onPointerLeave, { passive: true });
+    window.addEventListener('pointerup', onPointerUp, { passive: true });
+    window.addEventListener('pointercancel', onPointerUp, { passive: true });
+
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
 
     ensureLoop();
 
@@ -487,9 +643,16 @@ const GhostCursor = ({
       runningRef.current = false;
       rafRef.current = null;
 
+      window.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointermove', onPointerMove);
-      window.removeEventListener('pointerenter', onPointerEnter);
-      window.removeEventListener('pointerleave', onPointerLeave);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
+
       resizeObsRef.current?.disconnect();
 
       scene.clear();

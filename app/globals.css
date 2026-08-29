@@ -589,6 +589,16 @@ body.light-theme .animate-pulse.bg-white {
   box-shadow: 0 0 8px rgba(57, 78, 110, 0.4) !important;
 }
 
+/* Hero Content Layering (Guarantees Content Stays Above Background Ghost Layer) */
+.hero-content,
+.hero-text,
+.hero-roles,
+.hero-description,
+.hero-buttons {
+  position: relative;
+  z-index: 2;
+}
+
 /* Hero Roles in Light Mode */
 body.light-theme .hero-role-text {
   color: #394E6E !important;

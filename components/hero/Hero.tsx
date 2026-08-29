@@ -26,10 +26,10 @@ export default function Hero() {
       id="home"
       className="relative w-full min-h-[100dvh] flex items-center pt-28 md:pt-32 pb-16 lg:pt-24 lg:pb-16"
     >
-      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center max-w-7xl mx-auto">
+      <div className="hero-content relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center max-w-7xl mx-auto">
         {/* ── LEFT COLUMN ── */}
         <div
-          className="flex flex-col items-start px-4 sm:px-6"
+          className="hero-text flex flex-col items-start px-4 sm:px-6"
         >
           <div className="reveal-up">
             <SectionLabel number="01" text="INTRODUCTION" />
@@ -51,7 +51,7 @@ export default function Hero() {
           </h1>
 
           <div
-            className="reveal-up flex flex-col gap-2.5 mb-8"
+            className="hero-roles reveal-up flex flex-col gap-2.5 mb-8"
             style={delay(0.15)}
           >
             {["AI / LLM ENGINEER", "BACKEND ENGINEER", "FULL-STACK DEVELOPER"].map(
@@ -74,7 +74,7 @@ export default function Hero() {
           </div>
 
           <p
-            className="reveal-up text-[#1e293b] dark:text-gray-400 text-base max-w-[420px] mb-10 leading-relaxed font-sans font-normal"
+            className="hero-description reveal-up text-[#1e293b] dark:text-gray-400 text-base max-w-[420px] mb-10 leading-relaxed font-sans font-normal"
             style={delay(0.2)}
           >
             I build{" "}
@@ -87,7 +87,7 @@ export default function Hero() {
           </p>
 
           <div
-            className="reveal-up flex flex-col sm:flex-row items-stretch sm:items-center w-full sm:w-auto gap-4 mb-12"
+            className="hero-buttons reveal-up flex flex-col sm:flex-row items-stretch sm:items-center w-full sm:w-auto gap-4 mb-12"
             style={delay(0.25)}
           >
             {/* Native anchor navigation; scroll-behavior and scroll-padding-top
