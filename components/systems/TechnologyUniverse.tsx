@@ -67,34 +67,6 @@ const FRONTEND_CLUSTER_TECHS: OrbitTechItem[] = [
   { id: "typescript", name: "TYPESCRIPT", icon: Code2, x: "50%", y: "24%" },
 ];
 
-const CAPABILITY_PILLARS = [
-  {
-    icon: Rocket,
-    title: "Modern",
-    description: "Built with the latest technologies",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Scalable",
-    description: "Architected for growth & scale",
-  },
-  {
-    icon: Zap,
-    title: "Performant",
-    description: "Optimized for speed & efficiency",
-  },
-  {
-    icon: Lock,
-    title: "Reliable",
-    description: "Production-ready & battle-tested",
-  },
-  {
-    icon: Cloud,
-    title: "Cloud Native",
-    description: "Deployed on modern infrastructure",
-  },
-];
-
 export default function TechnologyUniverse() {
   const { isLightMode } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -405,63 +377,6 @@ export default function TechnologyUniverse() {
           isLightMode={isLightMode}
         />
       </div>
-
-      {/* ── 4. Bottom Capability Strip ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 25 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        className={cn(
-          "w-full max-w-[1120px] mt-8 md:mt-12 rounded-2xl sm:rounded-full px-5 py-3 sm:py-3.5 backdrop-blur-xl border transition-all duration-300",
-          isLightMode
-            ? "bg-white/80 border-slate-200/90 shadow-[0_8px_24px_rgba(0,0,0,0.04)]"
-            : "bg-[#0E0A1D]/75 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]"
-        )}
-      >
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-2 items-center justify-between">
-          {CAPABILITY_PILLARS.map((cap, i) => {
-            const Icon = cap.icon;
-            return (
-              <div
-                key={cap.title}
-                className={cn(
-                  "flex items-center gap-2.5 px-2 sm:px-3 py-1",
-                  i !== 0 ? "md:border-l md:border-white/10 dark:md:border-white/10" : ""
-                )}
-              >
-                <div
-                  className={cn(
-                    "w-7 h-7 rounded-lg flex items-center justify-center shrink-0 border transition-transform duration-200 hover:scale-110",
-                    isLightMode
-                      ? "bg-slate-100 border-slate-200 text-slate-700"
-                      : "bg-white/5 border-white/10 text-violet-300"
-                  )}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                </div>
-                <div className="flex flex-col text-left">
-                  <span
-                    className={cn(
-                      "text-xs font-bold font-mono tracking-tight",
-                      isLightMode ? "text-slate-900" : "text-white"
-                    )}
-                  >
-                    {cap.title}
-                  </span>
-                  <span
-                    className={cn(
-                      "text-[10px] font-sans truncate max-w-[130px]",
-                      isLightMode ? "text-slate-500" : "text-slate-400"
-                    )}
-                  >
-                    {cap.description}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </motion.div>
     </div>
   );
 }

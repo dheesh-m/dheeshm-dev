@@ -24,32 +24,28 @@ export default function SpeechBubble({ className = "" }: { className?: string })
 
   return (
     <div className={`relative ${className}`}>
-      {/* Cyber Speech Bubble Box with Silver / Platinum Styling */}
-      <div className="relative p-4 sm:p-5 rounded-2xl bg-[#0d0f14]/90 backdrop-blur-xl border border-slate-400/35 shadow-[0_8px_30px_rgba(0,0,0,0.6),0_0_20px_rgba(255,255,255,0.06)] min-h-[90px] flex items-center">
+      {/* Cyber Speech Bubble Box with Transparent Glassmorphic Rectangular Styling */}
+      <div className="relative p-3 sm:p-3.5 rounded-lg bg-white/[0.04] backdrop-blur-md border border-white/15 shadow-[0_4px_20px_rgba(0,0,0,0.3)] min-h-[70px] flex items-center">
         {/* Subtle Silver Corner Accents */}
-        <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 border-slate-200 rounded-tl" />
-        <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2 border-slate-200 rounded-br" />
+        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-white/60" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-white/60" />
 
         <AnimatePresence mode="wait">
           <motion.p
             key={index}
-            initial={{ opacity: 0, y: 6, filter: "blur(4px)" }}
+            initial={{ opacity: 0, y: 4, filter: "blur(3px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
-            transition={{ duration: 0.45, ease: "easeInOut" }}
-            className="text-xs sm:text-[13px] font-mono leading-relaxed text-slate-200 italic"
+            exit={{ opacity: 0, y: -4, filter: "blur(3px)" }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="text-[11px] sm:text-xs font-mono leading-relaxed text-slate-200 italic"
           >
             &ldquo;{MESSAGES[index]}&rdquo;
           </motion.p>
         </AnimatePresence>
 
-        {/* Speech Bubble Tail pointing down towards Deadpool Mascot */}
-        <div
-          className="absolute -bottom-2.5 left-10 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px] border-t-slate-400/40"
-        />
-        <div
-          className="absolute -bottom-2 left-10 w-0 h-0 border-l-[7px] border-l-transparent border-r-[7px] border-r-transparent border-t-[9px] border-t-[#0d0f14]"
-        />
+        {/* Speech Bubble Tail */}
+        <div className="absolute -bottom-2 left-8 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-white/20" />
+        <div className="absolute -bottom-1.5 left-8 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[7px] border-t-slate-900/60" />
       </div>
     </div>
   );

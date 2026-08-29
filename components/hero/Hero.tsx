@@ -7,6 +7,8 @@ import { SOCIALS } from "@/data/socials";
 import SectionLabel from "../ui/SectionLabel";
 import SystemGraph from "./SystemGraph";
 
+import DecryptedText from "../ui/DecryptedText";
+
 /**
  * Stagger for the entry cascade.
  *
@@ -41,13 +43,31 @@ export default function Hero() {
               className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
               style={delay(0.05)}
             >
-              Dheesh
+              <DecryptedText
+                text="Dheesh"
+                animateOn="view"
+                speed={80}
+                maxIterations={18}
+                sequential={true}
+                revealDirection="start"
+                className="text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
+                encryptedClassName="text-violet-400 dark:text-violet-300 font-mono opacity-80"
+              />
             </span>
             <span
               className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
               style={delay(0.1)}
             >
-              Medekar
+              <DecryptedText
+                text="Medekar"
+                animateOn="view"
+                speed={80}
+                maxIterations={20}
+                sequential={true}
+                revealDirection="start"
+                className="text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
+                encryptedClassName="text-violet-400 dark:text-violet-300 font-mono opacity-80"
+              />
             </span>
           </h1>
 
@@ -67,7 +87,15 @@ export default function Hero() {
                         : "text-[#394E6E] dark:text-gray-300"
                       }`}
                   >
-                    {role}
+                    <DecryptedText
+                      text={role}
+                      animateOn="inViewHover"
+                      speed={55}
+                      maxIterations={14}
+                      sequential={true}
+                      className={i === 0 ? "text-[#394E6E] dark:text-white" : "text-[#394E6E] dark:text-gray-300"}
+                      encryptedClassName="text-violet-400 dark:text-violet-300 font-mono opacity-70"
+                    />
                   </span>
                 </div>
               )

@@ -10,6 +10,7 @@ import NavbarEdgeLight from "./NavbarEdgeLight";
 import GooeyNavEffect from "./GooeyNavEffect";
 import { NAV_ITEMS, SECTION_IDS } from "./navItems";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import DecryptedText from "../ui/DecryptedText";
 
 const MOBILE_MENU_ID = "primary-mobile-menu";
 
@@ -243,7 +244,15 @@ export default function Navbar() {
                   isLightMode ? "text-[#0F172A]" : "text-[#ffffff]"
                 )}
               >
-                dhees_h
+                <DecryptedText
+                  text="dhees_h"
+                  animateOn="inViewHover"
+                  speed={65}
+                  maxIterations={15}
+                  sequential={true}
+                  className={isLightMode ? "text-[#0F172A]" : "text-[#ffffff]"}
+                  encryptedClassName="text-violet-400 font-mono opacity-80"
+                />
               </span>
             </a>
           </div>

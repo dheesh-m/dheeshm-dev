@@ -15,10 +15,15 @@ const METRICS: Metric[] = [
   { label: "Leadership", value: 85 },
 ];
 
-export default function RadarChart({ className = "" }: { className?: string }) {
-  const size = 260;
+export default function RadarChart({
+  className = "",
+  size = 190,
+}: {
+  className?: string;
+  size?: number;
+}) {
   const center = size / 2;
-  const radius = 85;
+  const radius = size * 0.32;
   const total = METRICS.length;
 
   const getCoordinates = (index: number, val: number, r: number = radius) => {
@@ -38,7 +43,10 @@ export default function RadarChart({ className = "" }: { className?: string }) {
 
   return (
     <div className={`relative flex flex-col items-center justify-center select-none ${className}`}>
-      <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full max-w-[260px] overflow-visible">
+      <svg
+        viewBox={`0 0 ${size} ${size}`}
+        className="w-full h-full max-w-[200px] overflow-visible"
+      >
         <defs>
           <radialGradient id="silver-radar-fill" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.45" />
@@ -46,7 +54,7 @@ export default function RadarChart({ className = "" }: { className?: string }) {
             <stop offset="100%" stopColor="#64748B" stopOpacity="0.08" />
           </radialGradient>
           <filter id="silver-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
             <feComposite in="SourceGraphic" in2="blur" operator="over" />
           </filter>
         </defs>
@@ -63,9 +71,9 @@ export default function RadarChart({ className = "" }: { className?: string }) {
               points={pts}
               fill="none"
               stroke="#94A3B8"
-              strokeWidth={lvl === 1.0 ? "1" : "0.75"}
+              strokeWidth={lvl === 1.0 ? "0.9" : "0.6"}
               strokeOpacity={lvl === 1.0 ? 0.45 : 0.2}
-              strokeDasharray={lvl < 1.0 ? "3 3" : undefined}
+              strokeDasharray={lvl < 1.0 ? "2 2" : undefined}
             />
           );
         })}
@@ -81,7 +89,7 @@ export default function RadarChart({ className = "" }: { className?: string }) {
               x2={x}
               y2={y}
               stroke="#94A3B8"
-              strokeWidth="0.8"
+              strokeWidth="0.7"
               strokeOpacity="0.3"
             />
           );
@@ -92,7 +100,7 @@ export default function RadarChart({ className = "" }: { className?: string }) {
           points={dataPath}
           fill="url(#silver-radar-fill)"
           stroke="#E2E8F0"
-          strokeWidth="2"
+          strokeWidth="1.5"
           filter="url(#silver-glow)"
           className="transition-all duration-500 ease-out"
         />
@@ -100,15 +108,15 @@ export default function RadarChart({ className = "" }: { className?: string }) {
         {/* Data Vertices Points with Specular Highlights */}
         {dataPoints.map((pt, i) => (
           <g key={i}>
-            <circle cx={pt.x} cy={pt.y} r="4" fill="#FFFFFF" stroke="#0F172A" strokeWidth="1.5" />
-            <circle cx={pt.x} cy={pt.y} r="7" fill="none" stroke="#FFFFFF" strokeWidth="0.8" opacity="0.6" />
+            <circle cx={pt.x} cy={pt.y} r="3" fill="#FFFFFF" stroke="#0F172A" strokeWidth="1" />
+            <circle cx={pt.x} cy={pt.y} r="5.5" fill="none" stroke="#FFFFFF" strokeWidth="0.6" opacity="0.6" />
           </g>
         ))}
 
         {/* Text Labels at Vertices */}
         {METRICS.map((m, i) => {
           const { angle } = getCoordinates(i, 100, radius);
-          const labelDist = radius + 22;
+          const labelDist = radius + 15;
           const lx = center + labelDist * Math.cos(angle);
           const ly = center + labelDist * Math.sin(angle);
 
@@ -120,9 +128,9 @@ export default function RadarChart({ className = "" }: { className?: string }) {
             <text
               key={m.label}
               x={lx}
-              y={ly + 4}
+              y={ly + 3}
               textAnchor={textAnchor}
-              className="text-[9.5px] font-mono uppercase tracking-wider fill-slate-300 font-semibold"
+              className="text-[7.5px] font-mono uppercase tracking-wider fill-slate-200 font-semibold"
             >
               {m.label}
             </text>

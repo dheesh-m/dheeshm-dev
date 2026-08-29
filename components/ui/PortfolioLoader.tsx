@@ -3,6 +3,8 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 
+import DecryptedText from "./DecryptedText";
+
 interface PortfolioLoaderProps {
   onStartExit?: () => void;
 }
@@ -22,10 +24,10 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const startTime = performance.now();
-    // Timing milestones (total ~2.3s)
-    const tPhase1 = 1050; // 0% -> 86% in 1050ms
-    const tPhase2 = 1850; // 86% -> 96% in 800ms
-    const tPhase3 = 2300; // 96% -> 100% in 450ms
+    // Timing milestones (slower, cinematic smooth countdown ~3.8s total)
+    const tPhase1 = 1750; // 0% -> 86% in 1750ms
+    const tPhase2 = 2950; // 86% -> 96% in 1200ms
+    const tPhase3 = 3750; // 96% -> 100% in 800ms
 
     let currentPercent = 0;
     let rafId: number;
@@ -34,9 +36,9 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
       const elapsed = now - startTime;
 
       if (elapsed < tPhase1) {
-        // Phase 1: 0 -> 86 (Fast Ease-Out)
+        // Phase 1: 0 -> 86 (Deliberate Ease-Out)
         const p = elapsed / tPhase1;
-        const easeOut = 1 - Math.pow(1 - p, 2.2);
+        const easeOut = 1 - Math.pow(1 - p, 2.0);
         currentPercent = Math.min(86, Math.round(easeOut * 86));
       } else if (elapsed < tPhase2) {
         // Phase 2: 86 -> 96 (Slower Deliberate Transition)
@@ -63,11 +65,11 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
           onStartExit?.();
 
           // Full unmount after transition completes
-          const exitDuration = prefersReducedMotion ? 300 : 750;
+          const exitDuration = prefersReducedMotion ? 300 : 800;
           setTimeout(() => {
             setMounted(false);
           }, exitDuration);
-        }, 180);
+        }, 220);
       }
     };
 
@@ -111,7 +113,7 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
             : "scale-100 blur-none opacity-100"
         }`}
       >
-        {/* Main Logo / Title */}
+        {/* Main Logo / Title with DecryptedText effect */}
         <h1
           className={`font-sans text-[clamp(2.5rem,8vw,5.5rem)] font-light tracking-[0.08em] leading-none text-center ${
             isLightMode
@@ -119,7 +121,20 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
               : "text-[#F8FAFC] drop-shadow-[0_0_30px_rgba(255,255,255,0.18)]"
           }`}
         >
-          dhees_h
+          <DecryptedText
+            text="dhees_h"
+            animateOn="view"
+            speed={95}
+            maxIterations={20}
+            sequential={true}
+            revealDirection="start"
+            className={
+              isLightMode
+                ? "text-[#0F172A]"
+                : "text-[#F8FAFC] drop-shadow-[0_0_30px_rgba(255,255,255,0.18)]"
+            }
+            encryptedClassName="text-violet-400 font-mono opacity-80"
+          />
         </h1>
 
         {/* Dynamic Percentage */}

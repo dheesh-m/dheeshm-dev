@@ -4,6 +4,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import BorderGlow from "./BorderGlow";
+import DecryptedText from "./DecryptedText";
 
 export default function SectionLabel({
   text,
@@ -56,7 +57,15 @@ export default function SectionLabel({
               isLightMode ? "text-[#1E293B]" : "text-white/95"
             )}
           >
-            {number ? `${number} / ${text}` : text}
+            <DecryptedText
+              text={number ? `${number} / ${text}` : text}
+              animateOn="inViewHover"
+              speed={60}
+              maxIterations={12}
+              sequential={true}
+              className={isLightMode ? "text-[#1E293B]" : "text-white/95"}
+              encryptedClassName="text-violet-400 opacity-80"
+            />
           </span>
         </div>
       </BorderGlow>
