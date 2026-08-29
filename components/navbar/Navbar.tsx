@@ -7,7 +7,6 @@ import MobileMenu from "./MobileMenu";
 import NavItem from "./NavItem";
 import ThemeToggle from "./ThemeToggle";
 import NavbarEdgeLight from "./NavbarEdgeLight";
-import NavbarGhostCursor from "./NavbarGhostCursor";
 import GooeyNavEffect from "./GooeyNavEffect";
 import { NAV_ITEMS, SECTION_IDS } from "./navItems";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -62,7 +61,14 @@ export default function Navbar() {
       }
     }
 
-    const checkActiveSection = () => {
+    const sectionElements = SECTION_IDS.map((id) => ({
+      id,
+      el: document.getElementById(id),
+    }));
+
+    let scrollTicking = false;
+
+    const performSectionCheck = () => {
       // If user recently clicked a nav item, hold that section until smooth scroll finishes
       if (isProgrammaticScrollRef.current) return;
 
@@ -94,8 +100,12 @@ export default function Navbar() {
       let maxVisibleHeight = 0;
       let minDistanceToCenter = Infinity;
 
-      for (const id of SECTION_IDS) {
-        const el = document.getElementById(id);
+      for (let i = 0; i < sectionElements.length; i++) {
+        let el = sectionElements[i].el;
+        if (!el) {
+          el = document.getElementById(sectionElements[i].id);
+          sectionElements[i].el = el;
+        }
         if (!el) continue;
 
         const rect = el.getBoundingClientRect();
@@ -116,7 +126,7 @@ export default function Navbar() {
           ) {
             maxVisibleHeight = visibleHeight;
             minDistanceToCenter = distToCenter;
-            bestSectionId = id;
+            bestSectionId = sectionElements[i].id;
           }
         }
       }
@@ -129,12 +139,19 @@ export default function Navbar() {
           setActive(label);
         }
       }
-      // CRITICAL: If no section crosses the threshold (e.g. fast scrolling or brief gap),
-      // NEVER fallback to "HOME". Keep the previous active section instead!
+    };
+
+    const checkActiveSection = () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        performSectionCheck();
+        scrollTicking = false;
+      });
     };
 
     // Run initial check on mount
-    checkActiveSection();
+    performSectionCheck();
 
     window.addEventListener("scroll", checkActiveSection, { passive: true });
 
@@ -178,16 +195,16 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed top-4 md:top-6 left-0 right-0 z-[100] flex justify-center px-4 sm:px-8 pointer-events-none">
+      <header className="fixed top-3 sm:top-4 md:top-6 left-0 right-0 z-[100] flex justify-center px-3 sm:px-4 md:px-8 pointer-events-none">
         <motion.div
           layout
           initial={false}
           animate={{
             maxWidth: isScrolled ? "980px" : "1200px",
-            paddingLeft: isScrolled ? "18px" : "24px",
-            paddingRight: isScrolled ? "18px" : "24px",
-            paddingTop: isScrolled ? "8px" : "10px",
-            paddingBottom: isScrolled ? "8px" : "10px",
+            paddingLeft: isScrolled ? "14px" : "20px",
+            paddingRight: isScrolled ? "14px" : "20px",
+            paddingTop: isScrolled ? "7px" : "9px",
+            paddingBottom: isScrolled ? "7px" : "9px",
           }}
           transition={{
             duration: 0.35,
@@ -202,9 +219,6 @@ export default function Navbar() {
               : "bg-transparent border border-transparent shadow-none"
           )}
         >
-          {/* ── Atmospheric Violet Ghost Cursor Trail (Behind Navbar Content) ── */}
-          <NavbarGhostCursor />
-
           {/* ── Traveling Edge Light Overlay on Outer Border ── */}
           <NavbarEdgeLight />
 

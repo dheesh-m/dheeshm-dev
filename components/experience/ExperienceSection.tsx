@@ -11,12 +11,13 @@ export default function ExperienceSection() {
 
         {/* Section Heading */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 35 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-center mb-16 md:mb-24"
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center mb-16 md:mb-24 flex flex-col items-center"
         >
+          <SectionLabel number="06" text="EXPERIENCE" />
           <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] font-display mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:via-[#D1D5DB] dark:to-[#FFFFFF]">
             Professional<br />
             Experience
@@ -24,9 +25,15 @@ export default function ExperienceSection() {
         </motion.div>
 
         {/* Experience List */}
-        <div className="w-full">
+        <motion.div
+          initial={{ opacity: 0, y: 45 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.8, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
+          className="w-full"
+        >
           <ExperienceAccordion />
-        </div>
+        </motion.div>
 
       </div>
 

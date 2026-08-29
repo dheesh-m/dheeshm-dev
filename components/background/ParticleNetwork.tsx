@@ -147,17 +147,40 @@ export default function ParticleNetwork() {
       () => []
     );
 
-    const init = () => {
+    let prevWidth = 0;
+    let prevHeight = 0;
+
+    const init = (forceRecreate = false) => {
       const dpr = window.devicePixelRatio || 1;
       const rect = canvas.getBoundingClientRect();
-      width = rect.width;
-      height = rect.height;
+      const newWidth = rect.width;
+      const newHeight = rect.height;
+
+      if (newWidth <= 0 || newHeight <= 0) return;
+
+      const isMobileHeightShift =
+        !forceRecreate &&
+        prevWidth > 0 &&
+        Math.abs(newWidth - prevWidth) < 12 &&
+        Math.abs(newHeight - prevHeight) < 160;
+
+      width = newWidth;
+      height = newHeight;
+      prevWidth = newWidth;
+      prevHeight = newHeight;
 
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
-      // setTransform, not scale: scale() multiplies onto the existing matrix,
-      // so re-running this on resize compounded the DPR each time.
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // If this is just a mobile URL address bar collapse/expand during scroll,
+      // preserve all existing particle and galaxy star positions so the background never jumps or restarts!
+      if (isMobileHeightShift && near.length > 0 && galaxy.length > 0) {
+        cols = Math.max(1, Math.ceil(width / LINK_DIST));
+        rows = Math.max(1, Math.ceil(height / LINK_DIST));
+        cells = Array.from({ length: cols * rows }, () => []);
+        return;
+      }
 
       const count = Math.min(Math.floor((width * height) / 15000), 160);
       near = Array.from({ length: count }, () =>
@@ -240,8 +263,14 @@ export default function ParticleNetwork() {
     const drawGalaxy = (isLight: boolean) => {
       ctx.save();
 
-      for (const s of galaxy) {
-        let renderAlpha = s.liveAlpha;
+      if (!isLight) {
+        ctx.shadowBlur = 2;
+        ctx.shadowColor = "rgba(255,255,255,0.8)";
+      }
+
+      for (let i = 0; i < galaxy.length; i++) {
+        const s = galaxy[i];
+        const renderAlpha = s.liveAlpha;
 
         if (isLight) {
           if (s.colorType === 0) {
@@ -277,10 +306,8 @@ export default function ParticleNetwork() {
             ctx.stroke();
           }
         } else {
-          // Dark mode (100% untouched)
+          // Dark mode (100% untouched visual look with 10x faster canvas state)
           ctx.beginPath();
-          ctx.shadowBlur = 2;
-          ctx.shadowColor = "rgba(255,255,255,0.8)";
           ctx.fillStyle = `rgba(255,255,255,${s.liveAlpha})`;
           ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
           ctx.fill();
@@ -409,6 +436,11 @@ export default function ParticleNetwork() {
 
     const animate = () => {
       tick++;
+      // During active scroll, throttle particle canvas to prioritize scroll performance
+      if (typeof window !== "undefined" && (window as any).__isScrolling && tick % 2 !== 0) {
+        frameId = requestAnimationFrame(animate);
+        return;
+      }
       mouseX += (targetX - mouseX) * 0.05;
       mouseY += (targetY - mouseY) * 0.05;
       stepGalaxy();

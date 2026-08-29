@@ -186,12 +186,8 @@ export default function ProjectCard({ project, index }: { project: Project; inde
   );
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
-      transition={{ duration: 0.6, delay: index * 0.1, type: "spring", stiffness: 200, damping: 20 }}
       className="group-hover/grid:opacity-40 hover:!opacity-100 transition-opacity duration-500 ease-out h-full"
     >
       <SweepCard className="h-full flex flex-col group/card !max-w-none transition-[border-color,box-shadow,transform] duration-250 ease-out rounded-[18px] sm:rounded-[24px]">
@@ -325,6 +321,6 @@ export default function ProjectCard({ project, index }: { project: Project; inde
           </div>
         </div>
       </SweepCard>
-    </motion.div>
+    </div>
   );
 }

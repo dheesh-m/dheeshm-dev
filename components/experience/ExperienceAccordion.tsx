@@ -13,12 +13,12 @@ export default function ExperienceAccordion() {
   };
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto pl-6 sm:pl-10">
+    <div className="relative w-full max-w-5xl mx-auto pl-5 sm:pl-8">
       {/* ── Left Continuous Vertical Timeline Line (Neutral Cool-Grey) ── */}
-      <div className="absolute left-[11px] sm:left-[19px] top-6 bottom-6 w-px bg-gradient-to-b from-slate-400/40 via-slate-300/20 to-transparent dark:from-white/25 dark:via-white/10 dark:to-transparent pointer-events-none" />
+      <div className="absolute left-[9px] sm:left-[15px] top-6 bottom-6 w-px bg-gradient-to-b from-slate-400/40 via-slate-300/20 to-transparent dark:from-white/25 dark:via-white/10 dark:to-transparent pointer-events-none" />
 
       {/* ── Timeline Items ── */}
-      <div className="flex flex-col gap-6 sm:gap-8">
+      <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
         {experiences.map((experience, index) => (
           <ExperienceItem
             key={experience.id}

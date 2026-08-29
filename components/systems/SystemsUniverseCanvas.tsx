@@ -69,11 +69,21 @@ function project(v: Vec3, cx: number, cy: number, zoom: number = 1) {
   };
 }
 
-function ellipsePts(mat: Mat3, rx: number, ry: number, segs = 72): Vec3[] {
-  const pts: Vec3[] = [];
-  for (let i = 0; i <= segs; i++) {
-    const t = (i / segs) * Math.PI * 2;
-    pts.push(applyMat(mat, { x: Math.cos(t) * rx, y: Math.sin(t) * ry, z: 0 }));
+// Precomputed Unit Ellipse points (36 segments for 60fps mobile execution)
+const ELLIPSE_SEGS = 36;
+const UNIT_ELLIPSE: Array<{ cos: number; sin: number }> = Array.from(
+  { length: ELLIPSE_SEGS + 1 },
+  (_, i) => {
+    const t = (i / ELLIPSE_SEGS) * Math.PI * 2;
+    return { cos: Math.cos(t), sin: Math.sin(t) };
+  }
+);
+
+function ellipsePts(mat: Mat3, rx: number, ry: number): Vec3[] {
+  const pts: Vec3[] = new Array(ELLIPSE_SEGS + 1);
+  for (let i = 0; i <= ELLIPSE_SEGS; i++) {
+    const u = UNIT_ELLIPSE[i];
+    pts[i] = applyMat(mat, { x: u.cos * rx, y: u.sin * ry, z: 0 });
   }
   return pts;
 }
@@ -117,6 +127,7 @@ function SystemsUniverseCanvas({
   const rafRef = useRef<number>(0);
   const startTimeRef = useRef(performance.now());
   const isLightRef = useRef(isLightMode);
+  const dprRef = useRef(1);
 
   useEffect(() => {
     isLightRef.current = isLightMode;
@@ -260,7 +271,7 @@ function SystemsUniverseCanvas({
 
   // Traveling conduit energy photons
   const conduitPhotonsRef = useRef(
-    Array.from({ length: 24 }, (_, i) => ({
+    Array.from({ length: 14 }, (_, i) => ({
       hubIndex: i % 4,
       progress: Math.random(),
       speed: 0.0025 + Math.random() * 0.0035,
@@ -271,7 +282,7 @@ function SystemsUniverseCanvas({
 
   // Ambient cosmic dust particles around singularity
   const cosmicDustRef = useRef(
-    Array.from({ length: 48 }, () => ({
+    Array.from({ length: 24 }, () => ({
       angle: Math.random() * Math.PI * 2,
       radius: 30 + Math.random() * 160,
       speed: 0.05 + Math.random() * 0.12,
@@ -298,7 +309,7 @@ function SystemsUniverseCanvas({
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = dprRef.current || 1;
     const W = canvas.width / dpr;
     const H = canvas.height / dpr;
     const cx = W / 2;
@@ -333,11 +344,11 @@ function SystemsUniverseCanvas({
 
     ctx.clearRect(0, 0, W, H);
 
-    // Adaptive spacing based on canvas dimensions
+    // Adaptive spacing based on canvas dimensions (Expanded for clear separation)
     const isMobile = W < 640;
     const isTablet = W >= 640 && W < 1024;
-    const spanX = isMobile ? W * 0.38 : isTablet ? W * 0.36 : Math.min(480, W * 0.34);
-    const spanY = isMobile ? H * 0.34 : isTablet ? H * 0.30 : Math.min(270, H * 0.28);
+    const spanX = isMobile ? W * 0.44 : isTablet ? W * 0.38 : Math.min(500, W * 0.34);
+    const spanY = isMobile ? H * 0.40 : isTablet ? H * 0.34 : Math.min(290, H * 0.28);
 
     // Central Singularity position
     const coreWorld = applyMat(globalUniverseMat, { x: 0, y: 0, z: 0 });
@@ -362,7 +373,7 @@ function SystemsUniverseCanvas({
 
     // ── 1. Draw Central Cosmic Accretion Glow (Restrained) ──────────────────
     const corePulse = 1 + Math.sin(t * 1.4) * 0.04;
-    const coreR = (isMobile ? 22 : 28) * zoom * corePulse;
+    const coreR = (isMobile ? 24 : 28) * zoom * corePulse;
 
     // Layered central energy aura (Reduced by 75%)
     const auraR = coreR * 2.2;
@@ -467,12 +478,12 @@ function SystemsUniverseCanvas({
     // ── 4. Calculate All 3D Nodes with Magnetic Orbit Physics & Mouse Pull ────
     const currentHitTargets: typeof hitTargetsRef.current = [];
 
-    // Orbital radius hierarchy per hub (Wider realistic 3D atom field)
-    const baseHubRadius = isMobile ? 70 : isTablet ? 90 : 115;
+    // Orbital radius hierarchy per hub (Wider realistic 3D atom field expanded by ~1.6x)
+    const baseHubRadius = isMobile ? 110 : isTablet ? 125 : 145;
     const hubOrbitRadii = [
-      { rx: baseHubRadius * 1.28, ry: baseHubRadius * 0.72 },
-      { rx: baseHubRadius * 0.94, ry: baseHubRadius * 0.52 },
-      { rx: baseHubRadius * 0.62, ry: baseHubRadius * 0.36 },
+      { rx: baseHubRadius * 1.35, ry: baseHubRadius * 0.82 },
+      { rx: baseHubRadius * 1.05, ry: baseHubRadius * 0.62 },
+      { rx: baseHubRadius * 0.78, ry: baseHubRadius * 0.45 },
     ];
 
     interface RenderableNode {
@@ -548,13 +559,13 @@ function SystemsUniverseCanvas({
       const isHovered = hoveredNodeIdRef.current === cfg.tech.id || activeNodeRef.current?.id === cfg.tech.id;
       const isActive = activeNodeRef.current?.id === cfg.tech.id;
 
-      // Closer nodes are larger, hovered nodes scale up to ~1.15x
-      const baseR = isMobile ? 4.5 : isTablet ? 6.5 : 8.5;
-      const depthScale = (0.65 + depth * 0.65) * zoom;
-      const hoverScale = isHovered ? 1.2 : 1.0;
-      const r = Math.max(3.5, baseR * depthScale * hoverScale);
+      // Closer nodes are larger, hovered nodes scale up to ~1.25x
+      const baseR = isMobile ? 5.5 : isTablet ? 7.0 : 8.5;
+      const depthScale = (0.75 + depth * 0.55) * zoom;
+      const hoverScale = isHovered ? 1.25 : 1.0;
+      const r = Math.max(4.0, baseR * depthScale * hoverScale);
 
-      const fontSize = Math.max(isMobile ? 7 : 8.5, r * 0.95);
+      const fontSize = isMobile ? 10.0 : isTablet ? 11.0 : 12.0;
 
       return {
         tech: cfg.tech,
@@ -806,27 +817,30 @@ function SystemsUniverseCanvas({
     ctx.stroke();
 
     // Core Code Label (LLM, DATA, API, STACK)
-    ctx.fillStyle = light ? "#ffffff" : "#ffffff";
-    ctx.font = `bold ${isMobile ? 9 : 11}px "Manrope", system-ui, sans-serif`;
+    ctx.font = `bold ${isMobile ? 11 : 13}px "Manrope", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.globalAlpha = 0.98;
     ctx.letterSpacing = "0.8px";
+
+    // Fast-path text shadow for 60fps mobile
     if (!light) {
-      ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
-      ctx.shadowBlur = 5;
-    } else {
-      ctx.shadowColor = "rgba(0, 0, 0, 0.35)";
-      ctx.shadowBlur = 3;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+      ctx.fillText(hub.code, sx + 0.8, sy + 0.8);
     }
+    ctx.fillStyle = "#ffffff";
     ctx.fillText(hub.code, sx, sy);
 
     // Subtle Subtitle under core (e.g. LLM ORCHESTRATION)
     if (hub.subtitle) {
-      ctx.fillStyle = light ? "#394E6E" : "#94a3b8";
-      ctx.font = `600 ${isMobile ? 6 : 7.5}px "JetBrains Mono", monospace`;
+      ctx.font = `bold ${isMobile ? 7 : 8}px "JetBrains Mono", monospace`;
       ctx.letterSpacing = "0.6px";
-      ctx.fillText(hub.subtitle, sx, sy + r + (isMobile ? 8 : 11));
+      if (!light) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+        ctx.fillText(hub.subtitle, sx + 0.6, sy + r + (isMobile ? 9.6 : 12.6));
+      }
+      ctx.fillStyle = light ? "#394E6E" : "#cbd5e1";
+      ctx.fillText(hub.subtitle, sx, sy + r + (isMobile ? 9 : 12));
     }
 
     ctx.restore();
@@ -896,29 +910,32 @@ function SystemsUniverseCanvas({
     fontSize: number
   ) {
     ctx.save();
-    ctx.globalAlpha = isHovered ? 1.0 : Math.min(1.0, alpha * 1.35);
-    ctx.fillStyle = isHovered
-      ? (light ? "#0f172a" : "#ffffff")
-      : (light ? "#1e293b" : "#e2e8f0");
-    ctx.font = `bold ${fontSize}px "Manrope", system-ui, sans-serif`;
+    ctx.globalAlpha = isHovered ? 1.0 : Math.min(1.0, alpha * 1.45);
+    ctx.font = `bold ${fontSize}px "Manrope", system-ui, -apple-system, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
-    ctx.letterSpacing = "0.5px";
+    ctx.letterSpacing = "0.35px";
 
+    // Fast-path text shadow for 60fps mobile
     if (!light) {
-      ctx.shadowColor = "rgba(0, 0, 0, 0.95)";
-      ctx.shadowBlur = 5;
-      ctx.shadowOffsetY = 1;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.95)";
+      ctx.fillText(text.toUpperCase(), sx + 0.8, sy + r + 4.8);
     } else {
-      ctx.shadowColor = "rgba(255, 255, 255, 0.85)";
-      ctx.shadowBlur = 3;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+      ctx.fillText(text.toUpperCase(), sx + 0.8, sy + r + 4.8);
     }
 
-    ctx.fillText(text.toUpperCase(), sx, sy + r + 3.5);
+    ctx.fillStyle = isHovered
+      ? (light ? "#0f172a" : "#ffffff")
+      : (light ? "#0f172a" : "#f1f5f9");
+    ctx.fillText(text.toUpperCase(), sx, sy + r + 4);
+
     ctx.restore();
   }
 
   // ── Resize Observer & Animation Gate ───────────────────────────────────────
+  const containerRectRef = useRef<DOMRect | null>(null);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -927,15 +944,19 @@ function SystemsUniverseCanvas({
     let isVisible = true;
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const isMobileScreen = window.innerWidth < 640;
+      const dpr = Math.min(window.devicePixelRatio || 1, isMobileScreen ? 1.5 : 2);
+      dprRef.current = dpr;
+      const rect = container.getBoundingClientRect();
+      containerRectRef.current = rect;
       const w = container.clientWidth;
       const h = container.clientHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
       canvas.style.width = w + "px";
       canvas.style.height = h + "px";
       const ctx = canvas.getContext("2d");
-      if (ctx) ctx.scale(dpr, dpr);
+      if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     resize();
@@ -946,7 +967,7 @@ function SystemsUniverseCanvas({
       (entries) => {
         const [entry] = entries;
         isVisible = entry.isIntersecting;
-        if (isVisible && isAnimating) {
+        if (isVisible && isAnimating && !document.hidden) {
           cancelAnimationFrame(rafRef.current);
           rafRef.current = requestAnimationFrame(draw);
         } else {
@@ -957,6 +978,17 @@ function SystemsUniverseCanvas({
     );
     io.observe(container);
 
+    const handleVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(rafRef.current);
+      } else if (isVisible && isAnimating) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = requestAnimationFrame(draw);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
+
     if (isAnimating) {
       rafRef.current = requestAnimationFrame(draw);
     }
@@ -964,6 +996,7 @@ function SystemsUniverseCanvas({
     return () => {
       ro.disconnect();
       io.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibility);
       cancelAnimationFrame(rafRef.current);
     };
   }, [draw, isAnimating]);
@@ -977,7 +1010,11 @@ function SystemsUniverseCanvas({
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = containerRef.current?.getBoundingClientRect();
+      let rect = containerRectRef.current;
+      if (!rect) {
+        rect = containerRef.current?.getBoundingClientRect() ?? null;
+        containerRectRef.current = rect;
+      }
       if (!rect) return;
 
       const clientX = e.clientX - rect.left;
@@ -1058,7 +1095,11 @@ function SystemsUniverseCanvas({
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      const rect = containerRef.current?.getBoundingClientRect();
+      let rect = containerRectRef.current;
+      if (!rect) {
+        rect = containerRef.current?.getBoundingClientRect() ?? null;
+        containerRectRef.current = rect;
+      }
       if (!rect) return;
 
       const clientX = e.clientX - rect.left;
@@ -1095,7 +1136,11 @@ function SystemsUniverseCanvas({
 
   const handleTouchMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 1 && isDraggingRef.current) {
-      const rect = containerRef.current?.getBoundingClientRect();
+      let rect = containerRectRef.current;
+      if (!rect) {
+        rect = containerRef.current?.getBoundingClientRect() ?? null;
+        containerRectRef.current = rect;
+      }
       if (!rect) return;
 
       const touch = e.touches[0];
@@ -1117,7 +1162,11 @@ function SystemsUniverseCanvas({
     (e: React.TouchEvent<HTMLDivElement>) => {
       isDraggingRef.current = false;
       if (e.changedTouches.length === 1) {
-        const rect = containerRef.current?.getBoundingClientRect();
+        let rect = containerRectRef.current;
+        if (!rect) {
+          rect = containerRef.current?.getBoundingClientRect() ?? null;
+          containerRectRef.current = rect;
+        }
         if (!rect) return;
         const touch = e.changedTouches[0];
         const clientX = touch.clientX - rect.left;
@@ -1140,7 +1189,7 @@ function SystemsUniverseCanvas({
     <div
       ref={containerRef}
       style={{ touchAction: "pan-y" }}
-      className="relative w-full h-[440px] xs:h-[500px] sm:h-[660px] lg:h-[760px] select-none cursor-grab active:cursor-grabbing overflow-hidden"
+      className="relative w-full h-[520px] xs:h-[580px] sm:h-[680px] lg:h-[780px] select-none cursor-grab active:cursor-grabbing overflow-hidden"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

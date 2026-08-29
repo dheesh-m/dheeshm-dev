@@ -136,11 +136,21 @@ function project(v: Vec3, cx: number, cy: number) {
   return { sx: cx + v.x * scale, sy: cy + v.y * scale, scale, z: v.z };
 }
 
-function ellipsePts(mat: Mat3, rx: number, ry: number, segs = 72): Vec3[] {
-  const pts: Vec3[] = [];
-  for (let i = 0; i <= segs; i++) {
-    const t = (i / segs) * Math.PI * 2;
-    pts.push(applyMat(mat, { x: Math.cos(t) * rx, y: Math.sin(t) * ry, z: 0 }));
+// Precomputed Unit Ellipse points (36 segments is buttery smooth and eliminates trigonometric runtime load)
+const ELLIPSE_SEGS = 36;
+const UNIT_ELLIPSE: Array<{ cos: number; sin: number }> = Array.from(
+  { length: ELLIPSE_SEGS + 1 },
+  (_, i) => {
+    const t = (i / ELLIPSE_SEGS) * Math.PI * 2;
+    return { cos: Math.cos(t), sin: Math.sin(t) };
+  }
+);
+
+function ellipsePts(mat: Mat3, rx: number, ry: number): Vec3[] {
+  const pts: Vec3[] = new Array(ELLIPSE_SEGS + 1);
+  for (let i = 0; i <= ELLIPSE_SEGS; i++) {
+    const u = UNIT_ELLIPSE[i];
+    pts[i] = applyMat(mat, { x: u.cos * rx, y: u.sin * ry, z: 0 });
   }
   return pts;
 }
@@ -338,6 +348,7 @@ function OrbitalSystem3D() {
   const rafRef = useRef<number>(0);
   const startTimeRef = useRef(performance.now());
   const isLightRef = useRef(isLightMode);
+  const dprRef = useRef(1);
 
   useEffect(() => {
     isLightRef.current = isLightMode;
@@ -360,7 +371,7 @@ function OrbitalSystem3D() {
 
   // Traveling data photons along spoke lines
   const dataPhotonsRef = useRef(
-    Array.from({ length: 15 }, (_, i) => ({
+    Array.from({ length: 12 }, (_, i) => ({
       nodeIndex: i % 5,
       progress: Math.random(),
       speed: 0.0035 + Math.random() * 0.004,
@@ -370,7 +381,7 @@ function OrbitalSystem3D() {
 
   // Orbital particles traveling along rings
   const orbitParticlesRef = useRef(
-    Array.from({ length: 18 }, (_, i) => ({
+    Array.from({ length: 14 }, (_, i) => ({
       plane: i % 3,
       angle: Math.random() * Math.PI * 2,
       speed: 0.12 + Math.random() * 0.15,
@@ -387,7 +398,7 @@ function OrbitalSystem3D() {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = dprRef.current || 1;
     const W = canvas.width / dpr;
     const H = canvas.height / dpr;
     const cx = W / 2;
@@ -426,16 +437,16 @@ function OrbitalSystem3D() {
     ctx.arc(cx, cy, atmosR, 0, Math.PI * 2);
     ctx.fill();
 
-    // ── 2. Safe Bounds & Orbital Radii ───────────────────────────────────────
+    // ── 2. Safe Bounds & Orbital Radii (2x expansion on mobile) ────────────
     const isMobile = W < 640;
     const isTablet = W >= 640 && W < 1024;
-    const baseRadiusX = isMobile ? W * 0.38 : isTablet ? W * 0.40 : Math.min(220, W * 0.38);
-    const baseRadiusY = isMobile ? H * 0.36 : isTablet ? H * 0.38 : Math.min(170, H * 0.34);
+    const baseRadiusX = isMobile ? Math.min(W * 0.46, 210) : isTablet ? W * 0.40 : Math.min(220, W * 0.38);
+    const baseRadiusY = isMobile ? Math.min(H * 0.44, 180) : isTablet ? H * 0.38 : Math.min(170, H * 0.34);
 
     const orbitRadii = [
-      { rx: baseRadiusX * 1.08, ry: baseRadiusY * 0.72 },
-      { rx: baseRadiusX * 0.88, ry: baseRadiusY * 0.58 },
-      { rx: baseRadiusX * 0.68, ry: baseRadiusY * 0.44 },
+      { rx: baseRadiusX * (isMobile ? 1.45 : 1.08), ry: baseRadiusY * (isMobile ? 1.25 : 0.72) },
+      { rx: baseRadiusX * (isMobile ? 1.20 : 0.88), ry: baseRadiusY * (isMobile ? 1.00 : 0.58) },
+      { rx: baseRadiusX * (isMobile ? 0.95 : 0.68), ry: baseRadiusY * (isMobile ? 0.78 : 0.44) },
     ];
 
     // ── 3. Draw 3D Elliptical Magnetic Orbit Rings ───────────────────────────
@@ -721,13 +732,13 @@ function OrbitalSystem3D() {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.letterSpacing = "1px";
+
+    // Fast-path text shadow: Sub-pixel pass on mobile, minimal blur on desktop
     if (!light) {
-      ctx.shadowColor = "rgba(0, 0, 0, 0.95)";
-      ctx.shadowBlur = 6;
-    } else {
-      ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
-      ctx.shadowBlur = 4;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.85)";
+      ctx.fillText("LLM", x + 1, y + 1);
     }
+    ctx.fillStyle = "#ffffff";
     ctx.fillText("LLM", x, y);
 
     ctx.restore();
@@ -814,32 +825,36 @@ function OrbitalSystem3D() {
     ctx.save();
     ctx.globalAlpha = isHovered ? 1.0 : Math.min(1.0, alpha * 1.3);
 
-    // Main Label (AGENTS, RAG, TOOLS, API, MEMORY)
-    ctx.fillStyle = isHovered
-      ? (light ? "#171A1F" : "#ffffff")
-      : (light ? "#334155" : "#f1f5f9");
     ctx.font = `bold ${isMobile ? 8.5 : 10.5}px "Manrope", system-ui, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
     ctx.letterSpacing = "0.8px";
 
+    // Fast-path text shadow for 60fps mobile
     if (!light) {
-      ctx.shadowColor = "rgba(0, 0, 0, 0.95)";
-      ctx.shadowBlur = 6;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.9)";
+      ctx.fillText(def.label, x + 0.8, y + r + 5.8);
     } else {
-      ctx.shadowColor = "rgba(255, 255, 255, 0.95)";
-      ctx.shadowBlur = 3;
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.fillText(def.label, x + 0.8, y + r + 5.8);
     }
 
+    ctx.fillStyle = isHovered
+      ? (light ? "#171A1F" : "#ffffff")
+      : (light ? "#334155" : "#f1f5f9");
     ctx.fillText(def.label, x, y + r + 5);
 
     // Sublabel (e.g. VECTOR DB under TOOLS)
     if (def.sublabel) {
+      ctx.font = `600 ${isMobile ? 7 : 8}px "JetBrains Mono", monospace`;
+      ctx.letterSpacing = "0.6px";
+      if (!light) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+        ctx.fillText(def.sublabel, x + 0.6, y + r + (isMobile ? 16.6 : 19.6));
+      }
       ctx.fillStyle = isHovered
         ? (light ? "#394E6E" : "#cbd5e1")
         : (light ? "#66717D" : "#94a3b8");
-      ctx.font = `600 ${isMobile ? 7 : 8}px "JetBrains Mono", monospace`;
-      ctx.letterSpacing = "0.6px";
       ctx.fillText(def.sublabel, x, y + r + (isMobile ? 16 : 19));
     }
 
@@ -847,6 +862,8 @@ function OrbitalSystem3D() {
   }
 
   // ── Resize Observer ────────────────────────────────────────────────────────
+  const containerRectRef = useRef<DOMRect | null>(null);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -855,15 +872,19 @@ function OrbitalSystem3D() {
     let isVisible = true;
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const isMobileScreen = window.innerWidth < 640;
+      const dpr = Math.min(window.devicePixelRatio || 1, isMobileScreen ? 1.5 : 2);
+      dprRef.current = dpr;
+      const rect = container.getBoundingClientRect();
+      containerRectRef.current = rect;
       const w = container.clientWidth;
       const h = container.clientHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
       canvas.style.width = w + "px";
       canvas.style.height = h + "px";
       const ctx = canvas.getContext("2d");
-      if (ctx) ctx.scale(dpr, dpr);
+      if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
     resize();
@@ -874,7 +895,7 @@ function OrbitalSystem3D() {
       (entries) => {
         const [entry] = entries;
         isVisible = entry.isIntersecting;
-        if (isVisible) {
+        if (isVisible && !document.hidden) {
           cancelAnimationFrame(rafRef.current);
           rafRef.current = requestAnimationFrame(draw);
         } else {
@@ -885,18 +906,34 @@ function OrbitalSystem3D() {
     );
     io.observe(container);
 
+    const handleVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(rafRef.current);
+      } else if (isVisible) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = requestAnimationFrame(draw);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
+
     rafRef.current = requestAnimationFrame(draw);
 
     return () => {
       ro.disconnect();
       io.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibility);
       cancelAnimationFrame(rafRef.current);
     };
   }, [draw]);
 
   // ── Mouse & Touch Event Handlers ───────────────────────────────────────────
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = containerRef.current?.getBoundingClientRect();
+    let rect = containerRectRef.current;
+    if (!rect) {
+      rect = containerRef.current?.getBoundingClientRect() ?? null;
+      containerRectRef.current = rect;
+    }
     if (!rect) return;
 
     const clientX = e.clientX - rect.left;

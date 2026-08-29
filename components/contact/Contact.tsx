@@ -6,6 +6,7 @@ import MagneticButton from "../ui/MagneticButton";
 import { EMAIL, SOCIALS } from "@/data/socials";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import SectionLabel from "../ui/SectionLabel";
 
 const ArrowIcon = ({ className = "" }: { className?: string }) => (
   <svg
@@ -55,7 +56,7 @@ export default function Contact() {
     <section
       ref={ref}
       id="contact"
-      className="relative w-full flex flex-col items-center justify-center py-20 md:py-32 overflow-hidden min-h-[70vh] z-20"
+      className="relative w-full flex flex-col items-center justify-center py-14 sm:py-20 md:py-32 overflow-hidden min-h-[60vh] sm:min-h-[70vh] z-20"
     >
       {/* Ambient background */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
@@ -82,28 +83,42 @@ export default function Contact() {
         ))}
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10%" }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <p className="font-mono text-[11px] tracking-[0.3em] text-zinc-500 mb-6 sm:mb-8">
-            07 / CONTACT
-          </p>
+      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center w-full">
+        <div>
+          <SectionLabel number="07" text="CONTACT" />
 
-          <h2 className="text-[clamp(1.75rem,6.5vw,4.8rem)] font-bold tracking-[-0.04em] leading-tight mb-6 font-sans text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:via-[#D1D5DB] dark:to-[#FFFFFF] whitespace-normal sm:whitespace-nowrap">
+          <motion.h2
+            initial={{ opacity: 0, y: 45 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className={cn(
+              "text-[clamp(1.85rem,7vw,4.5rem)] font-black tracking-[-0.04em] leading-tight mb-4 sm:mb-6 font-sans whitespace-normal break-words max-w-full transition-colors duration-300",
+              isLightMode ? "text-[#394E6E]" : "text-[#D1D5DB]"
+            )}
+          >
             LET&apos;S BUILD SOMETHING.
-          </h2>
+          </motion.h2>
 
-          <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-xl mx-auto mb-8 sm:mb-10 font-sans px-2">
+          <motion.p
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+            className="text-sm sm:text-lg md:text-xl text-gray-400 max-w-xl mx-auto mb-6 sm:mb-10 font-sans px-2"
+          >
             Have an interesting problem, AI system or product idea? I&apos;m
             always open to discussing new opportunities.
-          </p>
+          </motion.p>
 
           {/* Availability */}
-          <p className="flex items-center justify-center gap-2.5 font-mono text-[11px] tracking-[0.2em] text-zinc-500 uppercase mb-10 sm:mb-12">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="flex items-center justify-center gap-2 font-mono text-[10.5px] sm:text-[11px] tracking-[0.16em] sm:tracking-[0.2em] text-zinc-500 uppercase mb-8 sm:mb-12"
+          >
             <span
               className={cn(
                 "contact-status-dot h-1.5 w-1.5 rounded-full inline-block shrink-0",
@@ -111,23 +126,29 @@ export default function Contact() {
               )}
             />
             Open to new opportunities
-          </p>
+          </motion.p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-md sm:max-w-none mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.75, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 max-w-md sm:max-w-none mx-auto w-full"
+          >
             <MagneticButton
               href={SOCIALS.email}
-              className="contact-btn-primary group flex h-12 sm:h-14 items-center justify-center gap-3 px-8 rounded-xl bg-white text-[#030712] text-sm font-bold tracking-wide hover:bg-gray-200 transition-colors w-full sm:w-auto shadow-sm"
+              className="contact-btn-primary group flex h-11 sm:h-14 items-center justify-center gap-2.5 sm:gap-3 px-6 sm:px-8 rounded-xl bg-white text-[#030712] text-xs sm:text-sm font-bold tracking-wide hover:bg-gray-200 transition-colors w-full sm:w-auto shadow-sm"
             >
               EMAIL ME
               <ArrowIcon className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </MagneticButton>
 
-            <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+            <div className="flex items-center gap-2.5 sm:gap-4 w-full sm:w-auto">
               <MagneticButton
                 href={SOCIALS.linkedin}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="contact-btn-secondary group flex h-12 sm:h-14 items-center justify-center gap-2 px-5 sm:px-6 rounded-xl border border-white/10 text-white text-sm font-semibold hover:border-white/20 hover:bg-white/5 transition-colors flex-1 sm:flex-none shadow-sm"
+                className="contact-btn-secondary group flex h-11 sm:h-14 items-center justify-center gap-2 px-4 sm:px-6 rounded-xl border border-white/10 text-white text-xs sm:text-sm font-semibold hover:border-white/20 hover:bg-white/5 transition-colors flex-1 sm:flex-none shadow-sm"
               >
                 LINKEDIN
                 <ArrowIcon className="opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -136,33 +157,37 @@ export default function Contact() {
                 href={SOCIALS.github}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="contact-btn-secondary group flex h-12 sm:h-14 items-center justify-center gap-2 px-5 sm:px-6 rounded-xl border border-white/10 text-white text-sm font-semibold hover:border-white/20 hover:bg-white/5 transition-colors flex-1 sm:flex-none shadow-sm"
+                className="contact-btn-secondary group flex h-11 sm:h-14 items-center justify-center gap-2 px-4 sm:px-6 rounded-xl border border-white/10 text-white text-xs sm:text-sm font-semibold hover:border-white/20 hover:bg-white/5 transition-colors flex-1 sm:flex-none shadow-sm"
               >
                 GITHUB
                 <ArrowIcon className="opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
               </MagneticButton>
             </div>
-          </div>
+          </motion.div>
 
           {/* Copy-to-clipboard */}
-          <button
+          <motion.button
             type="button"
             onClick={copyEmail}
-            className="contact-email-btn mt-8 inline-flex items-center gap-3 rounded-lg border border-white/10 px-4 py-2.5 font-mono text-xs tracking-widest text-zinc-400 transition-colors hover:border-white/25 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 max-w-full truncate shadow-sm"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.7, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="contact-email-btn mt-6 sm:mt-8 inline-flex items-center gap-2.5 sm:gap-3 rounded-lg border border-white/10 px-3.5 sm:px-4 py-2 sm:py-2.5 font-mono text-[10.5px] sm:text-xs tracking-widest text-zinc-400 transition-colors hover:border-white/25 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 max-w-full truncate shadow-sm cursor-pointer"
           >
-            {EMAIL}
+            <span className="truncate">{EMAIL}</span>
             <span
               aria-hidden="true"
-              className={copied ? "text-emerald-400" : "text-zinc-600"}
+              className={copied ? "text-emerald-400 font-bold" : "text-zinc-600"}
             >
               {copied ? "COPIED" : "COPY"}
             </span>
-          </button>
+          </motion.button>
           {/* Announced to screen readers without shifting layout. */}
           <span aria-live="polite" className="sr-only">
             {copied ? `${EMAIL} copied to clipboard` : ""}
           </span>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

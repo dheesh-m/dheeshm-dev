@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, memo } from "react";
+import { useRef, useCallback, memo } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import type { Project } from "@/types";
 import {
@@ -15,6 +15,7 @@ import {
   RotateCcw,
   CheckCircle2,
 } from "lucide-react";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
 
 const GithubIcon = ({ className = "w-3.5 h-3.5" }: { className?: string }) => (
@@ -43,17 +44,17 @@ interface ProjectCard3DProps {
 
 // ── FarmLens Diagram Visual Component ─────────────────────────────────────────
 const FarmLensDiagram = ({ on }: { on: boolean }) => (
-  <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0a0b12] dark:bg-[#07070c] overflow-hidden p-3.5 gap-2 select-none">
+  <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0a0b12] dark:bg-[#07070c] overflow-hidden p-2 sm:p-3.5 gap-1 sm:gap-2 select-none">
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.08),transparent_70%)] pointer-events-none" />
 
     {/* 01 Leaf Upload Step */}
     <motion.div
-      className="w-full max-w-[200px] border border-slate-200 dark:border-white/10 rounded-lg p-2 bg-white/90 dark:bg-[#0f1016]/90 backdrop-blur-md relative overflow-hidden"
+      className="w-full max-w-[170px] sm:max-w-[200px] border border-slate-200 dark:border-white/10 rounded-md sm:rounded-lg p-1.5 sm:p-2 bg-white/90 dark:bg-[#0f1016]/90 backdrop-blur-md relative overflow-hidden"
       animate={on ? { borderColor: ["rgba(255,255,255,0.1)", "rgba(167,139,250,0.4)", "rgba(255,255,255,0.1)"] } : {}}
       transition={{ duration: 4, repeat: Infinity }}
     >
-      <div className="text-[8px] font-mono uppercase tracking-widest text-[#64748B] mb-1">01 · LEAF UPLOAD</div>
-      <div className="flex items-center justify-between text-[9px] font-mono text-[#CBD5E1]">
+      <div className="text-[7.5px] sm:text-[8px] font-mono uppercase tracking-widest text-[#64748B] mb-0.5 sm:mb-1">01 · LEAF UPLOAD</div>
+      <div className="flex items-center justify-between text-[8px] sm:text-[9px] font-mono text-[#CBD5E1]">
         <span className="font-semibold text-white">Image</span>
         <span className="text-[#64748B]">→</span>
         <span>Preprocess</span>
@@ -68,27 +69,27 @@ const FarmLensDiagram = ({ on }: { on: boolean }) => (
       />
     </motion.div>
 
-    <div className="w-px h-2.5 bg-gradient-to-b from-[#8B5CF6]/40 to-transparent" />
+    <div className="w-px h-1.5 sm:h-2.5 bg-gradient-to-b from-[#8B5CF6]/40 to-transparent" />
 
     {/* 02 Prediction Record */}
     <motion.div
-      className="w-full max-w-[220px] border border-slate-200 dark:border-white/10 rounded-lg p-2 bg-white/90 dark:bg-[#0f1016]/90 backdrop-blur-md"
+      className="w-full max-w-[190px] sm:max-w-[220px] border border-slate-200 dark:border-white/10 rounded-md sm:rounded-lg p-1.5 sm:p-2 bg-white/90 dark:bg-[#0f1016]/90 backdrop-blur-md"
       initial={{ opacity: 0.9 }}
       animate={on ? { opacity: [0.9, 1, 0.9] } : {}}
       transition={{ duration: 4, repeat: Infinity, delay: 0.8 }}
     >
-      <div className="text-[8px] font-mono uppercase tracking-widest text-[#64748B] mb-1">02 · PREDICTION RECORD</div>
-      <div className="flex justify-between items-center mb-1">
+      <div className="text-[7.5px] sm:text-[8px] font-mono uppercase tracking-widest text-[#64748B] mb-0.5 sm:mb-1">02 · PREDICTION RECORD</div>
+      <div className="flex justify-between items-center mb-0.5 sm:mb-1">
         <div className="flex flex-col">
-          <span className="text-[7.5px] text-[#64748B] uppercase tracking-wider">Condition</span>
-          <span className="text-[10.5px] font-semibold text-white">Tomato — Early Blight</span>
+          <span className="text-[7px] sm:text-[7.5px] text-[#64748B] uppercase tracking-wider">Condition</span>
+          <span className="text-[9.5px] sm:text-[10.5px] font-semibold text-white">Tomato — Early Blight</span>
         </div>
         <div className="flex flex-col text-right">
-          <span className="text-[7.5px] text-[#64748B] uppercase tracking-wider">Confidence</span>
-          <span className="text-[11px] font-mono font-bold text-emerald-400">91.4%</span>
+          <span className="text-[7px] sm:text-[7.5px] text-[#64748B] uppercase tracking-wider">Confidence</span>
+          <span className="text-[9.5px] sm:text-[11px] font-mono font-bold text-emerald-400">91.4%</span>
         </div>
       </div>
-      <div className="text-[7.5px] font-mono text-[#94A3B8] border-t border-slate-200 dark:border-white/10 pt-0.5">
+      <div className="text-[7px] sm:text-[7.5px] font-mono text-[#94A3B8] border-t border-slate-200 dark:border-white/10 pt-0.5">
         Treatment recommended · logged
       </div>
     </motion.div>
@@ -138,8 +139,10 @@ const ProjectIcon = ({ name }: { name?: string }) => {
 };
 
 function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3DProps) {
+  const { isLightMode } = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
+  // ── Ref-based hover — no React re-render on mouse enter/leave ──
+  const isHoveredRef = useRef(false);
 
   // Smooth cursor tracking across the card (0 to 100%)
   const mouseX = useMotionValue(50);
@@ -155,14 +158,34 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
   const rotateX = useSpring(tiltY, springConfig);
   const rotateY = useSpring(tiltX, springConfig);
 
+  // Motion values for scale/lift — driven by hover without setState
+  const hoverScale = useMotionValue(1);
+  const hoverY = useMotionValue(0);
+  const smoothScale = useSpring(hoverScale, { stiffness: 280, damping: 26, mass: 0.15 });
+  const smoothLiftY = useSpring(hoverY, { stiffness: 280, damping: 26, mass: 0.15 });
+  const spotlightOpacity = useMotionValue(0);
+  const smoothSpotlight = useSpring(spotlightOpacity, { stiffness: 200, damping: 22, mass: 0.1 });
+
   const rectRef = useRef<DOMRect | null>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const frontFaceRef = useRef<HTMLDivElement>(null);
 
   const handleMouseEnter = useCallback(() => {
-    setIsHovered(true);
+    isHoveredRef.current = true;
     if (cardRef.current) {
       rectRef.current = cardRef.current.getBoundingClientRect();
     }
-  }, []);
+    hoverScale.set(1.02);
+    hoverY.set(-5);
+    spotlightOpacity.set(1);
+    if (glowRef.current) {
+      glowRef.current.style.opacity = "1";
+      glowRef.current.style.transform = "scale(1.05)";
+    }
+    if (frontFaceRef.current) {
+      frontFaceRef.current.style.borderColor = "rgba(167, 139, 250, 0.35)";
+    }
+  }, [hoverScale, hoverY, spotlightOpacity]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     let rect = rectRef.current;
@@ -184,13 +207,23 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
   }, [mouseX, mouseY, tiltX, tiltY]);
 
   const handleMouseLeave = useCallback(() => {
-    setIsHovered(false);
+    isHoveredRef.current = false;
     rectRef.current = null;
     tiltX.set(0);
     tiltY.set(0);
     mouseX.set(50);
     mouseY.set(50);
-  }, [tiltX, tiltY, mouseX, mouseY]);
+    hoverScale.set(1);
+    hoverY.set(0);
+    spotlightOpacity.set(0);
+    if (glowRef.current) {
+      glowRef.current.style.opacity = "0.35";
+      glowRef.current.style.transform = "scale(0.95)";
+    }
+    if (frontFaceRef.current) {
+      frontFaceRef.current.style.borderColor = "";
+    }
+  }, [tiltX, tiltY, mouseX, mouseY, hoverScale, hoverY, spotlightOpacity]);
 
   const handleCardClick = useCallback(() => {
     onFlipToggle(project.id);
@@ -204,42 +237,35 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
           LAYER 0: DIFFUSE ATMOSPHERIC VIOLET/SMOKE GLOW BEHIND CARD (Magic Bento)
           ══════════════════════════════════════════════════════════════════ */}
       <div
-        className={cn(
-          "absolute -inset-2 sm:-inset-3 rounded-[28px] pointer-events-none transition-all duration-700 -z-10",
-          isHovered ? "opacity-100 scale-105" : "opacity-35 scale-95"
-        )}
+        ref={glowRef}
+        className="absolute -inset-2 sm:-inset-3 rounded-[28px] pointer-events-none -z-10"
         style={{
-          background: isHovered
-            ? "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.22) 0%, rgba(109, 40, 217, 0.10) 45%, rgba(15, 16, 22, 0) 75%)"
-            : "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.08) 0%, rgba(109, 40, 217, 0.02) 50%, rgba(15, 16, 22, 0) 75%)",
+          opacity: 0.35,
+          transform: "scale(0.95)",
+          transition: "opacity 0.4s ease, transform 0.4s ease",
+          background: "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.22) 0%, rgba(109, 40, 217, 0.10) 45%, rgba(15, 16, 22, 0) 75%)",
           filter: "blur(28px)",
         }}
       />
 
       <div
         ref={cardRef}
-        className="relative w-full h-[450px] sm:h-[480px] lg:h-[505px] perspective-1200 cursor-pointer select-none"
+        className="relative w-full h-[320px] sm:h-[430px] lg:h-[505px] perspective-1200 cursor-pointer select-none"
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleCardClick}
       >
-        {/* Tilt Wrapper */}
+        {/* Tilt Wrapper — scale/lift driven by motion values, no animate={} prop needed */}
         <motion.div
           style={{
             rotateX: isFlipped ? 0 : rotateX,
             rotateY: isFlipped ? 0 : rotateY,
+            scale: smoothScale,
+            y: smoothLiftY,
             transformStyle: "preserve-3d",
             width: "100%",
             height: "100%",
-          }}
-          animate={{
-            scale: isHovered ? 1.02 : 1,
-            y: isHovered ? -5 : 0,
-          }}
-          transition={{
-            scale: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
-            y: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
           }}
         >
           {/* Flip Wrapper */}
@@ -252,18 +278,19 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                 FRONT FACE OF CARD
                ══════════════════════════════════════════════════════════════════════ */}
             <div
+              ref={frontFaceRef}
               className={cn(
-                "absolute inset-0 w-full h-full rounded-2xl bg-[#0f1016]/80 backdrop-blur-2xl border transition-colors duration-500 flex flex-col justify-between overflow-hidden backface-hidden",
-                isHovered
-                  ? "border-[#A78BFA]/35 shadow-[0_20px_45px_-10px_rgba(0,0,0,0.85),0_0_20px_rgba(139,92,246,0.12)]"
-                  : "border-white/[0.14] hover:border-white/25 shadow-[0_16px_40px_-15px_rgba(0,0,0,0.75)]"
+                "absolute inset-0 w-full h-full rounded-2xl border flex flex-col justify-between overflow-hidden backface-hidden transition-[background-color,border-color,box-shadow] duration-300",
+                isLightMode
+                  ? "bg-[#E7E8EB] backdrop-blur-2xl border-[#D0D5DD] shadow-[0_4px_20px_rgba(57,78,110,0.04)]"
+                  : "bg-[#0f1016]/80 backdrop-blur-2xl border-white/[0.14] shadow-[0_16px_40px_-15px_rgba(0,0,0,0.75)]"
               )}
             >
               {/* Magic Bento Internal Spotlight */}
               <motion.div
-                className="absolute inset-0 rounded-2xl pointer-events-none transition-opacity duration-300 z-30"
+                className="absolute inset-0 rounded-2xl pointer-events-none z-30"
                 style={{
-                  opacity: isHovered ? 1 : 0,
+                  opacity: smoothSpotlight,
                   background: useTransform(
                     [smoothMouseX, smoothMouseY],
                     ([x, y]) =>
@@ -274,61 +301,89 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
 
               {/* Top Edge Specular Highlight */}
               <div
-                className="absolute inset-x-0 top-0 h-[1px] rounded-t-2xl pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity duration-500 z-30"
+                className="absolute inset-x-0 top-0 h-[1px] rounded-t-2xl pointer-events-none opacity-40 dark:opacity-60 group-hover:opacity-100 transition-opacity duration-500 z-30"
                 style={{
-                  background: "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.25) 30%, rgba(167, 139, 250, 0.4) 50%, rgba(255, 255, 255, 0.25) 70%, transparent 100%)",
+                  background: "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 30%, rgba(167, 139, 250, 0.4) 50%, rgba(255, 255, 255, 0.3) 70%, transparent 100%)",
                 }}
               />
 
-              {/* ── TOP IMAGE / DIAGRAM AREA (~40% of height) ─────────────────── */}
-              <div className="relative w-full h-[150px] sm:h-[180px] lg:h-[190px] border-b border-white/[0.10] overflow-hidden rounded-t-2xl">
+              {/* ── TOP IMAGE / DIAGRAM AREA ─────────────────── */}
+              <div className="relative w-full h-[120px] sm:h-[160px] lg:h-[190px] border-b border-black/10 dark:border-white/[0.10] overflow-hidden rounded-t-2xl">
                 <ProjectVisual
                   id={project.id}
                   imageUrl={project.imageUrl}
                   title={project.title}
-                  isHovered={isHovered}
+                  isHovered={isHoveredRef.current}
                 />
 
                 {/* Top-Left: Project Number Badge */}
-                <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 z-20">
-                  <span className="px-2 sm:px-2.5 py-0.5 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest text-[#CBD5E1] bg-black/75 backdrop-blur-md rounded-md border border-white/15 shadow-sm">
+                <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-20">
+                  <span className={cn(
+                    "px-2 sm:px-2.5 py-0.5 text-[8.5px] sm:text-[10px] font-mono font-bold tracking-widest rounded-md border shadow-sm",
+                    isLightMode
+                      ? "text-[#15171B] bg-white/90 border-slate-300"
+                      : "text-[#CBD5E1] bg-black/75 border-white/15 backdrop-blur-md"
+                  )}>
                     {projectNum}
                   </span>
                 </div>
 
                 {/* Bottom-Left: Floating Refined Icon Badge */}
-                <div className="absolute bottom-2 left-2.5 sm:bottom-2.5 sm:left-3 z-20 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-md sm:rounded-lg bg-[#0f1016]/90 backdrop-blur-md border border-white/[0.12] shadow-[0_4px_12px_rgba(0,0,0,0.3)] group-hover:scale-105 group-hover:border-[#8B5CF6]/40 transition-all">
+                <div className={cn(
+                  "absolute bottom-1.5 left-2 sm:bottom-2.5 sm:left-3 z-20 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-md sm:rounded-lg border shadow-sm group-hover:scale-105 group-hover:border-[#8B5CF6]/40 transition-[transform,border-color] duration-200",
+                  isLightMode
+                    ? "bg-white/90 border-slate-300 text-[#15171B]"
+                    : "bg-[#0f1016]/90 border-white/[0.12] text-gray-300 backdrop-blur-md"
+                )}>
                   <ProjectIcon name={project.iconName} />
                 </div>
 
                 {/* Bottom-Right: Category Badge */}
                 {project.categoryBadge && (
-                  <div className="absolute bottom-2 right-2.5 sm:bottom-2.5 sm:right-3 z-20">
-                    <span className="px-1.5 sm:px-2 py-0.5 text-[7.5px] sm:text-[8.5px] font-mono font-bold uppercase tracking-wider text-[#CBD5E1] bg-[#0f1016]/90 backdrop-blur-md rounded border border-white/[0.12]">
+                  <div className="absolute bottom-1.5 right-2 sm:bottom-2.5 sm:right-3 z-20">
+                    <span className={cn(
+                      "px-1.5 sm:px-2 py-0.5 text-[7px] sm:text-[8.5px] font-mono font-bold uppercase tracking-wider rounded border",
+                      isLightMode
+                        ? "text-[#15171B] bg-white/90 border-slate-300"
+                        : "text-[#CBD5E1] bg-[#0f1016]/90 border-white/[0.12] backdrop-blur-md"
+                    )}>
                       {project.categoryBadge}
                     </span>
                   </div>
                 )}
               </div>
 
-              {/* ── CONTENT AREA (~60% of height) ─────────────────────────────── */}
-              <div className="p-4 sm:p-4.5 lg:p-5 flex flex-col flex-grow justify-between relative z-10">
+              {/* ── CONTENT AREA ─────────────────────────────── */}
+              <div className="p-3 sm:p-4 lg:p-5 flex flex-col flex-grow justify-between relative z-10">
                 {/* Title & Description */}
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-[#CBD5E1] group-hover:text-white tracking-tight font-display mb-1.5 transition-colors">
+                  <h3 className={cn(
+                    "text-[13.5px] sm:text-base lg:text-lg font-bold tracking-tight font-display mb-1 transition-colors leading-snug",
+                    isLightMode
+                      ? "text-[#0F172A] group-hover:text-[#8B5CF6]"
+                      : "text-[#CBD5E1] group-hover:text-white"
+                  )}>
                     {project.title}
                   </h3>
-                  <p className="text-xs sm:text-[12.5px] lg:text-[13px] text-[#94A3B8] leading-relaxed font-sans line-clamp-2 sm:line-clamp-3 mb-2.5 sm:mb-3">
+                  <p className={cn(
+                    "text-[11px] sm:text-[12.5px] lg:text-[13px] leading-snug sm:leading-relaxed font-sans line-clamp-2 sm:line-clamp-3 mb-2 sm:mb-2.5",
+                    isLightMode ? "text-[#1E293B]" : "text-[#94A3B8]"
+                  )}>
                     {project.description}
                   </p>
                 </div>
 
                 {/* Tech Tags */}
-                <div className="flex flex-wrap gap-1.5 mb-3">
+                <div className="flex flex-wrap gap-1 sm:gap-1.5 mb-2 sm:mb-2.5">
                   {project.technologies.slice(0, 5).map((tech) => (
                     <span
                       key={tech}
-                      className="px-2 py-0.5 text-[9px] sm:text-[10px] font-mono rounded bg-white/[0.04] border border-white/[0.10] text-[#CBD5E1] group-hover:border-[#8B5CF6]/30 transition-colors"
+                      className={cn(
+                        "px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9.5px] font-mono rounded font-medium transition-colors",
+                        isLightMode
+                          ? "bg-[#CBD5E1]/60 border border-[#94A3B8]/60 text-[#0F172A]"
+                          : "bg-white/[0.04] border border-white/[0.10] text-[#CBD5E1] group-hover:border-[#8B5CF6]/30"
+                      )}
                     >
                       {tech}
                     </span>
@@ -336,15 +391,26 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                 </div>
 
                 {/* Footer Row */}
-                <div className="flex items-center justify-between text-[11px] sm:text-xs font-semibold pt-1 border-t border-white/[0.08]">
-                  <div className="flex items-center gap-3">
+                <div className={cn(
+                  "flex items-center justify-between text-[10.5px] sm:text-xs font-semibold pt-1 border-t",
+                  isLightMode ? "border-black/10" : "border-white/[0.08]"
+                )}>
+                  <div className="flex items-center gap-2.5 sm:gap-3">
                     {project.githubUrl === "private" ? (
-                      <div className="flex items-center gap-1 text-[11px] text-[#64748B]">
-                        <Lock className="w-3 h-3 text-[#64748B]" />
+                      <div className={cn(
+                        "flex items-center gap-1 text-[10px] sm:text-[11px]",
+                        isLightMode ? "text-[#59616D]" : "text-[#64748B]"
+                      )}>
+                        <Lock className="w-3 h-3" />
                         <span>Private source</span>
                       </div>
                     ) : (
-                      <div className="flex items-center gap-1 text-[11px] text-[#94A3B8] group-hover:text-white transition-colors">
+                      <div className={cn(
+                        "flex items-center gap-1 text-[10px] sm:text-[11px] transition-colors",
+                        isLightMode
+                          ? "text-[#1E293B] hover:text-[#8B5CF6]"
+                          : "text-[#94A3B8] group-hover:text-white"
+                      )}>
                         <GithubIcon className="w-3.5 h-3.5" />
                         <span>Source</span>
                       </div>
@@ -356,7 +422,10 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                         target="_blank"
                         rel="noreferrer noopener"
                         onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1 text-[11px] font-semibold text-[#A78BFA] hover:text-white transition-colors hover:underline"
+                        className={cn(
+                          "flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold transition-colors hover:underline",
+                          isLightMode ? "text-[#2563EB]" : "text-[#A78BFA] hover:text-white"
+                        )}
                       >
                         <span>Live</span>
                         <ExternalLink className="w-3 h-3" />
@@ -364,9 +433,14 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                     )}
                   </div>
 
-                  <div className="flex items-center gap-1 text-[11.5px] font-bold text-[#CBD5E1] group-hover:text-white transition-colors">
+                  <div className={cn(
+                    "flex items-center gap-1 text-[10.5px] sm:text-[11.5px] font-bold transition-colors",
+                    isLightMode
+                      ? "text-[#0F172A] group-hover:text-[#8B5CF6]"
+                      : "text-[#CBD5E1] group-hover:text-white"
+                  )}>
                     <span>View More</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#94A3B8] group-hover:text-white group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </div>
@@ -377,8 +451,10 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                ══════════════════════════════════════════════════════════════════════ */}
             <div
               className={cn(
-                "absolute inset-0 w-full h-full rounded-2xl bg-[#0f1016]/85 backdrop-blur-2xl border border-white/[0.14] p-4 sm:p-5 flex flex-col justify-between overflow-hidden backface-hidden shadow-[0_16px_40px_rgba(0,0,0,0.85)]",
-                isHovered && "border-[#A78BFA]/35"
+                "absolute inset-0 w-full h-full rounded-2xl p-3.5 sm:p-5 flex flex-col justify-between overflow-hidden backface-hidden shadow-[0_16px_40px_rgba(0,0,0,0.85)] border transition-colors",
+                isLightMode
+                  ? "bg-[#E7E8EB] backdrop-blur-2xl border-[#D0D5DD]"
+                  : "bg-[#0f1016]/85 backdrop-blur-2xl border-white/[0.14] group-hover:border-[#A78BFA]/35"
               )}
               style={{
                 transform: "rotateY(180deg)",
@@ -386,24 +462,41 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
             >
               {/* Header */}
               <div>
-                <div className="flex items-center justify-between border-b border-white/[0.10] pb-2 mb-2.5 sm:mb-3">
-                  <span className="px-2 py-0.5 text-[9px] sm:text-[9.5px] font-mono font-bold tracking-widest text-[#CBD5E1] bg-white/5 rounded border border-white/10">
+                <div className={cn(
+                  "flex items-center justify-between border-b pb-1.5 sm:pb-2 mb-2 sm:mb-3",
+                  isLightMode ? "border-black/10" : "border-white/[0.10]"
+                )}>
+                  <span className={cn(
+                    "px-2 py-0.5 text-[8.5px] sm:text-[9.5px] font-mono font-bold tracking-widest rounded border",
+                    isLightMode
+                      ? "text-[#0F172A] bg-white/80 border-slate-300"
+                      : "text-[#CBD5E1] bg-white/5 border-white/10"
+                  )}>
                     {projectNum} · WHAT I BUILT
                   </span>
-                  <div className="flex items-center gap-1 text-[10px] font-mono text-[#64748B]">
+                  <div className={cn(
+                    "flex items-center gap-1 text-[9.5px] sm:text-[10px] font-mono",
+                    isLightMode ? "text-[#59616D]" : "text-[#64748B]"
+                  )}>
                     <RotateCcw className="w-3 h-3" />
                     <span>Return</span>
                   </div>
                 </div>
 
-                <h4 className="text-base font-bold text-[#CBD5E1] font-display mb-2 sm:mb-2.5">
+                <h4 className={cn(
+                  "text-sm sm:text-base font-bold font-display mb-1.5 sm:mb-2",
+                  isLightMode ? "text-[#0F172A]" : "text-[#CBD5E1]"
+                )}>
                   {project.title}
                 </h4>
 
-                <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-[12.5px] text-[#94A3B8] font-sans leading-relaxed">
+                <div className={cn(
+                  "space-y-1 sm:space-y-1.5 text-[11px] sm:text-[12.5px] font-sans leading-snug sm:leading-relaxed",
+                  isLightMode ? "text-[#1E293B]" : "text-[#94A3B8]"
+                )}>
                   {project.whatIBuilt?.map((point, idx) => (
                     <div key={idx} className="flex items-start gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#A78BFA] shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#8B5CF6] shrink-0 mt-0.5" />
                       <span>{point}</span>
                     </div>
                   ))}
@@ -411,11 +504,20 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
               </div>
 
               {/* Bottom Actions */}
-              <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between">
-                <span className="text-[10px] font-mono text-[#64748B]">
+              <div className={cn(
+                "pt-1.5 sm:pt-2 border-t flex items-center justify-between",
+                isLightMode ? "border-black/10" : "border-white/[0.08]"
+              )}>
+                <span className={cn(
+                  "text-[9px] sm:text-[10px] font-mono",
+                  isLightMode ? "text-[#59616D]" : "text-[#64748B]"
+                )}>
                   Click to flip back
                 </span>
-                <span className="text-[10px] font-mono text-[#A78BFA] hover:underline">
+                <span className={cn(
+                  "text-[9px] sm:text-[10px] font-mono hover:underline",
+                  isLightMode ? "text-[#2563EB]" : "text-[#A78BFA]"
+                )}>
                   Close Details →
                 </span>
               </div>
@@ -428,7 +530,7 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
           GROUND FLOOR MIRROR REFLECTION WITH VIOLET AMBIENT TINT
           ══════════════════════════════════════════════════════════════════ */}
       <div
-        className="w-[85%] h-8 mt-1 rounded-full opacity-25 blur-md pointer-events-none transition-all duration-500 group-hover/card:opacity-50 group-hover/card:scale-105"
+        className="w-[85%] h-3 sm:h-8 mt-0.5 sm:mt-1 rounded-full opacity-25 blur-md pointer-events-none transition-[opacity,transform] duration-300 group-hover/card:opacity-50 group-hover/card:scale-105"
         style={{
           background: "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.15) 0%, rgba(255, 255, 255, 0.04) 40%, transparent 75%)",
         }}

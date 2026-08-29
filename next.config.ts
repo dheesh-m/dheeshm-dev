@@ -79,16 +79,22 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    // lucide-react is optimized by default and must NOT be listed here.
-    optimizePackageImports: ["framer-motion"],
-    // experimental.inlineCss is deliberately NOT enabled. Measured on this
-    // site it added ~36 KB gzip to every HTML response to avoid a single
-    // 12 KB cacheable stylesheet request, and Next still emits the external
-    // stylesheet regardless. Re-measure before reconsidering.
+    optimizePackageImports: ["framer-motion", "three"],
   },
 
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      {
+        source: "/:all*(svg|jpg|png|webp|avif|woff2)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+    ];
   },
 };
 

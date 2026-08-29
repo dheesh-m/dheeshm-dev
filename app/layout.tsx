@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Manrope, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import CustomCursor from "@/components/ui/CustomCursor";
 import MotionProvider from "@/components/providers/MotionProvider";
 import { siteMetadataBase, SITE_URL } from "@/lib/siteUrl";
 
@@ -90,6 +89,7 @@ export const viewport: Viewport = {
 
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default function RootLayout({
   children,
@@ -106,8 +106,8 @@ export default function RootLayout({
         <ThemeProvider>
           <SmoothScrollProvider>
             <MotionProvider>
-              <CustomCursor />
               {children}
+              <SpeedInsights />
             </MotionProvider>
           </SmoothScrollProvider>
         </ThemeProvider>

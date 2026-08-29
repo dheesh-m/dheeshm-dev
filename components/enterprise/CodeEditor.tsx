@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { EnterpriseSection } from "@/data/enterpriseData";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -24,22 +24,6 @@ export default function CodeEditor({ activeItem }: CodeEditorProps) {
     }, 3500);
     return () => clearInterval(interval);
   }, []);
-
-  // Scroll reveal effect
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 90%", "center center"],
-  });
-
-  const rawY = useTransform(scrollYProgress, [0, 1], [40, 0]);
-  const y = useSpring(rawY, { stiffness: 100, damping: 20 });
-  const rawOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
-  const opacity = useSpring(rawOpacity, { stiffness: 100, damping: 20 });
-  const clipPath = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ["inset(15% 0% 15% 0%)", "inset(0% 0% 0%)"]
-  );
 
   const getFileName = (id: string) => {
     switch (id) {
@@ -74,7 +58,10 @@ export default function CodeEditor({ activeItem }: CodeEditorProps) {
   return (
     <motion.div
       ref={containerRef}
-      style={{ y, opacity, clipPath }}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
       className="w-full max-w-4xl mx-auto mt-14 lg:mt-20 select-none"
     >
       {/* Console Section Header Tag */}

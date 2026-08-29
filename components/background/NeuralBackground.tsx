@@ -1,10 +1,24 @@
+import { memo } from "react";
 import ParticleNetwork from "./ParticleNetwork";
 
-export default function NeuralBackground() {
+function NeuralBackground() {
   return (
     <div
       aria-hidden="true"
       className="neural-bg-root fixed inset-0 z-0 pointer-events-none overflow-hidden bg-[#050505]"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: "100%",
+        height: "100%",
+        transform: "translate3d(0, 0, 0)",
+        WebkitTransform: "translate3d(0, 0, 0)",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+      }}
     >
       {/* ── DARK MODE AMBIENT ELEMENTS ── */}
       <div className="ambient-glow absolute top-[-10%] right-[-5%] w-[800px] h-[800px] rounded-full bg-[#1C1C1C]/40 blur-[120px]" />
@@ -28,3 +42,5 @@ export default function NeuralBackground() {
     </div>
   );
 }
+
+export default memo(NeuralBackground);

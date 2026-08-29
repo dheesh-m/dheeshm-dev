@@ -53,13 +53,7 @@ export default function SystemCluster({ onToggleView }: SystemClusterProps) {
     <div ref={containerRef} className="relative w-full flex flex-col items-center justify-center mt-2 mb-12 select-none">
       
       {/* ── Top Controls Bar ────────────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-7xl px-4 sm:px-6 flex justify-center sm:justify-end mb-3"
-      >
+      <div className="w-full max-w-7xl px-4 sm:px-6 flex justify-center sm:justify-end mb-3">
         <div className="flex items-center gap-1.5 sm:gap-4 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.5)] text-[10px] sm:text-xs font-mono text-gray-700 dark:text-gray-300">
           <div className="flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-0.5 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
             <Move className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 shrink-0" />
@@ -76,7 +70,7 @@ export default function SystemCluster({ onToggleView }: SystemClusterProps) {
             <span>Tap to explore</span>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* ── Master 3D Systems Universe Canvas Viewport ─────────────────────── */}
       <div className="relative w-full max-w-[1360px] mx-auto">
@@ -96,9 +90,9 @@ export default function SystemCluster({ onToggleView }: SystemClusterProps) {
           onMouseEnter={() => handleHubHover("ai")}
           onMouseLeave={() => handleHubHover(null)}
         >
-          <div className="p-3.5 sm:p-4 rounded-2xl bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 group-hover:border-slate-300 dark:group-hover:border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.6)] group-hover:scale-[1.02] transition-all duration-300">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 group-hover:border-slate-300 dark:group-hover:border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.6)] group-hover:scale-[1.02] transition-[transform,border-color] duration-200">
             <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                 <Brain className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />
               </div>
               <h4 className="text-xs sm:text-sm font-bold font-mono text-gray-900 dark:text-white tracking-tight">
@@ -117,9 +111,9 @@ export default function SystemCluster({ onToggleView }: SystemClusterProps) {
           onMouseEnter={() => handleHubHover("data")}
           onMouseLeave={() => handleHubHover(null)}
         >
-          <div className="p-3.5 sm:p-4 rounded-2xl bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 group-hover:border-slate-300 dark:group-hover:border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.6)] group-hover:scale-[1.02] transition-all duration-300">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 group-hover:border-slate-300 dark:group-hover:border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.6)] group-hover:scale-[1.02] transition-[transform,border-color] duration-200">
             <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                 <Cloud className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />
               </div>
               <h4 className="text-xs sm:text-sm font-bold font-mono text-gray-900 dark:text-white tracking-tight">
@@ -138,9 +132,9 @@ export default function SystemCluster({ onToggleView }: SystemClusterProps) {
           onMouseEnter={() => handleHubHover("backend")}
           onMouseLeave={() => handleHubHover(null)}
         >
-          <div className="p-3.5 sm:p-4 rounded-2xl bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 group-hover:border-slate-300 dark:group-hover:border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.6)] group-hover:scale-[1.02] transition-all duration-300">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 group-hover:border-slate-300 dark:group-hover:border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.6)] group-hover:scale-[1.02] transition-[transform,border-color] duration-200">
             <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                 <Code2 className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />
               </div>
               <h4 className="text-xs sm:text-sm font-bold font-mono text-gray-900 dark:text-white tracking-tight">
@@ -159,9 +153,9 @@ export default function SystemCluster({ onToggleView }: SystemClusterProps) {
           onMouseEnter={() => handleHubHover("fullstack")}
           onMouseLeave={() => handleHubHover(null)}
         >
-          <div className="p-3.5 sm:p-4 rounded-2xl bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 group-hover:border-slate-300 dark:group-hover:border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.6)] group-hover:scale-[1.02] transition-all duration-300">
+          <div className="p-3.5 sm:p-4 rounded-2xl bg-white/90 dark:bg-[#0c0c14]/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 group-hover:border-slate-300 dark:group-hover:border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.04)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.6)] group-hover:scale-[1.02] transition-[transform,border-color] duration-200">
             <div className="flex items-center gap-2 mb-1.5">
-              <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <div className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
                 <Layers className="w-3.5 h-3.5 text-gray-700 dark:text-gray-300" />
               </div>
               <h4 className="text-xs sm:text-sm font-bold font-mono text-gray-900 dark:text-white tracking-tight">

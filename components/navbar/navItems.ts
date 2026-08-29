@@ -7,7 +7,7 @@ export interface NavItemData {
 
 export const NAV_ITEMS: NavItemData[] = [
   { id: "01", label: "HOME", title: "Home", href: "#home" },
-  { id: "02", label: "ABOUT", title: "About Us", href: "#about" },
+  { id: "02", label: "ABOUT ME", title: "About Me", href: "#about" },
   { id: "03", label: "EXPERTISE", title: "Expertise", href: "#expertise" },
   { id: "04", label: "PROJECTS", title: "Projects", href: "#projects" },
   { id: "05", label: "SKILLS", title: "Skills", href: "#skills" },

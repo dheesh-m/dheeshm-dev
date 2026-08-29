@@ -69,13 +69,13 @@ export default function EngineeringCards3D({
         {enterpriseData.map((item, i) => (
           <motion.div
             key={item.id}
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 35 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10%" }}
+            viewport={{ once: true, amount: 0.15 }}
             transition={{
-              duration: 0.6,
-              delay: i * 0.08,
-              ease: [0.16, 1, 0.3, 1],
+              duration: 0.75,
+              delay: i * 0.09,
+              ease: [0.22, 1, 0.36, 1],
             }}
             className="w-full h-full"
           >

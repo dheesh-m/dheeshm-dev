@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import SweepCard from "../ui/SweepCard";
 
 export default function BuildShowcase() {
@@ -14,13 +13,9 @@ export default function BuildShowcase() {
   return (
     <div className="w-full mt-8 sm:mt-16 lg:mt-20">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-        {categories.map((cat, i) => (
-          <motion.div
+        {categories.map((cat) => (
+          <div
             key={cat.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-10%" }}
-            transition={{ duration: 0.5, delay: i * 0.08 }}
             className="group relative h-full"
           >
             <SweepCard className="h-full min-h-[145px] sm:min-h-[220px] lg:min-h-[260px] flex flex-col justify-between p-3.5 sm:p-6 lg:p-8 rounded-[16px] sm:rounded-[24px]">
@@ -34,7 +29,7 @@ export default function BuildShowcase() {
                 </p>
               </div>
             </SweepCard>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
