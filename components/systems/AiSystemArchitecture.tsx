@@ -37,26 +37,26 @@ const ARCHITECTURE_NODES: Record<Exclude<ArchitectureNodeId, "core">, NodeData> 
     title: "MEMORY",
     description: "Long-term & short-term memory storage for context and learning.",
     icon: Database,
-    accentColor: "from-purple-500 to-indigo-500",
-    glowColor: "rgba(168, 85, 247, 0.25)",
-    borderColor: "rgba(168, 85, 247, 0.35)",
+    accentColor: "from-purple-200 to-white",
+    glowColor: "rgba(192, 132, 252, 0.3)",
+    borderColor: "rgba(192, 132, 252, 0.35)",
   },
   rag: {
     id: "rag",
     title: "RAG ENGINE",
     description: "Retrieval augmented generation for accurate, relevant and context-aware responses.",
     icon: FileText,
-    accentColor: "from-blue-500 to-cyan-500",
-    glowColor: "rgba(59, 130, 246, 0.25)",
-    borderColor: "rgba(59, 130, 246, 0.35)",
+    accentColor: "from-purple-200 to-white",
+    glowColor: "rgba(192, 132, 252, 0.3)",
+    borderColor: "rgba(192, 132, 252, 0.35)",
   },
   api: {
     id: "api",
     title: "API LAYER",
     description: "Robust APIs to connect services, applications and external systems.",
     icon: Code2,
-    accentColor: "from-purple-500 to-pink-500",
-    glowColor: "rgba(192, 132, 252, 0.25)",
+    accentColor: "from-purple-200 to-white",
+    glowColor: "rgba(192, 132, 252, 0.3)",
     borderColor: "rgba(192, 132, 252, 0.35)",
   },
   tools: {
@@ -64,18 +64,18 @@ const ARCHITECTURE_NODES: Record<Exclude<ArchitectureNodeId, "core">, NodeData> 
     title: "TOOLS",
     description: "Integrated tools & functions to extend capabilities and execute real-world actions.",
     icon: Box,
-    accentColor: "from-blue-500 to-indigo-500",
-    glowColor: "rgba(99, 102, 241, 0.25)",
-    borderColor: "rgba(99, 102, 241, 0.35)",
+    accentColor: "from-purple-200 to-white",
+    glowColor: "rgba(192, 132, 252, 0.3)",
+    borderColor: "rgba(192, 132, 252, 0.35)",
   },
   agents: {
     id: "agents",
     title: "AGENTS",
     description: "Autonomous agents that plan, reason and take action to solve complex problems.",
     icon: UserCheck,
-    accentColor: "from-pink-500 to-purple-500",
-    glowColor: "rgba(236, 72, 153, 0.25)",
-    borderColor: "rgba(236, 72, 153, 0.35)",
+    accentColor: "from-purple-200 to-white",
+    glowColor: "rgba(192, 132, 252, 0.3)",
+    borderColor: "rgba(192, 132, 252, 0.35)",
   },
 };
 
@@ -98,24 +98,25 @@ const CAPABILITIES = [
   {
     icon: Cloud,
     title: "Production Ready",
-    description: "Deployed & tested",
+    description: "Cloud native",
   },
 ];
 
 export default function AiSystemArchitecture() {
   const { isLightMode } = useTheme();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: true, amount: 0.15 });
   const [hoveredNode, setHoveredNode] = useState<ArchitectureNodeId | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: false, amount: 0.2 });
 
-  // Subtle 3D mouse parallax tilt effect
+  // 3D Spatial Tilt state on mouse movement
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: x * 6, y: -y * 6 });
+    setTilt({ x: x * 8, y: -y * 8 });
   };
 
   const handleMouseLeave = () => {
@@ -130,129 +131,102 @@ export default function AiSystemArchitecture() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full max-w-7xl mx-auto flex flex-col items-center justify-center select-none py-4"
+      className="relative w-full min-h-[700px] flex flex-col items-center justify-center select-none py-12 px-4 sm:px-6 overflow-hidden"
     >
-      {/* ── Background Atmospheric Purple/Blue Ambient Aura ── */}
-      <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden flex items-center justify-center">
-        <div
-          className={cn(
-            "w-[650px] h-[520px] rounded-full blur-[130px] transition-opacity duration-1000",
-            isLightMode
-              ? "bg-gradient-to-tr from-violet-200/30 via-indigo-200/20 to-blue-200/30 opacity-70"
-              : "bg-gradient-to-tr from-purple-900/20 via-violet-800/25 to-blue-900/20 opacity-80",
-            isCoreHovered ? "opacity-100 scale-110" : "scale-100"
-          )}
-          style={{ transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)" }}
-        />
-        <div
-          className={cn(
-            "absolute w-[450px] h-[380px] rounded-full blur-[95px] transition-all duration-700",
-            isLightMode
-              ? "bg-indigo-300/20 opacity-60"
-              : "bg-violet-600/15 opacity-60",
-            isCoreHovered ? "scale-125 opacity-90" : "scale-100"
-          )}
-        />
-      </div>
+      {/* ── Luminous Silver-Purple Ambient Nebula Glow ── */}
+      <div
+        className={cn(
+          "absolute w-[520px] h-[520px] rounded-full blur-[90px] pointer-events-none transition-all duration-700 -z-10",
+          isLightMode
+            ? "bg-gradient-to-tr from-purple-200/40 via-slate-100/50 to-violet-200/40 opacity-70"
+            : "bg-gradient-to-tr from-violet-600/[0.14] via-slate-300/[0.1] to-purple-500/[0.12] opacity-85",
+          isCoreHovered ? "scale-120 opacity-100 blur-[100px]" : "scale-100"
+        )}
+      />
 
-      {/* ── 1. Section Header (Badge, Title, Subtitle) ── */}
-      <div className="text-center flex flex-col items-center justify-center max-w-3xl mx-auto mb-10 md:mb-14 px-4">
-        {/* Status Pill Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      {/* ── 1. Header Section ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="flex flex-col items-center text-center mb-10 md:mb-14 z-10"
+      >
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-purple-300/30 bg-purple-500/[0.08] backdrop-blur-md text-[11px] font-mono font-semibold tracking-wider text-purple-200 mb-3 shadow-[0_0_12px_rgba(192,132,252,0.2)]">
+          <Sparkles className="w-3.5 h-3.5 text-purple-300" />
+          ENTERPRISE ARCHITECTURE
+        </div>
+        <h2
           className={cn(
-            "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono tracking-widest uppercase mb-5 backdrop-blur-xl border transition-colors shadow-sm",
+            "text-3xl sm:text-4xl md:text-5xl font-bold font-display tracking-tight mb-3",
             isLightMode
-              ? "bg-white/80 text-slate-700 border-slate-200/90 shadow-slate-200/50"
-              : "bg-[#130E26]/80 text-violet-300 border-violet-500/30 shadow-[0_0_15px_rgba(139,92,246,0.15)]"
+              ? "text-slate-900"
+              : "text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-purple-200 drop-shadow-[0_0_15px_rgba(192,132,252,0.25)]"
           )}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse shadow-[0_0_8px_#a855f7]" />
-          <span>AI SYSTEM ARCHITECTURE</span>
-        </motion.div>
-
-        {/* Display Title */}
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          AI System Ecosystem
+        </h2>
+        <p
           className={cn(
-            "text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-light tracking-[-0.035em] leading-[1.08] font-display mb-4",
-            isLightMode ? "text-slate-900" : "text-white"
-          )}
-        >
-          Built for{" "}
-          <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-violet-500 via-purple-400 to-pink-500 dark:from-violet-400 dark:via-purple-300 dark:to-pink-400">
-            intelligent
-          </span>{" "}
-          systems
-        </motion.h2>
-
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className={cn(
-            "text-sm sm:text-base md:text-[17px] font-sans max-w-2xl leading-relaxed",
+            "text-sm sm:text-base max-w-xl font-sans",
             isLightMode ? "text-slate-600" : "text-slate-400"
           )}
         >
-          I design and build end-to-end AI architectures that are scalable, reliable and production ready.
-        </motion.p>
-      </div>
+          Full-stack autonomous intelligence stack powered by real-time RAG, memory persistence, dynamic tools and multi-agent coordination.
+        </p>
+      </motion.div>
 
-      {/* ── 2. Master Architecture Spatial Diagram (Desktop & Tablet: lg+) ── */}
+      {/* ── 2. Spatial 3D Desktop & Tablet Interactive Canvas ── */}
       <div
-        className="hidden lg:block relative w-full max-w-[1120px] h-[640px] my-2 transition-transform duration-300 ease-out"
+        className="hidden lg:block relative w-[1100px] h-[580px] origin-center transition-transform duration-300 ease-out"
         style={{
           perspective: 1200,
           transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
           transformStyle: "preserve-3d",
         }}
       >
-        {/* ── SVG Connection Network with Dynamic Curved Paths & Traveling Data Photons ── */}
+        {/* ── SVG Connection Network with Pure Glowing Silver Paths ── */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
-          viewBox="0 0 1120 640"
+          viewBox="0 0 1100 580"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            {/* Gradients */}
-            <linearGradient id="grad-memory" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#A855F7" />
-              <stop offset="50%" stopColor="#8B5CF6" />
-              <stop offset="100%" stopColor="#6366F1" />
+            <linearGradient id="sys-silver-purple-grad-left" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#94A3B8" />
+              <stop offset="35%" stopColor="#C084FC" />
+              <stop offset="60%" stopColor="#FFFFFF" />
+              <stop offset="100%" stopColor="#CBD5E1" />
             </linearGradient>
-            <linearGradient id="grad-rag" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#3B82F6" />
-              <stop offset="50%" stopColor="#06B6D4" />
-              <stop offset="100%" stopColor="#8B5CF6" />
+            <linearGradient id="sys-silver-purple-grad-right" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#94A3B8" />
+              <stop offset="35%" stopColor="#A855F7" />
+              <stop offset="60%" stopColor="#FFFFFF" />
+              <stop offset="100%" stopColor="#CBD5E1" />
             </linearGradient>
-            <linearGradient id="grad-api" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#A855F7" />
-              <stop offset="50%" stopColor="#EC4899" />
-              <stop offset="100%" stopColor="#8B5CF6" />
-            </linearGradient>
-            <linearGradient id="grad-tools" x1="100%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#3B82F6" />
-              <stop offset="50%" stopColor="#6366F1" />
-              <stop offset="100%" stopColor="#A855F7" />
-            </linearGradient>
-            <linearGradient id="grad-agents" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#8B5CF6" />
-              <stop offset="50%" stopColor="#D946EF" />
-              <stop offset="100%" stopColor="#EC4899" />
+            <linearGradient id="sys-silver-purple-grad-agents" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#CBD5E1" />
+              <stop offset="40%" stopColor="#D8B4FE" />
+              <stop offset="70%" stopColor="#FFFFFF" />
+              <stop offset="100%" stopColor="#94A3B8" />
             </linearGradient>
 
-            {/* Glow Filter */}
-            <filter id="line-glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="3.5" result="blur" />
+            {/* Silver-Purple Glow Filter */}
+            <filter id="sys-silver-line-glow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="2.5" result="blur1" />
+              <feGaussianBlur stdDeviation="1.2" result="blur2" />
               <feMerge>
-                <feMergeNode in="blur" />
+                <feMergeNode in="blur1" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            {/* Bright Silver Photon Glow */}
+            <filter id="sys-photon-silver-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2.2" result="glow" />
+              <feMerge>
+                <feMergeNode in="glow" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
@@ -262,10 +236,10 @@ export default function AiSystemArchitecture() {
           <path
             id="path-memory"
             d="M 290 125 C 340 125, 340 180, 390 180"
-            stroke="url(#grad-memory)"
+            stroke="url(#sys-silver-purple-grad-left)"
             strokeWidth={hoveredNode === "memory" || isCoreHovered ? 2.5 : 1.5}
-            opacity={hoveredNode === "memory" || isCoreHovered ? 1 : isLightMode ? 0.6 : 0.45}
-            filter="url(#line-glow)"
+            opacity={hoveredNode === "memory" || isCoreHovered ? 1 : isLightMode ? 0.65 : 0.48}
+            filter="url(#sys-silver-line-glow)"
             className="transition-all duration-300"
           />
 
@@ -273,10 +247,10 @@ export default function AiSystemArchitecture() {
           <path
             id="path-rag"
             d="M 830 125 C 780 125, 780 180, 730 180"
-            stroke="url(#grad-rag)"
+            stroke="url(#sys-silver-purple-grad-right)"
             strokeWidth={hoveredNode === "rag" || isCoreHovered ? 2.5 : 1.5}
-            opacity={hoveredNode === "rag" || isCoreHovered ? 1 : isLightMode ? 0.6 : 0.45}
-            filter="url(#line-glow)"
+            opacity={hoveredNode === "rag" || isCoreHovered ? 1 : isLightMode ? 0.65 : 0.48}
+            filter="url(#sys-silver-line-glow)"
             className="transition-all duration-300"
           />
 
@@ -284,10 +258,10 @@ export default function AiSystemArchitecture() {
           <path
             id="path-api"
             d="M 290 395 C 340 395, 340 280, 390 280"
-            stroke="url(#grad-api)"
+            stroke="url(#sys-silver-purple-grad-left)"
             strokeWidth={hoveredNode === "api" || isCoreHovered ? 2.5 : 1.5}
-            opacity={hoveredNode === "api" || isCoreHovered ? 1 : isLightMode ? 0.6 : 0.45}
-            filter="url(#line-glow)"
+            opacity={hoveredNode === "api" || isCoreHovered ? 1 : isLightMode ? 0.65 : 0.48}
+            filter="url(#sys-silver-line-glow)"
             className="transition-all duration-300"
           />
 
@@ -295,10 +269,10 @@ export default function AiSystemArchitecture() {
           <path
             id="path-tools"
             d="M 830 395 C 780 395, 780 280, 730 280"
-            stroke="url(#grad-tools)"
+            stroke="url(#sys-silver-purple-grad-right)"
             strokeWidth={hoveredNode === "tools" || isCoreHovered ? 2.5 : 1.5}
-            opacity={hoveredNode === "tools" || isCoreHovered ? 1 : isLightMode ? 0.6 : 0.45}
-            filter="url(#line-glow)"
+            opacity={hoveredNode === "tools" || isCoreHovered ? 1 : isLightMode ? 0.65 : 0.48}
+            filter="url(#sys-silver-line-glow)"
             className="transition-all duration-300"
           />
 
@@ -306,94 +280,49 @@ export default function AiSystemArchitecture() {
           <path
             id="path-agents"
             d="M 560 360 L 560 450"
-            stroke="url(#grad-agents)"
+            stroke="url(#sys-silver-purple-grad-agents)"
             strokeWidth={hoveredNode === "agents" || isCoreHovered ? 2.5 : 1.5}
-            opacity={hoveredNode === "agents" || isCoreHovered ? 1 : isLightMode ? 0.6 : 0.45}
-            filter="url(#line-glow)"
+            opacity={hoveredNode === "agents" || isCoreHovered ? 1 : isLightMode ? 0.65 : 0.48}
+            filter="url(#sys-silver-line-glow)"
             className="transition-all duration-300"
           />
 
-          {/* ── Traveling Light Data Photons ── */}
-          {/* Memory -> Core */}
-          <circle r={hoveredNode === "memory" ? "3.5" : "2.5"} fill="#C084FC" filter="url(#line-glow)">
+          {/* ── Traveling Light Data Photons (Silver/Purple) ── */}
+          <circle r={hoveredNode === "memory" ? "3.5" : "2.5"} fill="#FFFFFF" filter="url(#sys-photon-silver-glow)">
             <animateMotion
               dur={hoveredNode === "memory" ? "1.8s" : "3.2s"}
               repeatCount="indefinite"
               path="M 290 125 C 340 125, 340 180, 390 180"
             />
           </circle>
-          <circle r="2" fill="#E879F9" opacity="0.8">
-            <animateMotion
-              dur={hoveredNode === "memory" ? "1.8s" : "3.2s"}
-              begin="1.2s"
-              repeatCount="indefinite"
-              path="M 290 125 C 340 125, 340 180, 390 180"
-            />
-          </circle>
 
-          {/* Core -> RAG */}
-          <circle r={hoveredNode === "rag" ? "3.5" : "2.5"} fill="#38BDF8" filter="url(#line-glow)">
+          <circle r={hoveredNode === "rag" ? "3.5" : "2.5"} fill="#FFFFFF" filter="url(#sys-photon-silver-glow)">
             <animateMotion
               dur={hoveredNode === "rag" ? "1.8s" : "3.4s"}
               repeatCount="indefinite"
               path="M 730 180 C 780 180, 780 125, 830 125"
             />
           </circle>
-          <circle r="2" fill="#67E8F9" opacity="0.8">
-            <animateMotion
-              dur={hoveredNode === "rag" ? "1.8s" : "3.4s"}
-              begin="1.5s"
-              repeatCount="indefinite"
-              path="M 730 180 C 780 180, 780 125, 830 125"
-            />
-          </circle>
 
-          {/* API -> Core */}
-          <circle r={hoveredNode === "api" ? "3.5" : "2.5"} fill="#F472B6" filter="url(#line-glow)">
+          <circle r={hoveredNode === "api" ? "3.5" : "2.5"} fill="#FFFFFF" filter="url(#sys-photon-silver-glow)">
             <animateMotion
               dur={hoveredNode === "api" ? "1.8s" : "3.1s"}
               repeatCount="indefinite"
               path="M 290 395 C 340 395, 340 280, 390 280"
             />
           </circle>
-          <circle r="2" fill="#C084FC" opacity="0.8">
-            <animateMotion
-              dur={hoveredNode === "api" ? "1.8s" : "3.1s"}
-              begin="1.3s"
-              repeatCount="indefinite"
-              path="M 290 395 C 340 395, 340 280, 390 280"
-            />
-          </circle>
 
-          {/* Core -> Tools */}
-          <circle r={hoveredNode === "tools" ? "3.5" : "2.5"} fill="#818CF8" filter="url(#line-glow)">
+          <circle r={hoveredNode === "tools" ? "3.5" : "2.5"} fill="#FFFFFF" filter="url(#sys-photon-silver-glow)">
             <animateMotion
               dur={hoveredNode === "tools" ? "1.8s" : "3.3s"}
               repeatCount="indefinite"
               path="M 730 280 C 780 280, 780 395, 830 395"
             />
           </circle>
-          <circle r="2" fill="#A78BFA" opacity="0.8">
-            <animateMotion
-              dur={hoveredNode === "tools" ? "1.8s" : "3.3s"}
-              begin="1.4s"
-              repeatCount="indefinite"
-              path="M 730 280 C 780 280, 780 395, 830 395"
-            />
-          </circle>
 
-          {/* Core -> Agents */}
-          <circle r={hoveredNode === "agents" ? "3.5" : "2.5"} fill="#EC4899" filter="url(#line-glow)">
+          <circle r={hoveredNode === "agents" ? "3.5" : "2.5"} fill="#FFFFFF" filter="url(#sys-photon-silver-glow)">
             <animateMotion
               dur={hoveredNode === "agents" ? "1.6s" : "2.8s"}
-              repeatCount="indefinite"
-              path="M 560 360 L 560 450"
-            />
-          </circle>
-          <circle r="2" fill="#F472B6" opacity="0.8">
-            <animateMotion
-              dur={hoveredNode === "agents" ? "1.6s" : "2.8s"}
-              begin="1.1s"
               repeatCount="indefinite"
               path="M 560 360 L 560 450"
             />
@@ -432,37 +361,40 @@ export default function AiSystemArchitecture() {
           />
         </div>
 
-        {/* ── 3. Central AI CORE Card (Focal Point, 3D Lifted) ── */}
+        {/* ── 3. Central AI CORE Card (Deep Silver-Purple Frosted Glassmorphism) ── */}
         <div
           className="absolute top-[100px] left-1/2 -translate-x-1/2 z-30"
           onMouseEnter={() => setHoveredNode("core")}
           onMouseLeave={() => setHoveredNode(null)}
-          style={{ transform: "translateZ(24px) translateX(-50%)" }}
+          style={{ transform: "translateZ(26px) translateX(-50%)" }}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 20 }}
             animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
-              "w-[340px] rounded-3xl p-6 sm:p-7 backdrop-blur-2xl transition-all duration-400 cursor-pointer text-center relative overflow-hidden flex flex-col items-center",
+              "w-[340px] rounded-3xl p-6 sm:p-7 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 cursor-pointer text-center relative overflow-hidden flex flex-col items-center group",
               isLightMode
-                ? "bg-white/85 border border-slate-200/90 shadow-[0_16px_40px_rgba(57,78,110,0.12)] hover:border-violet-500/50 hover:shadow-[0_20px_50px_rgba(139,92,246,0.2)]"
-                : "bg-[#110C24]/85 border border-violet-500/30 shadow-[0_20px_60px_rgba(0,0,0,0.6),0_0_35px_rgba(139,92,246,0.18)] hover:border-violet-400/60 hover:shadow-[0_24px_70px_rgba(0,0,0,0.7),0_0_55px_rgba(139,92,246,0.35)]",
-              isCoreHovered ? "scale-[1.02] -translate-y-1" : "scale-100"
+                ? "bg-gradient-to-b from-white/90 via-purple-50/40 to-white/90 border border-purple-200/80 shadow-[0_0_25px_rgba(192,132,252,0.35),0_16px_40px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] hover:border-purple-300 hover:shadow-[0_0_40px_rgba(192,132,252,0.55),0_20px_50px_rgba(0,0,0,0.12)]"
+                : "bg-gradient-to-b from-[#1a1728]/85 via-[#12111d]/90 to-[#0a0d14]/90 border border-white/30 hover:border-purple-300/60 shadow-[0_0_35px_rgba(168,85,247,0.28),0_0_70px_rgba(255,255,255,0.2),0_20px_60px_rgba(0,0,0,0.7),inset_0_1px_2px_rgba(255,255,255,0.5),inset_0_0_16px_rgba(168,85,247,0.08)] hover:shadow-[0_0_55px_rgba(192,132,252,0.45),0_0_95px_rgba(255,255,255,0.35),0_24px_70px_rgba(0,0,0,0.85),inset_0_1px_2px_rgba(255,255,255,0.85)]",
+              isCoreHovered ? "scale-[1.03] -translate-y-1" : "scale-100"
             )}
           >
-            {/* Subtle Inner Glow Highlight */}
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-b from-white/10 via-transparent to-violet-500/5 pointer-events-none" />
+            {/* Top Crisp Specular Silver Rim Light */}
+            <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
 
-            {/* Central Holographic Brain Icon Housing with Ambient Orbitals */}
+            {/* Corner Glass Ambient Soft Purple Sheen */}
+            <div className="absolute -top-12 -right-12 w-32 h-32 bg-purple-500/[0.1] rounded-full blur-xl pointer-events-none" />
+
+            {/* Central Liquid Silver-Purple Orbital Rings */}
             <div className="relative w-24 h-24 mb-4 flex items-center justify-center">
-              {/* Outer Slow Rotating Orbital Ring */}
+              {/* Outer Slow Rotating Silver-Purple Orbital Ring */}
               <div
-                className="absolute inset-0 rounded-full border border-dashed border-violet-400/40 animate-[spin_18s_linear_infinite]"
+                className="absolute inset-0 rounded-full border border-white/40 shadow-[0_0_12px_rgba(192,132,252,0.4)] animate-[spin_20s_linear_infinite]"
                 style={{ animationDirection: "normal" }}
               />
               <div
-                className="absolute inset-1.5 rounded-full border border-violet-500/20 animate-[spin_24s_linear_infinite]"
+                className="absolute inset-1.5 rounded-full border border-dashed border-purple-300/30 animate-[spin_25s_linear_infinite]"
                 style={{ animationDirection: "reverse" }}
               />
 
@@ -471,20 +403,17 @@ export default function AiSystemArchitecture() {
                 className={cn(
                   "relative z-10 w-16 h-16 rounded-full flex items-center justify-center backdrop-blur-md border transition-all duration-300",
                   isLightMode
-                    ? "bg-gradient-to-br from-violet-100 to-indigo-100/80 border-violet-300 shadow-[0_0_20px_rgba(139,92,246,0.25)]"
-                    : "bg-gradient-to-br from-[#201542] to-[#120B27] border-violet-400/50 shadow-[0_0_25px_rgba(168,85,247,0.4)]"
+                    ? "bg-gradient-to-b from-white to-purple-50 border-purple-200 text-slate-800 shadow-[0_0_15px_rgba(192,132,252,0.4),inset_0_1px_1px_rgba(255,255,255,1)]"
+                    : "bg-gradient-to-b from-white/[0.24] via-purple-500/[0.1] to-white/[0.06] border-white/40 text-white shadow-[0_0_20px_rgba(192,132,252,0.35),inset_0_1px_2px_rgba(255,255,255,0.6)]"
                 )}
               >
-                {/* AI / Neural Brain Icon */}
-                <div className="relative">
-                  <Cpu className="w-8 h-8 text-violet-400 dark:text-violet-300 animate-pulse" />
-                  <Sparkles className="w-3.5 h-3.5 text-pink-400 absolute -top-1 -right-1" />
-                </div>
+                <Cpu className="w-8 h-8 text-white animate-pulse drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                <Sparkles className="w-3.5 h-3.5 text-purple-200 absolute -top-0.5 -right-0.5 drop-shadow-[0_0_5px_rgba(216,180,254,0.9)]" />
               </div>
 
               {/* Orbiting Tiny Light Particle */}
               <div className="absolute inset-0 animate-[spin_6s_linear_infinite] pointer-events-none">
-                <div className="w-1.5 h-1.5 rounded-full bg-violet-300 shadow-[0_0_8px_#c084fc] -translate-x-1" />
+                <div className="w-2 h-2 rounded-full bg-white shadow-[0_0_10px_#c084fc] -translate-x-1" />
               </div>
             </div>
 
@@ -492,12 +421,21 @@ export default function AiSystemArchitecture() {
             <h3
               className={cn(
                 "text-xl sm:text-2xl font-bold font-display tracking-tight mb-1",
-                isLightMode ? "text-slate-900" : "text-white"
+                isLightMode
+                  ? "text-slate-900"
+                  : "text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-purple-200 drop-shadow-[0_0_12px_rgba(255,255,255,0.35)]"
               )}
             >
               AI CORE
             </h3>
-            <div className="text-[11px] font-mono font-semibold tracking-widest text-violet-500 dark:text-violet-300 uppercase mb-2.5">
+            <div
+              className={cn(
+                "text-[11px] font-mono font-bold tracking-widest uppercase mb-2.5",
+                isLightMode
+                  ? "text-purple-600"
+                  : "text-transparent bg-clip-text bg-gradient-to-r from-purple-200 via-white to-purple-200 drop-shadow-[0_0_6px_rgba(192,132,252,0.5)]"
+              )}
+            >
               LLM ORCHESTRATION
             </div>
 
@@ -568,37 +506,50 @@ export default function AiSystemArchitecture() {
         {/* Mobile AI Core */}
         <div
           className={cn(
-            "w-full max-w-sm rounded-3xl p-5 sm:p-6 backdrop-blur-2xl transition-all text-center flex flex-col items-center",
+            "w-full max-w-sm rounded-2xl p-5 border text-center flex flex-col items-center relative overflow-hidden backdrop-blur-2xl backdrop-saturate-150",
             isLightMode
-              ? "bg-white/85 border border-slate-200/90 shadow-lg"
-              : "bg-[#110C24]/85 border border-violet-500/30 shadow-[0_0_30px_rgba(139,92,246,0.2)]"
+              ? "bg-white/90 border-purple-200 shadow-[0_0_20px_rgba(192,132,252,0.3),0_8px_24px_rgba(0,0,0,0.06)]"
+              : "bg-gradient-to-b from-[#1a1728]/90 to-[#0a0d14]/90 border-white/30 shadow-[0_0_25px_rgba(168,85,247,0.25),0_12px_32px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.4)]"
           )}
         >
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-3 bg-gradient-to-br from-violet-500/20 to-pink-500/20 border border-violet-400/40">
-            <Cpu className="w-8 h-8 text-violet-400" />
+          <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+          <div
+            className={cn(
+              "w-12 h-12 rounded-2xl flex items-center justify-center mb-2 border backdrop-blur-md",
+              isLightMode
+                ? "bg-white border-purple-200 text-slate-800"
+                : "bg-white/[0.16] border-white/30 text-white shadow-[0_0_12px_rgba(192,132,252,0.25)]"
+            )}
+          >
+            <Cpu className="w-6 h-6 text-white animate-pulse" />
           </div>
-          <h3 className={cn("text-xl font-bold font-display tracking-tight mb-1", isLightMode ? "text-slate-900" : "text-white")}>
+          <h3
+            className={cn(
+              "text-lg font-bold font-display tracking-tight mb-0.5",
+              isLightMode ? "text-slate-900" : "text-transparent bg-clip-text bg-gradient-to-b from-white to-purple-200"
+            )}
+          >
             AI CORE
           </h3>
-          <div className="text-[10px] font-mono font-semibold tracking-widest text-violet-400 uppercase mb-2">
+          <div className="text-[9.5px] font-mono font-bold tracking-widest text-purple-300 uppercase mb-1.5">
             LLM ORCHESTRATION
           </div>
           <p className={cn("text-xs leading-relaxed font-sans", isLightMode ? "text-slate-600" : "text-slate-300")}>
-            Central intelligence layer that connects memory, knowledge, tools and agents.
+            Central intelligence layer connecting memory, knowledge, tools and agents.
           </p>
         </div>
 
-        {/* Connecting Pulse Line */}
-        <div className="w-[2px] h-6 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-full" />
+        {/* Connecting Silver-Purple Pulse Line */}
+        <div className="w-[1.5px] h-6 bg-gradient-to-b from-purple-300/80 via-white/60 to-purple-400/20 rounded-full shadow-[0_0_6px_rgba(192,132,252,0.4)]" />
 
-        {/* Top 2 Cards: Memory & RAG */}
+        {/* Top 2 Cards: Memory & RAG Engine */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full max-w-xl">
           <MobileCard node={ARCHITECTURE_NODES.memory} isLightMode={isLightMode} />
           <MobileCard node={ARCHITECTURE_NODES.rag} isLightMode={isLightMode} />
         </div>
 
-        {/* Connecting Pulse Line */}
-        <div className="w-[2px] h-6 bg-gradient-to-b from-indigo-500 to-pink-500 rounded-full" />
+        {/* Connecting Silver-Purple Pulse Line */}
+        <div className="w-[1.5px] h-6 bg-gradient-to-b from-purple-300/80 via-white/60 to-purple-400/20 rounded-full shadow-[0_0_6px_rgba(192,132,252,0.4)]" />
 
         {/* Bottom 2 Cards: API Layer & Tools */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full max-w-xl">
@@ -606,8 +557,8 @@ export default function AiSystemArchitecture() {
           <MobileCard node={ARCHITECTURE_NODES.tools} isLightMode={isLightMode} />
         </div>
 
-        {/* Connecting Pulse Line */}
-        <div className="w-[2px] h-6 bg-gradient-to-b from-pink-500 to-purple-500 rounded-full" />
+        {/* Connecting Silver-Purple Pulse Line */}
+        <div className="w-[1.5px] h-6 bg-gradient-to-b from-purple-300/80 via-white/60 to-purple-400/20 rounded-full shadow-[0_0_6px_rgba(192,132,252,0.4)]" />
 
         {/* Agents Card */}
         <div className="w-full max-w-sm">
@@ -621,10 +572,10 @@ export default function AiSystemArchitecture() {
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.7, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          "w-full max-w-[1000px] mt-10 md:mt-14 rounded-2xl sm:rounded-full px-5 py-3 sm:py-3.5 backdrop-blur-xl border transition-all duration-300",
+          "w-full max-w-[1000px] mt-10 md:mt-14 rounded-2xl sm:rounded-full px-5 py-3 sm:py-3.5 backdrop-blur-2xl backdrop-saturate-150 border transition-all duration-300",
           isLightMode
-            ? "bg-white/80 border-slate-200/90 shadow-[0_8px_24px_rgba(0,0,0,0.04)]"
-            : "bg-[#0E0A1D]/75 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]"
+            ? "bg-white/80 border-purple-200/80 shadow-[0_0_20px_rgba(192,132,252,0.25),0_8px_24px_rgba(0,0,0,0.04)]"
+            : "bg-[#141221]/75 border-white/20 shadow-[0_0_25px_rgba(192,132,252,0.18),0_8px_32px_rgba(0,0,0,0.6),inset_0_1px_1px_rgba(255,255,255,0.3)]"
         )}
       >
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-2 items-center justify-between">
@@ -640,10 +591,10 @@ export default function AiSystemArchitecture() {
               >
                 <div
                   className={cn(
-                    "w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border transition-transform duration-200 hover:scale-110",
+                    "w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border transition-transform duration-200 hover:scale-110 backdrop-blur-md",
                     isLightMode
-                      ? "bg-slate-100 border-slate-200 text-slate-700"
-                      : "bg-white/5 border-white/10 text-violet-300"
+                      ? "bg-purple-50 border-purple-200 text-purple-700"
+                      : "bg-white/[0.1] border-white/20 text-purple-200 shadow-[0_0_10px_rgba(192,132,252,0.2)]"
                   )}
                 >
                   <Icon className="w-4 h-4" />
@@ -703,40 +654,48 @@ function ArchitectureCard({
       animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
       transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        "rounded-2xl p-5 backdrop-blur-xl transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col items-center text-center",
+        "rounded-2xl p-5 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col items-center text-center group",
         isCenter ? "w-[300px]" : "w-[250px]",
         isLightMode
-          ? "bg-white/85 border border-slate-200/90 shadow-[0_8px_24px_rgba(57,78,110,0.06)]"
-          : "bg-[#0E0A1E]/75 border border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.5)]",
+          ? "bg-gradient-to-b from-white/90 via-purple-50/30 to-white/90 border border-purple-200/70 shadow-[0_0_18px_rgba(192,132,252,0.25),0_6px_20px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.9)]"
+          : "bg-gradient-to-b from-[#191726]/80 via-[#12111d]/85 to-[#0a0d14]/85 border border-white/20 shadow-[0_0_22px_rgba(168,85,247,0.18),0_0_45px_rgba(203,213,225,0.12),0_8px_24px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.35),inset_0_0_12px_rgba(168,85,247,0.04)]",
         isHovered
           ? isLightMode
-            ? "border-violet-400 shadow-[0_12px_30px_rgba(139,92,246,0.15)] -translate-y-1 scale-[1.02]"
-            : "border-violet-400/60 shadow-[0_12px_36px_rgba(139,92,246,0.25)] -translate-y-1 scale-[1.02]"
+            ? "border-purple-300 shadow-[0_0_28px_rgba(192,132,252,0.45),0_10px_28px_rgba(0,0,0,0.1)] -translate-y-1 scale-[1.02]"
+            : "border-purple-200/60 shadow-[0_0_32px_rgba(192,132,252,0.35),0_0_65px_rgba(255,255,255,0.3),0_12px_32px_rgba(0,0,0,0.7),inset_0_1px_2px_rgba(255,255,255,0.55)] -translate-y-1 scale-[1.02]"
           : isCoreHovered
           ? isLightMode
-            ? "border-violet-300"
-            : "border-violet-500/35"
+            ? "border-purple-300/80 shadow-[0_0_22px_rgba(192,132,252,0.35)]"
+            : "border-purple-300/40 shadow-[0_0_25px_rgba(192,132,252,0.25)]"
           : ""
       )}
     >
+      {/* Top Specular Silver Rim Highlight */}
+      <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/70 to-transparent pointer-events-none" />
+
+      {/* Subtle Corner Glass Sheen with Soft Purple Hue */}
+      <div className="absolute -top-8 -right-8 w-20 h-20 bg-purple-500/[0.08] rounded-full blur-md pointer-events-none" />
+
       {/* Icon Housing */}
       <div
         className={cn(
-          "w-11 h-11 rounded-xl flex items-center justify-center mb-3 border transition-transform duration-300",
+          "w-11 h-11 rounded-xl flex items-center justify-center mb-3 border transition-all duration-300 backdrop-blur-md",
           isLightMode
-            ? "bg-slate-100/90 border-slate-200 text-slate-800"
-            : "bg-white/5 border-white/15 text-violet-300",
-          isHovered ? "scale-110" : ""
+            ? "bg-purple-50/80 border-purple-200 text-slate-800 shadow-sm"
+            : "bg-gradient-to-b from-white/[0.2] via-purple-500/[0.08] to-white/[0.04] border-white/30 text-white shadow-[0_0_12px_rgba(192,132,252,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)]",
+          isHovered ? "scale-110 border-purple-300/60 shadow-[0_0_18px_rgba(192,132,252,0.4)]" : ""
         )}
       >
-        <Icon className="w-5 h-5" />
+        <Icon className="w-5 h-5 text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.6)]" />
       </div>
 
       {/* Node Title */}
       <h4
         className={cn(
           "text-sm font-bold font-mono tracking-wider mb-1.5 uppercase",
-          isLightMode ? "text-slate-900" : "text-white"
+          isLightMode
+            ? "text-slate-900"
+            : "text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-purple-200 drop-shadow-[0_0_8px_rgba(255,255,255,0.25)]"
         )}
       >
         {node.title}
@@ -746,7 +705,7 @@ function ArchitectureCard({
       <p
         className={cn(
           "text-[11.5px] leading-relaxed font-sans",
-          isLightMode ? "text-slate-600" : "text-slate-400"
+          isLightMode ? "text-slate-600" : "text-slate-300/90"
         )}
       >
         {node.description}
@@ -761,27 +720,28 @@ function MobileCard({ node, isLightMode }: { node: NodeData; isLightMode: boolea
   return (
     <div
       className={cn(
-        "rounded-2xl p-4 backdrop-blur-xl border transition-all flex items-start gap-3.5",
+        "rounded-2xl p-4 backdrop-blur-2xl backdrop-saturate-150 border transition-all flex items-start gap-3.5 relative overflow-hidden",
         isLightMode
-          ? "bg-white/85 border-slate-200/90 shadow-sm"
-          : "bg-[#0E0A1E]/80 border-white/10"
+          ? "bg-white/90 border-purple-200 shadow-[0_0_14px_rgba(192,132,252,0.2)]"
+          : "bg-gradient-to-b from-[#191726]/85 to-[#0a0d14]/85 border-white/25 shadow-[0_0_18px_rgba(168,85,247,0.15),0_6px_18px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.3)]"
       )}
     >
+      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
       <div
         className={cn(
-          "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border",
+          "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border backdrop-blur-md",
           isLightMode
-            ? "bg-slate-100 border-slate-200 text-slate-800"
-            : "bg-white/5 border-white/15 text-violet-300"
+            ? "bg-purple-50 border-purple-200 text-slate-800"
+            : "bg-white/[0.16] border-white/30 text-white shadow-[0_0_8px_rgba(192,132,252,0.2)]"
         )}
       >
-        <Icon className="w-5 h-5" />
+        <Icon className="w-5 h-5 text-white" />
       </div>
       <div className="flex flex-col text-left">
         <h4
           className={cn(
             "text-xs font-bold font-mono tracking-wider mb-1 uppercase",
-            isLightMode ? "text-slate-900" : "text-white"
+            isLightMode ? "text-slate-900" : "text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.3)]"
           )}
         >
           {node.title}
@@ -789,7 +749,7 @@ function MobileCard({ node, isLightMode }: { node: NodeData; isLightMode: boolea
         <p
           className={cn(
             "text-[11px] leading-relaxed font-sans",
-            isLightMode ? "text-slate-600" : "text-slate-400"
+            isLightMode ? "text-slate-600" : "text-slate-300"
           )}
         >
           {node.description}
