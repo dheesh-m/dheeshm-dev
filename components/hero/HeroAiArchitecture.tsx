@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
 import {
@@ -67,7 +67,7 @@ export default function HeroAiArchitecture() {
     const rect = containerRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: x * 6, y: -y * 6 });
+    setTilt({ x: x * 3.5, y: -y * 3.5 });
   };
 
   const handleMouseLeave = () => {
@@ -84,13 +84,13 @@ export default function HeroAiArchitecture() {
       onMouseLeave={handleMouseLeave}
       className="relative w-full h-full flex flex-col items-center justify-center select-none py-2"
     >
-      {/* ── Luminous Silver-Purple Ambient Nebula Glow ── */}
+      {/* ── Atmospheric Ambient Glow Behind Network ── */}
       <div
         className={cn(
           "absolute w-[440px] h-[440px] rounded-full blur-[85px] pointer-events-none transition-all duration-700 -z-10",
           isLightMode
-            ? "bg-gradient-to-tr from-purple-200/40 via-slate-100/50 to-violet-200/40 opacity-70"
-            : "bg-gradient-to-tr from-violet-600/[0.14] via-slate-300/[0.1] to-purple-500/[0.12] opacity-85",
+            ? "bg-gradient-to-tr from-teal-300/20 via-indigo-200/30 to-purple-200/25 opacity-80"
+            : "bg-gradient-to-tr from-emerald-500/[0.08] via-cyan-500/[0.06] to-indigo-600/[0.08] opacity-80",
           isCoreHovered ? "scale-115 opacity-100 blur-[95px]" : "scale-100"
         )}
       />
@@ -104,7 +104,7 @@ export default function HeroAiArchitecture() {
           transformStyle: "preserve-3d",
         }}
       >
-        {/* ── SVG Connection Network with Soft Purple & Silver Shimmer ── */}
+        {/* ── SVG Connection Network with Dynamic Light/Dark Shimmer ── */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
           viewBox="0 0 620 520"
@@ -112,29 +112,29 @@ export default function HeroAiArchitecture() {
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            <linearGradient id="silver-purple-grad-left" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#94A3B8" />
-              <stop offset="35%" stopColor="#C084FC" />
-              <stop offset="60%" stopColor="#FFFFFF" />
-              <stop offset="100%" stopColor="#CBD5E1" />
+            <linearGradient id="cyber-grad-left" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={isLightMode ? "#6366F1" : "#475569"} />
+              <stop offset="35%" stopColor={isLightMode ? "#4F46E5" : "#5C67FF"} />
+              <stop offset="60%" stopColor={isLightMode ? "#0D9488" : "#00FFAA"} />
+              <stop offset="100%" stopColor={isLightMode ? "#64748B" : "#94A3B8"} />
             </linearGradient>
-            <linearGradient id="silver-purple-grad-right" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#94A3B8" />
-              <stop offset="35%" stopColor="#A855F7" />
-              <stop offset="60%" stopColor="#FFFFFF" />
-              <stop offset="100%" stopColor="#CBD5E1" />
+            <linearGradient id="cyber-grad-right" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={isLightMode ? "#6366F1" : "#475569"} />
+              <stop offset="35%" stopColor={isLightMode ? "#4F46E5" : "#5C67FF"} />
+              <stop offset="60%" stopColor={isLightMode ? "#0D9488" : "#00FFAA"} />
+              <stop offset="100%" stopColor={isLightMode ? "#64748B" : "#94A3B8"} />
             </linearGradient>
-            <linearGradient id="silver-purple-grad-agents" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#CBD5E1" />
-              <stop offset="40%" stopColor="#D8B4FE" />
-              <stop offset="70%" stopColor="#FFFFFF" />
-              <stop offset="100%" stopColor="#94A3B8" />
+            <linearGradient id="cyber-grad-agents" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={isLightMode ? "#64748B" : "#94A3B8"} />
+              <stop offset="40%" stopColor={isLightMode ? "#0D9488" : "#00FFAA"} />
+              <stop offset="70%" stopColor={isLightMode ? "#4F46E5" : "#5C67FF"} />
+              <stop offset="100%" stopColor={isLightMode ? "#6366F1" : "#475569"} />
             </linearGradient>
 
-            {/* Silver-Purple Glow Filter */}
-            <filter id="silver-line-glow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="2.5" result="blur1" />
-              <feGaussianBlur stdDeviation="1.2" result="blur2" />
+            {/* Cyber Line Glow Filter */}
+            <filter id="cyber-line-glow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation={isLightMode ? "1.5" : "2.2"} result="blur1" />
+              <feGaussianBlur stdDeviation={isLightMode ? "0.8" : "1.0"} result="blur2" />
               <feMerge>
                 <feMergeNode in="blur1" />
                 <feMergeNode in="blur2" />
@@ -142,9 +142,9 @@ export default function HeroAiArchitecture() {
               </feMerge>
             </filter>
 
-            {/* Bright Silver-Purple Photon Glow */}
-            <filter id="photon-silver-glow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="2.2" result="glow" />
+            {/* Photon Glow */}
+            <filter id="photon-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2.0" result="glow" />
               <feMerge>
                 <feMergeNode in="glow" />
                 <feMergeNode in="SourceGraphic" />
@@ -155,55 +155,59 @@ export default function HeroAiArchitecture() {
           {/* 1. Path: MEMORY -> AI CORE */}
           <path
             d="M 170 95 C 195 95, 175 185, 195 185"
-            stroke="url(#silver-purple-grad-left)"
-            strokeWidth={hoveredNode === "memory" || isCoreHovered ? 2.2 : 1.4}
-            opacity={hoveredNode === "memory" || isCoreHovered ? 1 : isLightMode ? 0.65 : 0.48}
-            filter="url(#silver-line-glow)"
+            stroke="url(#cyber-grad-left)"
+            strokeWidth={hoveredNode === "memory" || isCoreHovered ? 2.4 : isLightMode ? 1.8 : 1.3}
+            opacity={hoveredNode === "memory" || isCoreHovered ? 1 : isLightMode ? 0.7 : 0.45}
+            filter="url(#cyber-line-glow)"
             className="transition-all duration-300"
           />
 
           {/* 2. Path: AI CORE -> RAG ENGINE */}
           <path
             d="M 450 95 C 425 95, 445 185, 425 185"
-            stroke="url(#silver-purple-grad-right)"
-            strokeWidth={hoveredNode === "rag" || isCoreHovered ? 2.2 : 1.4}
-            opacity={hoveredNode === "rag" || isCoreHovered ? 1 : isLightMode ? 0.65 : 0.48}
-            filter="url(#silver-line-glow)"
+            stroke="url(#cyber-grad-right)"
+            strokeWidth={hoveredNode === "rag" || isCoreHovered ? 2.4 : isLightMode ? 1.8 : 1.3}
+            opacity={hoveredNode === "rag" || isCoreHovered ? 1 : isLightMode ? 0.7 : 0.45}
+            filter="url(#cyber-line-glow)"
             className="transition-all duration-300"
           />
 
           {/* 3. Path: API LAYER -> AI CORE */}
           <path
             d="M 170 335 C 195 335, 175 265, 195 265"
-            stroke="url(#silver-purple-grad-left)"
-            strokeWidth={hoveredNode === "api" || isCoreHovered ? 2.2 : 1.4}
-            opacity={hoveredNode === "api" || isCoreHovered ? 1 : isLightMode ? 0.65 : 0.48}
-            filter="url(#silver-line-glow)"
+            stroke="url(#cyber-grad-left)"
+            strokeWidth={hoveredNode === "api" || isCoreHovered ? 2.4 : isLightMode ? 1.8 : 1.3}
+            opacity={hoveredNode === "api" || isCoreHovered ? 1 : isLightMode ? 0.7 : 0.45}
+            filter="url(#cyber-line-glow)"
             className="transition-all duration-300"
           />
 
           {/* 4. Path: AI CORE -> TOOLS */}
           <path
             d="M 450 335 C 425 335, 445 265, 425 265"
-            stroke="url(#silver-purple-grad-right)"
-            strokeWidth={hoveredNode === "tools" || isCoreHovered ? 2.2 : 1.4}
-            opacity={hoveredNode === "tools" || isCoreHovered ? 1 : isLightMode ? 0.65 : 0.48}
-            filter="url(#silver-line-glow)"
+            stroke="url(#cyber-grad-right)"
+            strokeWidth={hoveredNode === "tools" || isCoreHovered ? 2.4 : isLightMode ? 1.8 : 1.3}
+            opacity={hoveredNode === "tools" || isCoreHovered ? 1 : isLightMode ? 0.7 : 0.45}
+            filter="url(#cyber-line-glow)"
             className="transition-all duration-300"
           />
 
           {/* 5. Path: AI CORE -> AGENTS */}
           <path
             d="M 310 345 L 310 405"
-            stroke="url(#silver-purple-grad-agents)"
-            strokeWidth={hoveredNode === "agents" || isCoreHovered ? 2.2 : 1.4}
-            opacity={hoveredNode === "agents" || isCoreHovered ? 1 : isLightMode ? 0.65 : 0.48}
-            filter="url(#silver-line-glow)"
+            stroke="url(#cyber-grad-agents)"
+            strokeWidth={hoveredNode === "agents" || isCoreHovered ? 2.4 : isLightMode ? 1.8 : 1.3}
+            opacity={hoveredNode === "agents" || isCoreHovered ? 1 : isLightMode ? 0.7 : 0.45}
+            filter="url(#cyber-line-glow)"
             className="transition-all duration-300"
           />
 
-          {/* ── Traveling Light Data Photons (Luminous Silver-White with Lavender Aura) ── */}
-          <circle r={hoveredNode === "memory" ? "3" : "2.2"} fill="#FFFFFF" filter="url(#photon-silver-glow)">
+          {/* ── Traveling Light Data Photons ── */}
+          <circle
+            r={hoveredNode === "memory" ? "3.2" : "2.4"}
+            fill={isLightMode ? "#4F46E5" : "#FFFFFF"}
+            filter="url(#photon-glow)"
+          >
             <animateMotion
               dur={hoveredNode === "memory" ? "1.6s" : "2.8s"}
               repeatCount="indefinite"
@@ -211,7 +215,11 @@ export default function HeroAiArchitecture() {
             />
           </circle>
 
-          <circle r={hoveredNode === "rag" ? "3" : "2.2"} fill="#FFFFFF" filter="url(#photon-silver-glow)">
+          <circle
+            r={hoveredNode === "rag" ? "3.2" : "2.4"}
+            fill={isLightMode ? "#4F46E5" : "#FFFFFF"}
+            filter="url(#photon-glow)"
+          >
             <animateMotion
               dur={hoveredNode === "rag" ? "1.6s" : "3.0s"}
               repeatCount="indefinite"
@@ -219,7 +227,11 @@ export default function HeroAiArchitecture() {
             />
           </circle>
 
-          <circle r={hoveredNode === "api" ? "3" : "2.2"} fill="#FFFFFF" filter="url(#photon-silver-glow)">
+          <circle
+            r={hoveredNode === "api" ? "3.2" : "2.4"}
+            fill={isLightMode ? "#4F46E5" : "#FFFFFF"}
+            filter="url(#photon-glow)"
+          >
             <animateMotion
               dur={hoveredNode === "api" ? "1.6s" : "2.9s"}
               repeatCount="indefinite"
@@ -227,7 +239,11 @@ export default function HeroAiArchitecture() {
             />
           </circle>
 
-          <circle r={hoveredNode === "tools" ? "3" : "2.2"} fill="#FFFFFF" filter="url(#photon-silver-glow)">
+          <circle
+            r={hoveredNode === "tools" ? "3.2" : "2.4"}
+            fill={isLightMode ? "#4F46E5" : "#FFFFFF"}
+            filter="url(#photon-glow)"
+          >
             <animateMotion
               dur={hoveredNode === "tools" ? "1.6s" : "3.1s"}
               repeatCount="indefinite"
@@ -235,7 +251,11 @@ export default function HeroAiArchitecture() {
             />
           </circle>
 
-          <circle r={hoveredNode === "agents" ? "3" : "2.2"} fill="#FFFFFF" filter="url(#photon-silver-glow)">
+          <circle
+            r={hoveredNode === "agents" ? "3.2" : "2.4"}
+            fill={isLightMode ? "#4F46E5" : "#FFFFFF"}
+            filter="url(#photon-glow)"
+          >
             <animateMotion
               dur={hoveredNode === "agents" ? "1.5s" : "2.6s"}
               repeatCount="indefinite"
@@ -245,129 +265,53 @@ export default function HeroAiArchitecture() {
         </svg>
 
         {/* ── 1. Top-Left: MEMORY Card ── */}
-        <div
-          className="absolute top-[25px] left-[15px] z-20 w-[155px]"
-          onMouseEnter={() => setHoveredNode("memory")}
-          onMouseLeave={() => setHoveredNode(null)}
-        >
-          <HighQualityCard
+        <div className="absolute top-[25px] left-[15px] z-20 w-[155px]">
+          <ExactCyberCard
             node={NODES_DATA.memory}
-            isHovered={hoveredNode === "memory"}
+            onHoverChange={(hovered) => setHoveredNode(hovered ? "memory" : null)}
             isCoreHovered={isCoreHovered}
             isLightMode={isLightMode}
           />
         </div>
 
         {/* ── 2. Top-Right: RAG ENGINE Card ── */}
-        <div
-          className="absolute top-[25px] right-[15px] z-20 w-[155px]"
-          onMouseEnter={() => setHoveredNode("rag")}
-          onMouseLeave={() => setHoveredNode(null)}
-        >
-          <HighQualityCard
+        <div className="absolute top-[25px] right-[15px] z-20 w-[155px]">
+          <ExactCyberCard
             node={NODES_DATA.rag}
-            isHovered={hoveredNode === "rag"}
+            onHoverChange={(hovered) => setHoveredNode(hovered ? "rag" : null)}
             isCoreHovered={isCoreHovered}
             isLightMode={isLightMode}
           />
         </div>
 
-        {/* ── 3. Central AI CORE Card (Deep Silver-Purple Frosted Glassmorphism) ── */}
+        {/* ── 3. Central AI CORE Card (Larger Hub) ── */}
         <div
           className="absolute top-[115px] z-30 w-[230px]"
           style={{
             left: "calc(50% - 115px)",
-            transform: "translateZ(28px)",
           }}
-          onMouseEnter={() => setHoveredNode("core")}
-          onMouseLeave={() => setHoveredNode(null)}
         >
-          <div
-            className={cn(
-              "w-full rounded-3xl p-5 transition-all duration-300 cursor-pointer text-center relative overflow-hidden flex flex-col items-center backdrop-blur-2xl backdrop-saturate-150 group",
-              isLightMode
-                ? "bg-gradient-to-b from-white/90 via-purple-50/40 to-white/90 border border-purple-200/80 shadow-[0_0_25px_rgba(192,132,252,0.35),0_12px_32px_rgba(0,0,0,0.08),inset_0_1px_1px_rgba(255,255,255,0.9)] hover:border-purple-300 hover:shadow-[0_0_40px_rgba(192,132,252,0.55),0_16px_40px_rgba(0,0,0,0.12)]"
-                : "bg-gradient-to-b from-[#1a1728]/85 via-[#12111d]/90 to-[#0a0d14]/90 border border-white/30 hover:border-purple-300/60 shadow-[0_0_35px_rgba(168,85,247,0.28),0_0_70px_rgba(255,255,255,0.2),0_16px_40px_rgba(0,0,0,0.7),inset_0_1px_2px_rgba(255,255,255,0.5),inset_0_0_16px_rgba(168,85,247,0.08)] hover:shadow-[0_0_55px_rgba(192,132,252,0.45),0_0_95px_rgba(255,255,255,0.35),0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_2px_rgba(255,255,255,0.85)]",
-              isCoreHovered ? "scale-[1.03] -translate-y-1" : "scale-100"
-            )}
-          >
-            {/* Top Crisp Specular Silver Rim Light */}
-            <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
-
-            {/* Corner Glass Ambient Soft Purple Sheen */}
-            <div className="absolute -top-10 -right-10 w-28 h-28 bg-purple-500/[0.1] rounded-full blur-xl pointer-events-none" />
-            <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-violet-500/[0.08] rounded-full blur-xl pointer-events-none" />
-
-            {/* Core Neural Icon Housing with Liquid Silver-Purple Halo Rings */}
-            <div className="relative w-14 h-14 mb-2.5 flex items-center justify-center">
-              {/* Outer Glowing Silver Orbitals */}
-              <div className="absolute inset-0 rounded-full border border-white/40 shadow-[0_0_12px_rgba(192,132,252,0.4)] animate-[spin_20s_linear_infinite]" />
-              <div className="absolute inset-1 rounded-full border border-dashed border-purple-300/30 animate-[spin_25s_linear_infinite_reverse]" />
-
-              {/* Core Icon Badge */}
-              <div
-                className={cn(
-                  "relative z-10 w-11 h-11 rounded-2xl flex items-center justify-center border backdrop-blur-md transition-all duration-300",
-                  isLightMode
-                    ? "bg-gradient-to-b from-white to-purple-50 border-purple-200 text-slate-800 shadow-[0_0_15px_rgba(192,132,252,0.4),inset_0_1px_1px_rgba(255,255,255,1)]"
-                    : "bg-gradient-to-b from-white/[0.24] via-purple-500/[0.1] to-white/[0.06] border-white/40 text-white shadow-[0_0_20px_rgba(192,132,252,0.35),inset_0_1px_2px_rgba(255,255,255,0.6)]"
-                )}
-              >
-                <Cpu className="w-5 h-5 text-white animate-pulse drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-                <Sparkles className="w-2.5 h-2.5 text-purple-200 absolute -top-0.5 -right-0.5 drop-shadow-[0_0_5px_rgba(216,180,254,0.9)]" />
-              </div>
-            </div>
-
-            {/* AI CORE Typography with Silver & Subtle Soft Purple Sheen */}
-            <h3
-              className={cn(
-                "text-base sm:text-lg font-bold font-display tracking-tight mb-0.5",
-                isLightMode
-                  ? "text-slate-900"
-                  : "text-transparent bg-clip-text bg-gradient-to-b from-white via-slate-100 to-purple-200 drop-shadow-[0_0_12px_rgba(255,255,255,0.35)]"
-              )}
-            >
-              AI CORE
-            </h3>
-            <div
-              className={cn(
-                "text-[9px] font-mono font-bold tracking-widest uppercase mb-1.5",
-                isLightMode
-                  ? "text-purple-600"
-                  : "text-transparent bg-clip-text bg-gradient-to-r from-purple-200 via-white to-purple-200 drop-shadow-[0_0_6px_rgba(192,132,252,0.5)]"
-              )}
-            >
-              LLM ORCHESTRATION
-            </div>
-            <p className={cn("text-[10.5px] leading-snug font-sans max-w-[190px]", isLightMode ? "text-slate-600" : "text-slate-300/90")}>
-              Central intelligence layer that connects memory, knowledge, tools and agents.
-            </p>
-          </div>
+          <ExactCyberAiCoreCard
+            onHoverChange={(hovered) => setHoveredNode(hovered ? "core" : null)}
+            isLightMode={isLightMode}
+          />
         </div>
 
         {/* ── 4. Bottom-Left: API LAYER Card ── */}
-        <div
-          className="absolute top-[265px] left-[15px] z-20 w-[155px]"
-          onMouseEnter={() => setHoveredNode("api")}
-          onMouseLeave={() => setHoveredNode(null)}
-        >
-          <HighQualityCard
+        <div className="absolute top-[265px] left-[15px] z-20 w-[155px]">
+          <ExactCyberCard
             node={NODES_DATA.api}
-            isHovered={hoveredNode === "api"}
+            onHoverChange={(hovered) => setHoveredNode(hovered ? "api" : null)}
             isCoreHovered={isCoreHovered}
             isLightMode={isLightMode}
           />
         </div>
 
         {/* ── 5. Bottom-Right: TOOLS Card ── */}
-        <div
-          className="absolute top-[265px] right-[15px] z-20 w-[155px]"
-          onMouseEnter={() => setHoveredNode("tools")}
-          onMouseLeave={() => setHoveredNode(null)}
-        >
-          <HighQualityCard
+        <div className="absolute top-[265px] right-[15px] z-20 w-[155px]">
+          <ExactCyberCard
             node={NODES_DATA.tools}
-            isHovered={hoveredNode === "tools"}
+            onHoverChange={(hovered) => setHoveredNode(hovered ? "tools" : null)}
             isCoreHovered={isCoreHovered}
             isLightMode={isLightMode}
           />
@@ -379,12 +323,10 @@ export default function HeroAiArchitecture() {
           style={{
             left: "calc(50% - 105px)",
           }}
-          onMouseEnter={() => setHoveredNode("agents")}
-          onMouseLeave={() => setHoveredNode(null)}
         >
-          <HighQualityCard
+          <ExactCyberCard
             node={NODES_DATA.agents}
-            isHovered={hoveredNode === "agents"}
+            onHoverChange={(hovered) => setHoveredNode(hovered ? "agents" : null)}
             isCoreHovered={isCoreHovered}
             isLightMode={isLightMode}
             isCenter
@@ -397,138 +339,674 @@ export default function HeroAiArchitecture() {
         {/* Mobile AI Core */}
         <div
           className={cn(
-            "w-full max-w-[320px] rounded-2xl p-4 border text-center flex flex-col items-center relative overflow-hidden backdrop-blur-2xl backdrop-saturate-150",
+            "w-full max-w-[320px] rounded-[18px] p-4 text-center flex flex-col items-center relative overflow-hidden transition-all duration-300",
             isLightMode
-              ? "bg-white/90 border-purple-200 shadow-[0_0_20px_rgba(192,132,252,0.3),0_6px_20px_rgba(0,0,0,0.06)]"
-              : "bg-gradient-to-b from-[#1a1728]/90 to-[#0a0d14]/90 border-white/30 shadow-[0_0_25px_rgba(168,85,247,0.25),0_8px_24px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.4)]"
+              ? "bg-white/95 border border-slate-200/90 shadow-[0_8px_24px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.03)]"
+              : "bg-[#11131a] border border-[#2a2f3d] shadow-[0_8px_24px_rgba(0,0,0,0.8)]"
           )}
         >
-          <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+          {/* Subtle Horizontal Lines */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-30"
+            style={{
+              backgroundImage: isLightMode
+                ? "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.02) 3px, rgba(0, 0, 0, 0.02) 4px)"
+                : "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255, 255, 255, 0.02) 3px, rgba(255, 255, 255, 0.02) 4px)",
+            }}
+          />
+          {/* Corner Brackets */}
+          <CyberCorner position="tl" isHovered={false} isLightMode={isLightMode} />
+          <CyberCorner position="tr" isHovered={false} isLightMode={isLightMode} />
+          <CyberCorner position="bl" isHovered={false} isLightMode={isLightMode} />
+          <CyberCorner position="br" isHovered={false} isLightMode={isLightMode} />
+
           <div
             className={cn(
-              "w-10 h-10 rounded-xl flex items-center justify-center mb-1.5 border backdrop-blur-md",
+              "relative z-10 w-10 h-10 rounded-xl flex items-center justify-center mb-1.5 border transition-colors",
               isLightMode
-                ? "bg-white border-purple-200 text-slate-800"
-                : "bg-white/[0.16] border-white/30 text-white shadow-[0_0_12px_rgba(192,132,252,0.25)]"
+                ? "border-indigo-200 bg-indigo-50/90 text-[#4f46e5]"
+                : "border-[#3e476c] bg-[#1a1e2b] text-white"
             )}
           >
-            <Cpu className="w-5 h-5 text-white animate-pulse" />
+            <Cpu className={cn("w-5 h-5 animate-pulse", isLightMode ? "text-[#4f46e5]" : "text-white")} />
           </div>
           <h3
             className={cn(
-              "text-sm font-bold font-display tracking-tight",
-              isLightMode
-                ? "text-slate-900"
-                : "text-transparent bg-clip-text bg-gradient-to-b from-white to-purple-200"
+              "relative z-10 text-sm font-bold font-display tracking-wider uppercase",
+              isLightMode ? "text-slate-900" : "text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"
             )}
           >
             AI CORE
           </h3>
-          <div className="text-[8.5px] font-mono font-bold tracking-widest text-purple-300 uppercase mb-1">
+          <div
+            className={cn(
+              "relative z-10 text-[8.5px] font-mono font-bold tracking-widest uppercase mb-1",
+              isLightMode ? "text-[#4f46e5]" : "text-[#5c67ff]"
+            )}
+          >
             LLM ORCHESTRATION
           </div>
-          <p className={cn("text-[9.5px] leading-relaxed font-sans", isLightMode ? "text-slate-600" : "text-slate-300")}>
-            Central intelligence layer connecting memory, knowledge, tools and agents.
+          <p
+            className={cn(
+              "relative z-10 text-[9.5px] leading-relaxed font-sans",
+              isLightMode ? "text-slate-600 font-normal" : "text-slate-300 font-light"
+            )}
+          >
+            Central intelligence layer that connects memory, knowledge, tools and agents.
           </p>
         </div>
 
-        {/* Silver-Purple Pulse Connector */}
-        <div className="w-[1.5px] h-3 bg-gradient-to-b from-purple-300/80 via-white/60 to-purple-400/20 rounded-full shadow-[0_0_6px_rgba(192,132,252,0.4)]" />
+        {/* Pulse Connector */}
+        <div
+          className={cn(
+            "w-[1.5px] h-3 rounded-full",
+            isLightMode
+              ? "bg-gradient-to-b from-[#4f46e5] to-teal-500 shadow-[0_0_4px_rgba(79,70,229,0.4)]"
+              : "bg-gradient-to-b from-[#5c67ff]/80 via-white/50 to-transparent shadow-[0_0_6px_#5c67ff]"
+          )}
+        />
 
         {/* 2-Col Grid: Memory & RAG */}
         <div className="grid grid-cols-2 gap-2.5 w-full max-w-[340px]">
-          <MobileHighQualityCard node={NODES_DATA.memory} isLightMode={isLightMode} />
-          <MobileHighQualityCard node={NODES_DATA.rag} isLightMode={isLightMode} />
+          <MobileExactCard node={NODES_DATA.memory} isLightMode={isLightMode} />
+          <MobileExactCard node={NODES_DATA.rag} isLightMode={isLightMode} />
         </div>
 
-        {/* Silver-Purple Pulse Connector */}
-        <div className="w-[1.5px] h-3 bg-gradient-to-b from-purple-300/80 via-white/60 to-purple-400/20 rounded-full shadow-[0_0_6px_rgba(192,132,252,0.4)]" />
+        {/* Pulse Connector */}
+        <div
+          className={cn(
+            "w-[1.5px] h-3 rounded-full",
+            isLightMode
+              ? "bg-gradient-to-b from-[#4f46e5] to-teal-500 shadow-[0_0_4px_rgba(79,70,229,0.4)]"
+              : "bg-gradient-to-b from-[#5c67ff]/80 via-white/50 to-transparent shadow-[0_0_6px_#5c67ff]"
+          )}
+        />
 
         {/* 2-Col Grid: API & Tools */}
         <div className="grid grid-cols-2 gap-2.5 w-full max-w-[340px]">
-          <MobileHighQualityCard node={NODES_DATA.api} isLightMode={isLightMode} />
-          <MobileHighQualityCard node={NODES_DATA.tools} isLightMode={isLightMode} />
+          <MobileExactCard node={NODES_DATA.api} isLightMode={isLightMode} />
+          <MobileExactCard node={NODES_DATA.tools} isLightMode={isLightMode} />
         </div>
 
-        {/* Silver-Purple Pulse Connector */}
-        <div className="w-[1.5px] h-3 bg-gradient-to-b from-purple-300/80 via-white/60 to-purple-400/20 rounded-full shadow-[0_0_6px_rgba(192,132,252,0.4)]" />
+        {/* Pulse Connector */}
+        <div
+          className={cn(
+            "w-[1.5px] h-3 rounded-full",
+            isLightMode
+              ? "bg-gradient-to-b from-[#4f46e5] to-teal-500 shadow-[0_0_4px_rgba(79,70,229,0.4)]"
+              : "bg-gradient-to-b from-[#5c67ff]/80 via-white/50 to-transparent shadow-[0_0_6px_#5c67ff]"
+          )}
+        />
 
         {/* Agents Card */}
         <div className="w-full max-w-[320px]">
-          <MobileHighQualityCard node={NODES_DATA.agents} isLightMode={isLightMode} isFull />
+          <MobileExactCard node={NODES_DATA.agents} isLightMode={isLightMode} isFull />
         </div>
       </div>
     </div>
   );
 }
 
-function HighQualityCard({
-  node,
+// ═══════════════════════════════════════════════════════════════════════
+// EXACT CORNER BRACKET (L-Shape in Idle -> Glowing Box in Hover)
+// ═══════════════════════════════════════════════════════════════════════
+
+function CyberCorner({
+  position,
   isHovered,
+  isLightMode,
+}: {
+  position: "tl" | "tr" | "bl" | "br";
+  isHovered: boolean;
+  isLightMode: boolean;
+}) {
+  const posClasses = {
+    tl: "top-2 left-2 border-t-2 border-l-2 rounded-tl-[3px]",
+    tr: "top-2 right-2 border-t-2 border-r-2 rounded-tr-[3px]",
+    bl: "bottom-2 left-2 border-b-2 border-l-2 rounded-bl-[3px]",
+    br: "bottom-2 right-2 border-b-2 border-r-2 rounded-br-[3px]",
+  }[position];
+
+  return (
+    <div
+      className={cn(
+        "absolute w-3 h-3 pointer-events-none transition-all duration-300 z-20",
+        posClasses,
+        isLightMode
+          ? isHovered
+            ? "border-[#4f46e5] bg-[#4f46e5]/15 shadow-[0_0_8px_rgba(79,70,229,0.5),inset_0_0_3px_#4f46e5]"
+            : "border-slate-400/60 bg-transparent"
+          : isHovered
+          ? "border-[#5c67ff] bg-[#5c67ff]/25 shadow-[0_0_10px_#5c67ff,inset_0_0_4px_#5c67ff]"
+          : "border-[#383f60] bg-transparent"
+      )}
+    />
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// EXACT CYBER ARCHITECTURE CARD (Surrounding Nodes)
+// ═══════════════════════════════════════════════════════════════════════
+
+function ExactCyberCard({
+  node,
+  onHoverChange,
   isCoreHovered,
   isLightMode,
   isCenter = false,
 }: {
   node: NodeItem;
-  isHovered: boolean;
+  onHoverChange: (hovered: boolean) => void;
   isCoreHovered: boolean;
   isLightMode: boolean;
   isCenter?: boolean;
 }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const clientX = e.clientX - rect.left;
+    const clientY = e.clientY - rect.top;
+
+    const normX = (clientX / rect.width - 0.5) * 2;
+    const normY = (clientY / rect.height - 0.5) * 2;
+
+    const maxTilt = 8;
+    setTilt({
+      x: -normY * maxTilt,
+      y: normX * maxTilt,
+    });
+
+    setGlare({
+      x: (clientX / rect.width) * 100,
+      y: (clientY / rect.height) * 100,
+      opacity: 0.85,
+    });
+  }, []);
+
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+    onHoverChange(true);
+  }, [onHoverChange]);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false);
+    onHoverChange(false);
+    setTilt({ x: 0, y: 0 });
+    setGlare((prev) => ({ ...prev, opacity: 0 }));
+  }, [onHoverChange]);
+
   const Icon = node.icon;
+
   return (
     <div
-      className={cn(
-        "rounded-2xl p-3.5 transition-all duration-300 cursor-pointer relative flex flex-col items-center text-center w-full overflow-hidden backdrop-blur-2xl backdrop-saturate-150 group",
-        isLightMode
-          ? "bg-gradient-to-b from-white/90 via-purple-50/30 to-white/90 border border-purple-200/70 shadow-[0_0_18px_rgba(192,132,252,0.25),0_6px_20px_rgba(0,0,0,0.05),inset_0_1px_1px_rgba(255,255,255,0.9)]"
-          : "bg-gradient-to-b from-[#191726]/80 via-[#12111d]/85 to-[#0a0d14]/85 border border-white/20 shadow-[0_0_22px_rgba(168,85,247,0.18),0_0_45px_rgba(203,213,225,0.12),0_8px_24px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.35),inset_0_0_12px_rgba(168,85,247,0.04)]",
-        isHovered
-          ? isLightMode
-            ? "border-purple-300 shadow-[0_0_28px_rgba(192,132,252,0.45),0_10px_28px_rgba(0,0,0,0.1)] -translate-y-1 scale-[1.02]"
-            : "border-purple-200/60 shadow-[0_0_32px_rgba(192,132,252,0.35),0_0_65px_rgba(255,255,255,0.3),0_12px_32px_rgba(0,0,0,0.7),inset_0_1px_2px_rgba(255,255,255,0.55)] -translate-y-1 scale-[1.02]"
-          : isCoreHovered
-          ? isLightMode
-            ? "border-purple-300/80 shadow-[0_0_22px_rgba(192,132,252,0.35)]"
-            : "border-purple-300/40 shadow-[0_0_25px_rgba(192,132,252,0.25)]"
-          : ""
-      )}
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="relative w-full select-none cursor-pointer"
+      style={{ perspective: 900 }}
     >
-      {/* Top Specular Silver Rim Highlight */}
-      <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/70 to-transparent pointer-events-none" />
-
-      {/* Subtle Corner Glass Sheen with Soft Purple Hue */}
-      <div className="absolute -top-6 -right-6 w-16 h-16 bg-purple-500/[0.08] rounded-full blur-md pointer-events-none" />
-
       <div
         className={cn(
-          "w-8 h-8 rounded-xl flex items-center justify-center mb-1.5 border transition-all duration-300 backdrop-blur-md",
+          "relative w-full rounded-[18px] p-3.5 flex flex-col items-center text-center overflow-hidden transition-all duration-300 group",
           isLightMode
-            ? "bg-purple-50/80 border-purple-200 text-slate-800 shadow-sm"
-            : "bg-gradient-to-b from-white/[0.2] via-purple-500/[0.08] to-white/[0.04] border-white/30 text-white shadow-[0_0_12px_rgba(192,132,252,0.2),inset_0_1px_1px_rgba(255,255,255,0.4)]",
-          isHovered ? "scale-110 border-purple-300/60 shadow-[0_0_18px_rgba(192,132,252,0.4)]" : ""
+            ? cn(
+                "bg-white/92 backdrop-blur-xl border border-slate-200/90 shadow-[0_8px_24px_rgba(0,0,0,0.06),0_2px_6px_rgba(0,0,0,0.02)]",
+                isHovered
+                  ? "border-[#4f46e5]/40 shadow-[0_16px_36px_rgba(79,70,229,0.14),0_0_20px_rgba(13,148,136,0.12)] bg-white/98"
+                  : isCoreHovered
+                  ? "border-slate-300 shadow-[0_10px_28px_rgba(0,0,0,0.08)]"
+                  : ""
+              )
+            : cn(
+                "bg-[#11131a] border border-[#282c3c] shadow-[0_8px_30px_rgba(0,0,0,0.7)]",
+                isHovered
+                  ? "border-[#3e4766] shadow-[0_16px_45px_rgba(0,0,0,0.85),0_0_25px_rgba(92,103,255,0.22)]"
+                  : isCoreHovered
+                  ? "border-[#343b54]"
+                  : ""
+              )
         )}
+        style={{
+          transform: isHovered
+            ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(16px)`
+            : "rotateX(0deg) rotateY(0deg) translateZ(0px)",
+          transformStyle: "preserve-3d",
+          transition: isHovered
+            ? "transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease"
+            : "transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
+          willChange: "transform",
+        }}
       >
-        <Icon className="w-4 h-4 text-white drop-shadow-[0_0_4px_rgba(255,255,255,0.6)]" />
+        {/* ── 1. Top Specular Rim Highlight ── */}
+        <div
+          className={cn(
+            "absolute inset-x-0 top-0 h-[1.5px] pointer-events-none z-10",
+            isLightMode
+              ? "bg-gradient-to-r from-transparent via-white to-transparent"
+              : "bg-gradient-to-r from-transparent via-slate-400/40 to-transparent"
+          )}
+        />
+
+        {/* ── 2. Atmospheric Emerald / Teal Green Glow (Appears on Hover) ── */}
+        <div
+          className={cn(
+            "absolute inset-0 pointer-events-none transition-opacity duration-500 z-0",
+            isLightMode
+              ? "bg-[radial-gradient(circle_at_50%_40%,rgba(13,148,136,0.12)_0%,rgba(79,70,229,0.06)_50%,transparent_75%)]"
+              : "bg-[radial-gradient(circle_at_50%_40%,rgba(0,255,170,0.14)_0%,rgba(16,185,129,0.06)_45%,transparent_75%)]",
+            isHovered ? "opacity-100" : "opacity-0"
+          )}
+        />
+
+        {/* ── 3. Cyber Corner Brackets ── */}
+        <CyberCorner position="tl" isHovered={isHovered} isLightMode={isLightMode} />
+        <CyberCorner position="tr" isHovered={isHovered} isLightMode={isLightMode} />
+        <CyberCorner position="bl" isHovered={isHovered} isLightMode={isLightMode} />
+        <CyberCorner position="br" isHovered={isHovered} isLightMode={isLightMode} />
+
+        {/* ── 4. Diagonal Glossy Glare Streak ── */}
+        <div
+          className={cn(
+            "absolute -inset-full pointer-events-none z-15 transition-opacity duration-300",
+            isHovered ? "opacity-100" : "opacity-0"
+          )}
+          style={{
+            background: isLightMode
+              ? `linear-gradient(135deg, transparent 35%, rgba(255, 255, 255, 0.4) 46%, rgba(255, 255, 255, 0.75) 50%, rgba(255, 255, 255, 0.4) 54%, transparent 65%)`
+              : `linear-gradient(135deg, transparent 35%, rgba(255, 255, 255, 0.08) 46%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.08) 54%, transparent 65%)`,
+            transform: `translate(${glare.x * 0.4 - 20}%, ${glare.y * 0.4 - 20}%)`,
+          }}
+        />
+
+        {/* ── 5. Dynamic Cursor-Tracking Glare Highlight ── */}
+        <div
+          className="absolute inset-0 rounded-[18px] pointer-events-none z-15 transition-opacity duration-300"
+          style={{
+            background: isLightMode
+              ? `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.5) 0%, rgba(79, 70, 229, 0.08) 30%, transparent 65%)`
+              : `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.18) 0%, rgba(92, 103, 255, 0.1) 30%, transparent 65%)`,
+            opacity: glare.opacity,
+          }}
+        />
+
+        {/* ── 6. Horizontal Cyber Lines Texture ── */}
+        <div
+          className={cn(
+            "absolute inset-0 pointer-events-none z-5",
+            isLightMode ? "opacity-25" : "opacity-40"
+          )}
+          style={{
+            backgroundImage: isLightMode
+              ? "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.015) 3px, rgba(0, 0, 0, 0.015) 4px)"
+              : "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255, 255, 255, 0.02) 3px, rgba(255, 255, 255, 0.02) 4px)",
+          }}
+        />
+
+        {/* ── 7. Tiny Green & Cyan Floating Particles ── */}
+        <div
+          className={cn(
+            "absolute top-[22%] left-[18%] w-1 h-1 rounded-full pointer-events-none transition-opacity duration-300 z-10",
+            isLightMode
+              ? "bg-[#0d9488] shadow-[0_0_4px_#0d9488]"
+              : "bg-[#00ffaa] shadow-[0_0_6px_#00ffaa]",
+            isHovered ? "opacity-90 animate-pulse" : "opacity-0"
+          )}
+        />
+        <div
+          className={cn(
+            "absolute bottom-[26%] right-[18%] w-1 h-1 rounded-full pointer-events-none transition-opacity duration-300 z-10",
+            isLightMode
+              ? "bg-[#4f46e5] shadow-[0_0_4px_#4f46e5]"
+              : "bg-[#00d9ff] shadow-[0_0_6px_#00d9ff]",
+            isHovered ? "opacity-90 animate-pulse" : "opacity-0"
+          )}
+        />
+
+        {/* ── 8. Card Content (Elevated on Z-Axis for 3D Depth) ── */}
+        <div className="relative z-20 flex flex-col items-center w-full">
+          <div
+            className={cn(
+              "w-8 h-8 rounded-xl flex items-center justify-center mb-1.5 border transition-all duration-300",
+              isLightMode
+                ? isHovered
+                  ? "bg-indigo-50 border-[#4f46e5]/50 text-[#4f46e5] shadow-[0_0_12px_rgba(79,70,229,0.25)] scale-105"
+                  : "bg-slate-50/90 border-slate-200/80 text-slate-700"
+                : isHovered
+                ? "bg-[#5c67ff]/20 border-[#5c67ff]/60 text-white shadow-[0_0_14px_rgba(92,103,255,0.4)] scale-105"
+                : "bg-[#181b26] border-[#2f354d] text-slate-300"
+            )}
+          >
+            <Icon
+              className={cn(
+                "w-4 h-4 transition-colors",
+                isLightMode
+                  ? isHovered
+                    ? "text-[#4f46e5]"
+                    : "text-slate-800"
+                  : "text-white drop-shadow-[0_0_4px_rgba(255,255,255,0.6)]"
+              )}
+            />
+          </div>
+
+          <h4
+            className={cn(
+              "text-[11px] font-bold font-mono tracking-wider mb-0.5 uppercase transition-colors",
+              isLightMode
+                ? "text-slate-900"
+                : "text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.45)]"
+            )}
+          >
+            {node.title}
+          </h4>
+
+          <p
+            className={cn(
+              "text-[10px] leading-snug font-sans transition-colors",
+              isLightMode ? "text-slate-600 font-normal" : "text-slate-300/90 font-light"
+            )}
+          >
+            {node.description}
+          </p>
+
+          {/* Micro Subtitle Indicator */}
+          <div
+            className={cn(
+              "mt-2 text-[8px] font-mono tracking-widest uppercase transition-colors",
+              isLightMode ? "text-slate-500 font-medium" : "text-slate-400/80"
+            )}
+          >
+            <span>INTERACTIVE </span>
+            <span className={cn("font-bold", isLightMode ? "text-[#4f46e5]" : "text-[#5c67ff]")}>
+              3D
+            </span>
+          </div>
+        </div>
       </div>
-      <h4
-        className={cn(
-          "text-[11px] font-bold font-mono tracking-wider mb-0.5 uppercase",
-          isLightMode
-            ? "text-slate-900"
-            : "text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-purple-200 drop-shadow-[0_0_8px_rgba(255,255,255,0.25)]"
-        )}
-      >
-        {node.title}
-      </h4>
-      <p className={cn("text-[10px] leading-snug font-sans", isLightMode ? "text-slate-600" : "text-slate-300/90")}>
-        {node.description}
-      </p>
     </div>
   );
 }
 
-function MobileHighQualityCard({
+// ═══════════════════════════════════════════════════════════════════════
+// EXACT CYBER AI CORE CARD (Central Larger Hub)
+// ═══════════════════════════════════════════════════════════════════════
+
+function ExactCyberAiCoreCard({
+  onHoverChange,
+  isLightMode,
+}: {
+  onHoverChange: (hovered: boolean) => void;
+  isLightMode: boolean;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const clientX = e.clientX - rect.left;
+    const clientY = e.clientY - rect.top;
+
+    const normX = (clientX / rect.width - 0.5) * 2;
+    const normY = (clientY / rect.height - 0.5) * 2;
+
+    const maxTilt = 7;
+    setTilt({
+      x: -normY * maxTilt,
+      y: normX * maxTilt,
+    });
+
+    setGlare({
+      x: (clientX / rect.width) * 100,
+      y: (clientY / rect.height) * 100,
+      opacity: 0.85,
+    });
+  }, []);
+
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+    onHoverChange(true);
+  }, [onHoverChange]);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsHovered(false);
+    onHoverChange(false);
+    setTilt({ x: 0, y: 0 });
+    setGlare((prev) => ({ ...prev, opacity: 0 }));
+  }, [onHoverChange]);
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="relative w-full select-none cursor-pointer"
+      style={{ perspective: 1000 }}
+    >
+      <div
+        className={cn(
+          "w-full rounded-[22px] p-5 text-center relative overflow-hidden flex flex-col items-center transition-all duration-300 group",
+          isLightMode
+            ? cn(
+                "bg-white/95 backdrop-blur-2xl border border-slate-200/90 shadow-[0_12px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.03)]",
+                isHovered
+                  ? "border-[#4f46e5]/50 shadow-[0_20px_45px_rgba(79,70,229,0.18),0_0_25px_rgba(13,148,136,0.15)] bg-white"
+                  : ""
+              )
+            : cn(
+                "bg-[#11131a] border border-[#2a2f40] shadow-[0_12px_36px_rgba(0,0,0,0.8)]",
+                isHovered
+                  ? "border-[#4a5580] shadow-[0_20px_55px_rgba(0,0,0,0.9),0_0_35px_rgba(92,103,255,0.3)]"
+                  : ""
+              )
+        )}
+        style={{
+          transform: isHovered
+            ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(30px)`
+            : "rotateX(0deg) rotateY(0deg) translateZ(28px)",
+          transformStyle: "preserve-3d",
+          transition: isHovered
+            ? "transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease"
+            : "transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
+          willChange: "transform",
+        }}
+      >
+        {/* ── 1. Top Specular Rim Highlight ── */}
+        <div
+          className={cn(
+            "absolute inset-x-0 top-0 h-[1.5px] pointer-events-none z-10",
+            isLightMode
+              ? "bg-gradient-to-r from-transparent via-white to-transparent"
+              : "bg-gradient-to-r from-transparent via-slate-400/50 to-transparent"
+          )}
+        />
+
+        {/* ── 2. Atmospheric Emerald / Teal Green Glow (Appears on Hover) ── */}
+        <div
+          className={cn(
+            "absolute inset-0 pointer-events-none transition-opacity duration-500 z-0",
+            isLightMode
+              ? "bg-[radial-gradient(circle_at_50%_40%,rgba(13,148,136,0.15)_0%,rgba(79,70,229,0.08)_50%,transparent_80%)]"
+              : "bg-[radial-gradient(circle_at_50%_40%,rgba(0,255,170,0.18)_0%,rgba(16,185,129,0.08)_50%,transparent_80%)]",
+            isHovered ? "opacity-100" : "opacity-0"
+          )}
+        />
+
+        {/* ── 3. Cyber Corner Brackets ── */}
+        <CyberCorner position="tl" isHovered={isHovered} isLightMode={isLightMode} />
+        <CyberCorner position="tr" isHovered={isHovered} isLightMode={isLightMode} />
+        <CyberCorner position="bl" isHovered={isHovered} isLightMode={isLightMode} />
+        <CyberCorner position="br" isHovered={isHovered} isLightMode={isLightMode} />
+
+        {/* ── 4. Diagonal Glossy Glare Streak ── */}
+        <div
+          className={cn(
+            "absolute -inset-full pointer-events-none z-15 transition-opacity duration-300",
+            isHovered ? "opacity-100" : "opacity-0"
+          )}
+          style={{
+            background: isLightMode
+              ? `linear-gradient(135deg, transparent 35%, rgba(255, 255, 255, 0.4) 46%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.4) 54%, transparent 65%)`
+              : `linear-gradient(135deg, transparent 35%, rgba(255, 255, 255, 0.08) 46%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.08) 54%, transparent 65%)`,
+            transform: `translate(${glare.x * 0.4 - 20}%, ${glare.y * 0.4 - 20}%)`,
+          }}
+        />
+
+        {/* ── 5. Dynamic Cursor-Tracking Glare Highlight ── */}
+        <div
+          className="absolute inset-0 rounded-[22px] pointer-events-none z-15 transition-opacity duration-300"
+          style={{
+            background: isLightMode
+              ? `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.6) 0%, rgba(79, 70, 229, 0.1) 35%, transparent 70%)`
+              : `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.22) 0%, rgba(92, 103, 255, 0.12) 35%, transparent 70%)`,
+            opacity: glare.opacity,
+          }}
+        />
+
+        {/* ── 6. Horizontal Cyber Lines Texture ── */}
+        <div
+          className={cn(
+            "absolute inset-0 pointer-events-none z-5",
+            isLightMode ? "opacity-25" : "opacity-40"
+          )}
+          style={{
+            backgroundImage: isLightMode
+              ? "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.015) 3px, rgba(0, 0, 0, 0.015) 4px)"
+              : "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255, 255, 255, 0.02) 3px, rgba(255, 255, 255, 0.02) 4px)",
+          }}
+        />
+
+        {/* ── 7. Tiny Green & Cyan Floating Particles ── */}
+        <div
+          className={cn(
+            "absolute top-[20%] left-[20%] w-1 h-1 rounded-full pointer-events-none transition-opacity duration-300 z-10",
+            isLightMode
+              ? "bg-[#0d9488] shadow-[0_0_5px_#0d9488]"
+              : "bg-[#00ffaa] shadow-[0_0_6px_#00ffaa]",
+            isHovered ? "opacity-90 animate-pulse" : "opacity-0"
+          )}
+        />
+        <div
+          className={cn(
+            "absolute bottom-[22%] right-[22%] w-1 h-1 rounded-full pointer-events-none transition-opacity duration-300 z-10",
+            isLightMode
+              ? "bg-[#4f46e5] shadow-[0_0_5px_#4f46e5]"
+              : "bg-[#00d9ff] shadow-[0_0_6px_#00d9ff]",
+            isHovered ? "opacity-90 animate-pulse" : "opacity-0"
+          )}
+        />
+
+        {/* ── 8. Core Neural Icon Housing with Liquid Cyber Orbital Rings ── */}
+        <div className="relative z-20 flex flex-col items-center w-full">
+          <div className="relative w-14 h-14 mb-2.5 flex items-center justify-center">
+            {/* Outer Glowing Orbitals */}
+            <div
+              className={cn(
+                "absolute inset-0 rounded-full border animate-[spin_20s_linear_infinite]",
+                isLightMode
+                  ? "border-[#4f46e5]/30 shadow-[0_0_8px_rgba(79,70,229,0.25)]"
+                  : "border-[#5c67ff]/40 shadow-[0_0_10px_rgba(92,103,255,0.4)]"
+              )}
+            />
+            <div
+              className={cn(
+                "absolute inset-1 rounded-full border border-dashed animate-[spin_25s_linear_infinite_reverse]",
+                isLightMode ? "border-slate-300" : "border-white/20"
+              )}
+            />
+
+            {/* Core Icon Badge */}
+            <div
+              className={cn(
+                "relative z-10 w-11 h-11 rounded-2xl flex items-center justify-center border transition-all duration-300",
+                isLightMode
+                  ? isHovered
+                    ? "bg-indigo-50 border-[#4f46e5]/60 text-[#4f46e5] shadow-[0_0_16px_rgba(79,70,229,0.35)] scale-105"
+                    : "bg-slate-50 border-slate-200/90 text-slate-800"
+                  : isHovered
+                  ? "bg-[#5c67ff]/20 border-[#5c67ff]/60 text-white shadow-[0_0_20px_rgba(92,103,255,0.5)] scale-105"
+                  : "bg-[#181b26] border-[#343b54] text-white"
+              )}
+            >
+              <Cpu
+                className={cn(
+                  "w-5 h-5 animate-pulse transition-colors",
+                  isLightMode ? "text-[#4f46e5]" : "text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]"
+                )}
+              />
+              <Sparkles
+                className={cn(
+                  "w-2.5 h-2.5 absolute -top-0.5 -right-0.5",
+                  isLightMode
+                    ? "text-[#0d9488] drop-shadow-[0_0_3px_#0d9488]"
+                    : "text-[#00ffaa] drop-shadow-[0_0_5px_#00ffaa]"
+                )}
+              />
+            </div>
+          </div>
+
+          {/* AI CORE Typography */}
+          <h3
+            className={cn(
+              "text-base sm:text-lg font-extrabold font-display tracking-wider mb-0.5 uppercase transition-colors",
+              isLightMode
+                ? "text-slate-900"
+                : "text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.6)]"
+            )}
+          >
+            AI CORE
+          </h3>
+          <div
+            className={cn(
+              "text-[9px] font-mono font-bold tracking-widest uppercase mb-1.5 transition-colors",
+              isLightMode ? "text-[#4f46e5]" : "text-[#5c67ff] drop-shadow-[0_0_6px_rgba(92,103,255,0.6)]"
+            )}
+          >
+            LLM ORCHESTRATION
+          </div>
+          <p
+            className={cn(
+              "text-[10.5px] leading-snug font-sans max-w-[190px] transition-colors",
+              isLightMode ? "text-slate-600 font-normal" : "text-slate-300 font-light"
+            )}
+          >
+            Central intelligence layer that connects memory, knowledge, tools and agents.
+          </p>
+
+          {/* Micro Footer Indicator */}
+          <div
+            className={cn(
+              "mt-2.5 flex items-center gap-1.5 text-[8.5px] font-mono tracking-widest uppercase transition-colors",
+              isLightMode ? "text-slate-500 font-medium" : "text-slate-400"
+            )}
+          >
+            <span>INTERACTIVE</span>
+            <span className={cn("font-bold", isLightMode ? "text-[#4f46e5]" : "text-[#5c67ff]")}>
+              3D
+            </span>
+            <span className={cn("font-bold", isLightMode ? "text-[#7c3aed]" : "text-[#8b5cf6]")}>
+              EFFECT
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// MOBILE EXACT CARD
+// ═══════════════════════════════════════════════════════════════════════
+
+function MobileExactCard({
   node,
   isLightMode,
   isFull = false,
@@ -541,32 +1019,54 @@ function MobileHighQualityCard({
   return (
     <div
       className={cn(
-        "rounded-xl p-2.5 border transition-all flex flex-col items-center text-center relative overflow-hidden backdrop-blur-2xl backdrop-saturate-150",
+        "rounded-[16px] p-2.5 flex flex-col items-center text-center relative overflow-hidden transition-all",
         isLightMode
-          ? "bg-white/90 border-purple-200 shadow-[0_0_14px_rgba(192,132,252,0.2)]"
-          : "bg-gradient-to-b from-[#191726]/85 to-[#0a0d14]/85 border-white/25 shadow-[0_0_18px_rgba(168,85,247,0.15),0_6px_18px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.3)]"
+          ? "border border-slate-200/90 bg-white/95 shadow-[0_6px_16px_rgba(0,0,0,0.05)]"
+          : "border border-[#282c3c] bg-[#11131a] shadow-[0_6px_18px_rgba(0,0,0,0.7)]"
       )}
     >
-      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
+      {/* Horizontal Cyber Lines */}
       <div
         className={cn(
-          "w-7 h-7 rounded-lg flex items-center justify-center mb-1 border shrink-0 backdrop-blur-md",
+          "absolute inset-0 pointer-events-none",
+          isLightMode ? "opacity-25" : "opacity-40"
+        )}
+        style={{
+          backgroundImage: isLightMode
+            ? "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0, 0, 0, 0.015) 3px, rgba(0, 0, 0, 0.015) 4px)"
+            : "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255, 255, 255, 0.02) 3px, rgba(255, 255, 255, 0.02) 4px)",
+        }}
+      />
+      {/* Corner Brackets */}
+      <CyberCorner position="tl" isHovered={false} isLightMode={isLightMode} />
+      <CyberCorner position="tr" isHovered={false} isLightMode={isLightMode} />
+      <CyberCorner position="bl" isHovered={false} isLightMode={isLightMode} />
+      <CyberCorner position="br" isHovered={false} isLightMode={isLightMode} />
+
+      <div
+        className={cn(
+          "relative z-10 w-7 h-7 rounded-lg flex items-center justify-center mb-1 border shrink-0",
           isLightMode
-            ? "bg-purple-50 border-purple-200 text-slate-800"
-            : "bg-white/[0.16] border-white/30 text-white shadow-[0_0_8px_rgba(192,132,252,0.2)]"
+            ? "border-indigo-200 bg-indigo-50/80 text-[#4f46e5]"
+            : "border-[#343b54] bg-[#181b26] text-white"
         )}
       >
-        <Icon className="w-3.5 h-3.5 text-white" />
+        <Icon className={cn("w-3.5 h-3.5", isLightMode ? "text-[#4f46e5]" : "text-white")} />
       </div>
       <h4
         className={cn(
-          "text-[10px] font-bold font-mono tracking-wide uppercase mb-0.5",
-          isLightMode ? "text-slate-900" : "text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.3)]"
+          "relative z-10 text-[10px] font-bold font-mono tracking-wide uppercase mb-0.5",
+          isLightMode ? "text-slate-900" : "text-white drop-shadow-[0_0_4px_rgba(255,255,255,0.4)]"
         )}
       >
         {node.title}
       </h4>
-      <p className={cn("text-[9px] leading-tight font-sans", isLightMode ? "text-slate-600" : "text-slate-300")}>
+      <p
+        className={cn(
+          "relative z-10 text-[9px] leading-tight font-sans",
+          isLightMode ? "text-slate-600 font-normal" : "text-slate-300 font-light"
+        )}
+      >
         {node.description}
       </p>
     </div>

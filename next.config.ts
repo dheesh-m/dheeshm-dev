@@ -75,6 +75,7 @@ const nextConfig: NextConfig = {
   },
 
   compiler: {
+    styledComponents: true,
     removeConsole: isDev ? false : { exclude: ["error"] },
   },
 

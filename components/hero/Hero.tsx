@@ -178,7 +178,7 @@ export default function Hero() {
 
         {/* ── RIGHT COLUMN: AI System Architecture ── */}
         <div
-          className="relative flex items-center justify-center w-full max-w-[540px] lg:max-w-none h-auto min-h-[380px] sm:h-[480px] lg:h-[560px] mx-auto mt-2 lg:-mt-8 overflow-visible"
+          className="relative flex items-center justify-center w-full max-w-[540px] lg:max-w-none h-auto min-h-[380px] sm:h-[480px] lg:h-[560px] mx-auto -mt-4 sm:-mt-6 lg:-mt-14 overflow-visible"
         >
           <SystemGraph />
         </div>

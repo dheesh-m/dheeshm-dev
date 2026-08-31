@@ -9,7 +9,7 @@ import Projects from "@/components/projects/Projects";
 import GlossarySection from "@/components/glossary/GlossarySection";
 import SystemsSection from "@/components/systems/SystemsSection";
 import ExperienceSection from "@/components/experience/ExperienceSection";
-import NeuralBackground from "@/components/background/NeuralBackground";
+import GalaxyBackground from "@/components/background/GalaxyBackground";
 import Contact from "@/components/contact/Contact";
 import Footer from "@/components/footer/Footer";
 import ScrollSectionWrapper from "@/components/ui/ScrollSectionWrapper";
@@ -53,8 +53,8 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
 
-      {/* 1. Background layer */}
-      <NeuralBackground />
+      {/* 1. Background layer (Dedicated full-viewport React Bits Galaxy WebGL) */}
+      <GalaxyBackground />
 
       {/* 2. SplashCursor global WebGL fluid simulation layer (BEHIND UI, cards, and typography: z-[1]) */}
       <SplashCursor

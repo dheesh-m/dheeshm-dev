@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Technology } from "@/data/technologies";
 
@@ -9,50 +11,77 @@ interface TechnologyInfoCardProps {
 }
 
 export default function TechnologyInfoCard({ technology, position }: TechnologyInfoCardProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const CARD_WIDTH = typeof window !== "undefined" ? Math.min(window.innerWidth - 32, 288) : 288;
   const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
-  
-  // Viewport-safe coordinates
-  const leftPos = position
-    ? isMobile
-      ? Math.max(16, Math.min(window.innerWidth - 304, (window.innerWidth - 288) / 2))
-      : Math.min(Math.max(16, position.x + 20), (typeof window !== "undefined" ? window.innerWidth : 1200) - 304)
-    : 0;
+  const winWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
+  const winHeight = typeof window !== "undefined" ? window.innerHeight : 800;
 
-  const topPos = position
-    ? isMobile
-      ? Math.max(80, Math.min(position.y - 120, (typeof window !== "undefined" ? window.innerHeight : 800) - 240))
-      : Math.max(20, Math.min(position.y - 40, (typeof window !== "undefined" ? window.innerHeight : 800) - 260))
-    : 0;
+  // Viewport-safe coordinates calculation with collision handling
+  let leftPos = 16;
+  let topPos = 80;
 
-  return (
+  if (position) {
+    if (isMobile) {
+      leftPos = Math.max(16, (winWidth - CARD_WIDTH) / 2);
+      topPos = Math.max(70, Math.min(position.y - 120, winHeight - 240));
+    } else {
+      // Desktop: check if placing to the right would overflow right edge
+      const placeRight = position.x + 24;
+      const placeLeft = position.x - CARD_WIDTH - 24;
+
+      if (placeRight + CARD_WIDTH <= winWidth - 16) {
+        leftPos = placeRight;
+      } else if (placeLeft >= 16) {
+        leftPos = placeLeft;
+      } else {
+        // Center within viewport bounds if tight on both sides
+        leftPos = Math.max(16, Math.min(winWidth - CARD_WIDTH - 16, position.x - CARD_WIDTH / 2));
+      }
+
+      topPos = Math.max(16, Math.min(position.y - 40, winHeight - 270));
+    }
+  }
+
+  const content = (
     <AnimatePresence>
       {technology && position && (
         <motion.div
-          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+          initial={{ opacity: 0, y: 8, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 10, scale: 0.95 }}
-          transition={{ duration: 0.2, ease: "easeOut" }}
+          exit={{ opacity: 0, y: 8, scale: 0.96 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
           style={{
+            position: "fixed",
             left: leftPos,
             top: topPos,
+            width: CARD_WIDTH,
+            zIndex: 9999,
+            pointerEvents: "none",
           }}
-          className="fixed z-50 w-[min(calc(100vw-32px),288px)] pointer-events-none"
         >
           {/* Ambient Violet Glow */}
           <div
             className="absolute -inset-2 rounded-2xl pointer-events-none -z-10"
             style={{
-              background: "radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(109, 40, 217, 0.10) 50%, transparent 70%)",
+              background: "radial-gradient(circle, rgba(139, 92, 246, 0.28) 0%, rgba(109, 40, 217, 0.12) 50%, transparent 70%)",
               filter: "blur(20px)",
             }}
           />
 
-          <div className="bg-[#0f1016]/90 backdrop-blur-2xl border border-white/[0.14] rounded-2xl p-5 shadow-[0_16px_40px_rgba(0,0,0,0.85),0_0_20px_rgba(139,92,246,0.15)] relative overflow-hidden">
+          <div className="bg-[#0f1016]/95 dark:bg-[#0f1016]/95 backdrop-blur-2xl border border-white/[0.16] rounded-2xl p-5 shadow-[0_20px_50px_rgba(0,0,0,0.85),0_0_24px_rgba(139,92,246,0.2)] relative overflow-hidden">
             {/* Top edge highlight */}
             <div
               className="absolute inset-x-0 top-0 h-[1px] rounded-t-2xl pointer-events-none"
               style={{
-                background: "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 30%, rgba(167, 139, 250, 0.4) 50%, rgba(255, 255, 255, 0.3) 70%, transparent 100%)",
+                background: "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 30%, rgba(167, 139, 250, 0.5) 50%, rgba(255, 255, 255, 0.3) 70%, transparent 100%)",
               }}
             />
 
@@ -82,4 +111,6 @@ export default function TechnologyInfoCard({ technology, position }: TechnologyI
       )}
     </AnimatePresence>
   );
+
+  return createPortal(content, document.body);
 }
