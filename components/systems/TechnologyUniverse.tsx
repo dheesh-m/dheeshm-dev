@@ -26,9 +26,6 @@ import {
   Wifi,
   Sparkles,
   Layers,
-  Rocket,
-  ShieldCheck,
-  Lock,
 } from "lucide-react";
 
 // ── 1. Technology Items per Cluster ──────────────────────────────────────────

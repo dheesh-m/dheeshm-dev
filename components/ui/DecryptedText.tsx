@@ -338,14 +338,12 @@ export default function DecryptedText({
 
   useEffect(() => {
     if (animateOn === "click") {
-      encryptInstantly();
-    } else {
-      setDisplayText(text);
-      setIsDecrypted(true);
+      const emptySet = new Set<number>();
+      setRevealedIndices(emptySet);
+      setDisplayText(shuffleText(text, emptySet));
+      setIsDecrypted(false);
     }
-    setRevealedIndices(new Set());
-    setDirection("forward");
-  }, [animateOn, text, encryptInstantly]);
+  }, [animateOn, text, shuffleText]);
 
   const animateProps =
     animateOn === "hover" || animateOn === "inViewHover"
