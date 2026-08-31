@@ -26,7 +26,7 @@ export interface ClusterProps {
   isHoveredOverall?: boolean;
 }
 
-export default function ClusterEcosystem({
+function ClusterEcosystem({
   id,
   badge,
   centralTitle,
@@ -349,3 +349,5 @@ export default function ClusterEcosystem({
     </div>
   );
 }
+
+export default React.memo(ClusterEcosystem);

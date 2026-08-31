@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import React, { useState, useCallback, memo } from "react";
 import { motion } from "framer-motion";
 import { enterpriseData, EnterpriseSection } from "@/data/enterpriseData";
 import Interactive3DCard from "./Interactive3DCard";
@@ -10,7 +10,7 @@ interface EngineeringCards3DProps {
   onSelectCard: (id: string) => void;
 }
 
-export default function EngineeringCards3D({
+function EngineeringCards3D({
   activeId,
   onSelectCard,
 }: EngineeringCards3DProps) {
@@ -30,9 +30,11 @@ export default function EngineeringCards3D({
 
   const handleCardHover = useCallback(
     (item: EnterpriseSection) => {
-      onSelectCard(item.id);
+      if (activeId !== item.id) {
+        onSelectCard(item.id);
+      }
     },
-    [onSelectCard]
+    [activeId, onSelectCard]
   );
 
   return (
@@ -67,3 +69,5 @@ export default function EngineeringCards3D({
     </div>
   );
 }
+
+export default memo(EngineeringCards3D);

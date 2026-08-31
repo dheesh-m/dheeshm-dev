@@ -1168,19 +1168,56 @@ export default function SplashCursor({
       return HSVtoRGB(rainbowHue, 0.95, 1.0);
     }
 
-    // ── Single RAF Animation Loop ──────────────────────────────────────────
+    // ── Intelligent Idle Sleep & Visibility Animation Loop ──────────────────
+    let idleFramesRemaining = 120; // Allow initial burst/fluid settle
+
+    function wakeUp() {
+      idleFramesRemaining = 120;
+      if (isRunning && animationFrameId === null && !document.hidden) {
+        lastUpdateTime = Date.now();
+        animationFrameId = requestAnimationFrame(updateFrame);
+      }
+    }
+
     function updateFrame() {
-      if (!isRunning) return;
+      if (!isRunning || document.hidden) {
+        animationFrameId = null;
+        return;
+      }
+
       const dt = calcDeltaTime();
       if (resizeCanvas()) initFramebuffers();
       applyInputs();
       step(dt);
       render(null);
-      animationFrameId = requestAnimationFrame(updateFrame);
+
+      if (pointers.some((p) => p.moved || p.down)) {
+        idleFramesRemaining = 90;
+      } else if (idleFramesRemaining > 0) {
+        idleFramesRemaining--;
+      }
+
+      if (idleFramesRemaining > 0) {
+        animationFrameId = requestAnimationFrame(updateFrame);
+      } else {
+        animationFrameId = null; // Sleep until next pointer event!
+      }
     }
 
-    // Start single loop immediately
+    // Start single loop initially to settle scene
     animationFrameId = requestAnimationFrame(updateFrame);
+
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+      } else {
+        wakeUp();
+      }
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     // ── Event Handlers with Named References for Strict Cleanup ─────────────
     const onMouseDown = (e: MouseEvent) => {
@@ -1189,6 +1226,7 @@ export default function SplashCursor({
       const posY = scaleByPixelRatio(e.clientY);
       updatePointerDownData(pointer, -1, posX, posY);
       clickSplat(pointer);
+      wakeUp();
     };
 
     const onMouseMove = (e: MouseEvent) => {
@@ -1197,6 +1235,7 @@ export default function SplashCursor({
       const posY = scaleByPixelRatio(e.clientY);
       const color = generateColor();
       updatePointerMoveData(pointer, posX, posY, color);
+      wakeUp();
     };
 
     const onTouchStart = (e: TouchEvent) => {
@@ -1207,6 +1246,7 @@ export default function SplashCursor({
         const posY = scaleByPixelRatio(touches[i].clientY);
         updatePointerDownData(pointer, touches[i].identifier, posX, posY);
       }
+      wakeUp();
     };
 
     const onTouchMove = (e: TouchEvent) => {
@@ -1217,6 +1257,7 @@ export default function SplashCursor({
         const posY = scaleByPixelRatio(touches[i].clientY);
         updatePointerMoveData(pointer, posX, posY, generateColor());
       }
+      wakeUp();
     };
 
     const onTouchEnd = (e: TouchEvent) => {
@@ -1225,6 +1266,7 @@ export default function SplashCursor({
       for (let i = 0; i < touches.length; i++) {
         updatePointerUpData(pointer);
       }
+      wakeUp();
     };
 
     window.addEventListener("mousedown", onMouseDown, { passive: true });
@@ -1237,7 +1279,9 @@ export default function SplashCursor({
       isRunning = false;
       if (animationFrameId !== null) {
         cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
       }
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("touchstart", onTouchStart);

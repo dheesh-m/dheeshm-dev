@@ -60,18 +60,31 @@ export default function HeroAiArchitecture() {
   const { isLightMode } = useTheme();
   const [hoveredNode, setHoveredNode] = useState<NodeId | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !canvasRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: x * 3.5, y: -y * 3.5 });
+    const tiltX = x * 3.5;
+    const tiltY = -y * 3.5;
+
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      if (canvasRef.current) {
+        canvasRef.current.style.transform = `rotateY(${tiltX.toFixed(2)}deg) rotateX(${tiltY.toFixed(2)}deg)`;
+      }
+      rafRef.current = null;
+    });
   };
 
   const handleMouseLeave = () => {
-    setTilt({ x: 0, y: 0 });
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    if (canvasRef.current) {
+      canvasRef.current.style.transform = "rotateY(0deg) rotateX(0deg)";
+    }
     setHoveredNode(null);
   };
 
@@ -97,10 +110,11 @@ export default function HeroAiArchitecture() {
 
       {/* ── 1. Desktop & Tablet Spatial Canvas ── */}
       <div
+        ref={canvasRef}
         className="hidden sm:block relative w-[620px] h-[520px] scale-[0.78] md:scale-[0.88] lg:scale-100 origin-center transition-transform duration-300 ease-out"
         style={{
           perspective: 1200,
-          transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
+          transform: "rotateY(0deg) rotateX(0deg)",
           transformStyle: "preserve-3d",
         }}
       >
@@ -488,7 +502,7 @@ function CyberCorner({
 // EXACT CYBER ARCHITECTURE CARD (Surrounding Nodes)
 // ═══════════════════════════════════════════════════════════════════════
 
-function ExactCyberCard({
+function InteractiveNodeCard({
   node,
   onHoverChange,
   isCoreHovered,
@@ -502,13 +516,13 @@ function ExactCyberCard({
   isCenter?: boolean;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
+  const rafRef = useRef<number | null>(null);
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
+    const el = cardRef.current;
+    const rect = el.getBoundingClientRect();
     const clientX = e.clientX - rect.left;
     const clientY = e.clientY - rect.top;
 
@@ -516,15 +530,19 @@ function ExactCyberCard({
     const normY = (clientY / rect.height - 0.5) * 2;
 
     const maxTilt = 8;
-    setTilt({
-      x: -normY * maxTilt,
-      y: normX * maxTilt,
-    });
+    const tiltX = -normY * maxTilt;
+    const tiltY = normX * maxTilt;
+    const glareX = (clientX / rect.width) * 100;
+    const glareY = (clientY / rect.height) * 100;
 
-    setGlare({
-      x: (clientX / rect.width) * 100,
-      y: (clientY / rect.height) * 100,
-      opacity: 0.85,
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      el.style.setProperty("--node-tilt-x", `${tiltX.toFixed(2)}deg`);
+      el.style.setProperty("--node-tilt-y", `${tiltY.toFixed(2)}deg`);
+      el.style.setProperty("--node-glare-x", glareX.toFixed(1));
+      el.style.setProperty("--node-glare-y", glareY.toFixed(1));
+      el.style.setProperty("--node-glare-opacity", "0.85");
+      rafRef.current = null;
     });
   }, []);
 
@@ -536,8 +554,12 @@ function ExactCyberCard({
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
     onHoverChange(false);
-    setTilt({ x: 0, y: 0 });
-    setGlare((prev) => ({ ...prev, opacity: 0 }));
+    if (!cardRef.current) return;
+    const el = cardRef.current;
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    el.style.setProperty("--node-tilt-x", "0deg");
+    el.style.setProperty("--node-tilt-y", "0deg");
+    el.style.setProperty("--node-glare-opacity", "0");
   }, [onHoverChange]);
 
   const Icon = node.icon;
@@ -549,7 +571,14 @@ function ExactCyberCard({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className="relative w-full select-none cursor-pointer"
-      style={{ perspective: 900 }}
+      style={{
+        perspective: 900,
+        ["--node-tilt-x" as string]: "0deg",
+        ["--node-tilt-y" as string]: "0deg",
+        ["--node-glare-x" as string]: "50",
+        ["--node-glare-y" as string]: "50",
+        ["--node-glare-opacity" as string]: "0",
+      }}
     >
       <div
         className={cn(
@@ -574,7 +603,7 @@ function ExactCyberCard({
         )}
         style={{
           transform: isHovered
-            ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(16px)`
+            ? "rotateX(var(--node-tilt-x, 0deg)) rotateY(var(--node-tilt-y, 0deg)) translateZ(16px)"
             : "rotateX(0deg) rotateY(0deg) translateZ(0px)",
           transformStyle: "preserve-3d",
           transition: isHovered
@@ -620,7 +649,7 @@ function ExactCyberCard({
             background: isLightMode
               ? `linear-gradient(135deg, transparent 35%, rgba(255, 255, 255, 0.4) 46%, rgba(255, 255, 255, 0.75) 50%, rgba(255, 255, 255, 0.4) 54%, transparent 65%)`
               : `linear-gradient(135deg, transparent 35%, rgba(255, 255, 255, 0.08) 46%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.08) 54%, transparent 65%)`,
-            transform: `translate(${glare.x * 0.4 - 20}%, ${glare.y * 0.4 - 20}%)`,
+            transform: "translate(calc(var(--node-glare-x, 50) * 0.4% - 20%), calc(var(--node-glare-y, 50) * 0.4% - 20%))",
           }}
         />
 
@@ -629,9 +658,9 @@ function ExactCyberCard({
           className="absolute inset-0 rounded-[18px] pointer-events-none z-15 transition-opacity duration-300"
           style={{
             background: isLightMode
-              ? `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.5) 0%, rgba(79, 70, 229, 0.08) 30%, transparent 65%)`
-              : `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.18) 0%, rgba(92, 103, 255, 0.1) 30%, transparent 65%)`,
-            opacity: glare.opacity,
+              ? "radial-gradient(circle at calc(var(--node-glare-x, 50) * 1%) calc(var(--node-glare-y, 50) * 1%), rgba(255, 255, 255, 0.5) 0%, rgba(79, 70, 229, 0.08) 30%, transparent 65%)"
+              : "radial-gradient(circle at calc(var(--node-glare-x, 50) * 1%) calc(var(--node-glare-y, 50) * 1%), rgba(255, 255, 255, 0.18) 0%, rgba(92, 103, 255, 0.1) 30%, transparent 65%)",
+            opacity: "var(--node-glare-opacity, 0)",
           }}
         />
 
@@ -732,6 +761,8 @@ function ExactCyberCard({
   );
 }
 
+const ExactCyberCard = InteractiveNodeCard;
+
 // ═══════════════════════════════════════════════════════════════════════
 // EXACT CYBER AI CORE CARD (Central Larger Hub)
 // ═══════════════════════════════════════════════════════════════════════
@@ -744,13 +775,13 @@ function ExactCyberAiCoreCard({
   isLightMode: boolean;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
+  const rafRef = useRef<number | null>(null);
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
+    const el = cardRef.current;
+    const rect = el.getBoundingClientRect();
     const clientX = e.clientX - rect.left;
     const clientY = e.clientY - rect.top;
 
@@ -758,15 +789,19 @@ function ExactCyberAiCoreCard({
     const normY = (clientY / rect.height - 0.5) * 2;
 
     const maxTilt = 7;
-    setTilt({
-      x: -normY * maxTilt,
-      y: normX * maxTilt,
-    });
+    const tiltX = -normY * maxTilt;
+    const tiltY = normX * maxTilt;
+    const glareX = (clientX / rect.width) * 100;
+    const glareY = (clientY / rect.height) * 100;
 
-    setGlare({
-      x: (clientX / rect.width) * 100,
-      y: (clientY / rect.height) * 100,
-      opacity: 0.85,
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      el.style.setProperty("--core-tilt-x", `${tiltX.toFixed(2)}deg`);
+      el.style.setProperty("--core-tilt-y", `${tiltY.toFixed(2)}deg`);
+      el.style.setProperty("--core-glare-x", glareX.toFixed(1));
+      el.style.setProperty("--core-glare-y", glareY.toFixed(1));
+      el.style.setProperty("--core-glare-opacity", "0.85");
+      rafRef.current = null;
     });
   }, []);
 
@@ -778,8 +813,12 @@ function ExactCyberAiCoreCard({
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
     onHoverChange(false);
-    setTilt({ x: 0, y: 0 });
-    setGlare((prev) => ({ ...prev, opacity: 0 }));
+    if (!cardRef.current) return;
+    const el = cardRef.current;
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    el.style.setProperty("--core-tilt-x", "0deg");
+    el.style.setProperty("--core-tilt-y", "0deg");
+    el.style.setProperty("--core-glare-opacity", "0");
   }, [onHoverChange]);
 
   return (
@@ -789,7 +828,14 @@ function ExactCyberAiCoreCard({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className="relative w-full select-none cursor-pointer"
-      style={{ perspective: 1000 }}
+      style={{
+        perspective: 1000,
+        ["--core-tilt-x" as string]: "0deg",
+        ["--core-tilt-y" as string]: "0deg",
+        ["--core-glare-x" as string]: "50",
+        ["--core-glare-y" as string]: "50",
+        ["--core-glare-opacity" as string]: "0",
+      }}
     >
       <div
         className={cn(
@@ -810,7 +856,7 @@ function ExactCyberAiCoreCard({
         )}
         style={{
           transform: isHovered
-            ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(30px)`
+            ? "rotateX(var(--core-tilt-x, 0deg)) rotateY(var(--core-tilt-y, 0deg)) translateZ(30px)"
             : "rotateX(0deg) rotateY(0deg) translateZ(28px)",
           transformStyle: "preserve-3d",
           transition: isHovered
@@ -856,7 +902,7 @@ function ExactCyberAiCoreCard({
             background: isLightMode
               ? `linear-gradient(135deg, transparent 35%, rgba(255, 255, 255, 0.4) 46%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.4) 54%, transparent 65%)`
               : `linear-gradient(135deg, transparent 35%, rgba(255, 255, 255, 0.08) 46%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.08) 54%, transparent 65%)`,
-            transform: `translate(${glare.x * 0.4 - 20}%, ${glare.y * 0.4 - 20}%)`,
+            transform: "translate(calc(var(--core-glare-x, 50) * 0.4% - 20%), calc(var(--core-glare-y, 50) * 0.4% - 20%))",
           }}
         />
 
@@ -865,9 +911,9 @@ function ExactCyberAiCoreCard({
           className="absolute inset-0 rounded-[22px] pointer-events-none z-15 transition-opacity duration-300"
           style={{
             background: isLightMode
-              ? `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.6) 0%, rgba(79, 70, 229, 0.1) 35%, transparent 70%)`
-              : `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(255, 255, 255, 0.22) 0%, rgba(92, 103, 255, 0.12) 35%, transparent 70%)`,
-            opacity: glare.opacity,
+              ? "radial-gradient(circle at calc(var(--core-glare-x, 50) * 1%) calc(var(--core-glare-y, 50) * 1%), rgba(255, 255, 255, 0.6) 0%, rgba(79, 70, 229, 0.1) 35%, transparent 70%)"
+              : "radial-gradient(circle at calc(var(--core-glare-x, 50) * 1%) calc(var(--core-glare-y, 50) * 1%), rgba(255, 255, 255, 0.22) 0%, rgba(92, 103, 255, 0.12) 35%, transparent 70%)",
+            opacity: "var(--core-glare-opacity, 0)",
           }}
         />
 

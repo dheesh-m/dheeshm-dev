@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useMemo, useCallback } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback, memo } from "react";
 import { motion, type HTMLMotionProps } from "framer-motion";
 
 export interface DecryptedTextProps extends HTMLMotionProps<"span"> {
@@ -369,16 +369,22 @@ export default function DecryptedText({
       <span className="sr-only">{displayText}</span>
 
       <span aria-hidden="true">
-        {displayText.split("").map((char, index) => {
-          const isRevealedOrDone = revealedIndices.has(index) || (!isAnimating && isDecrypted);
+        {!isAnimating && isDecrypted ? (
+          <span className={className}>{displayText}</span>
+        ) : (
+          displayText.split("").map((char, index) => {
+            const isRevealedOrDone = revealedIndices.has(index) || (!isAnimating && isDecrypted);
 
-          return (
-            <span key={index} className={isRevealedOrDone ? className : encryptedClassName}>
-              {char}
-            </span>
-          );
-        })}
+            return (
+              <span key={index} className={isRevealedOrDone ? className : encryptedClassName}>
+                {char}
+              </span>
+            );
+          })
+        )}
       </span>
     </motion.span>
   );
 }
+
+export const MemoizedDecryptedText = memo(DecryptedText);

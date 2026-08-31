@@ -66,6 +66,18 @@ export default function Interactive3DCard({
   const glowRef = useRef<HTMLDivElement>(null);
   const frontFaceRef = useRef<HTMLDivElement>(null);
 
+  const frontSpotlightBg = useTransform(
+    [smoothMouseX, smoothMouseY],
+    ([x, y]) =>
+      `radial-gradient(420px circle at ${x}% ${y}%, rgba(167, 139, 250, 0.12), rgba(109, 40, 217, 0.05) 40%, transparent 70%)`
+  );
+
+  const backSpotlightBg = useTransform(
+    [smoothMouseX, smoothMouseY],
+    ([x, y]) =>
+      `radial-gradient(420px circle at ${100 - (Number(x) || 50)}% ${y}%, rgba(167, 139, 250, 0.10), rgba(109, 40, 217, 0.04) 40%, transparent 70%)`
+  );
+
   const handleMouseEnter = useCallback(() => {
     isHoveredRef.current = true;
     if (cardRef.current) {
@@ -214,12 +226,8 @@ export default function Interactive3DCard({
               <motion.div
                 className="absolute inset-0 rounded-[16px] sm:rounded-[22px] pointer-events-none"
                 style={{
-                  opacity: isActive ? smoothSpotlight : smoothSpotlight,
-                  background: useTransform(
-                    [smoothMouseX, smoothMouseY],
-                    ([x, y]) =>
-                      `radial-gradient(420px circle at ${x}% ${y}%, rgba(167, 139, 250, 0.12), rgba(109, 40, 217, 0.05) 40%, transparent 70%)`
-                  ),
+                  opacity: smoothSpotlight,
+                  background: frontSpotlightBg,
                 }}
               />
 
@@ -327,12 +335,8 @@ export default function Interactive3DCard({
               <motion.div
                 className="absolute inset-0 rounded-[16px] sm:rounded-[22px] pointer-events-none"
                 style={{
-                  opacity: isActive ? smoothSpotlight : smoothSpotlight,
-                  background: useTransform(
-                    [smoothMouseX, smoothMouseY],
-                    ([x, y]) =>
-                      `radial-gradient(420px circle at ${100 - (Number(x) || 50)}% ${y}%, rgba(167, 139, 250, 0.10), rgba(109, 40, 217, 0.04) 40%, transparent 70%)`
-                  ),
+                  opacity: smoothSpotlight,
+                  background: backSpotlightBg,
                 }}
               />
 
@@ -421,3 +425,5 @@ export default function Interactive3DCard({
     </div>
   );
 }
+
+export const MemoizedInteractive3DCard = React.memo(Interactive3DCard);

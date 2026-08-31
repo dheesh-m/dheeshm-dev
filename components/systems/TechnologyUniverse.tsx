@@ -70,20 +70,33 @@ const FRONTEND_CLUSTER_TECHS: OrbitTechItem[] = [
 export default function TechnologyUniverse() {
   const { isLightMode } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
   const isInView = useInView(containerRef, { once: true, amount: 0.1 });
   const [activeCluster, setActiveCluster] = useState<string | null>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !canvasRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width - 0.5;
     const y = (e.clientY - rect.top) / rect.height - 0.5;
-    setTilt({ x: x * 6, y: -y * 6 });
+    const tiltX = x * 6;
+    const tiltY = -y * 6;
+
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      if (canvasRef.current) {
+        canvasRef.current.style.transform = `rotateY(${tiltX.toFixed(2)}deg) rotateX(${tiltY.toFixed(2)}deg)`;
+      }
+      rafRef.current = null;
+    });
   };
 
   const handleMouseLeave = () => {
-    setTilt({ x: 0, y: 0 });
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    if (canvasRef.current) {
+      canvasRef.current.style.transform = "rotateY(0deg) rotateX(0deg)";
+    }
     setActiveCluster(null);
   };
 
@@ -118,14 +131,14 @@ export default function TechnologyUniverse() {
             "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono tracking-widest uppercase mb-4 backdrop-blur-xl border transition-colors shadow-sm",
             isLightMode
               ? "bg-white/80 text-slate-700 border-slate-200"
-              : "bg-[#120B24]/80 text-violet-300 border-violet-500/30 shadow-[0_0_15px_rgba(139,92,246,0.15)]"
+              : "bg-white/5 text-slate-300 border-white/10"
           )}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse shadow-[0_0_8px_#a855f7]" />
-          <span>MY TECH UNIVERSE</span>
+          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+          <span>Core Capabilities</span>
         </motion.div>
 
-        {/* Display Title - Pure White & Consistent Typography across all words */}
+        {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -154,10 +167,11 @@ export default function TechnologyUniverse() {
 
       {/* ── 2. Master 3D Spatial Universe (Desktop: lg+) ── */}
       <div
+        ref={canvasRef}
         className="hidden lg:block relative w-full max-w-[1240px] h-[780px] my-2 transition-transform duration-300 ease-out"
         style={{
           perspective: 1200,
-          transform: `rotateY(${tilt.x}deg) rotateX(${tilt.y}deg)`,
+          transform: "rotateY(0deg) rotateX(0deg)",
           transformStyle: "preserve-3d",
         }}
       >

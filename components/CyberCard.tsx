@@ -141,12 +141,7 @@ const AtmosphericGlow = styled.div`
 `;
 
 // Diagonal Glossy Glare Streak
-interface DiagonalGlareProps {
-  $x: number;
-  $y: number;
-}
-
-const DiagonalGlare = styled.div<DiagonalGlareProps>`
+const DiagonalGlare = styled.div`
   position: absolute;
   inset: -100%;
   pointer-events: none;
@@ -160,8 +155,8 @@ const DiagonalGlare = styled.div<DiagonalGlareProps>`
     transparent 65%
   );
   transform: translate(
-    ${(props) => props.$x * 0.4 - 20}%,
-    ${(props) => props.$y * 0.4 - 20}%
+    calc(var(--glare-x, 50) * 0.4% - 20%),
+    calc(var(--glare-y, 50) * 0.4% - 20%)
   );
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -173,9 +168,6 @@ const DiagonalGlare = styled.div<DiagonalGlareProps>`
 
 // Dynamic Glare Overlay
 interface GlareProps {
-  $x: number;
-  $y: number;
-  $opacity: number;
   $accent: string;
 }
 
@@ -186,12 +178,12 @@ const Glare = styled.div<GlareProps>`
   pointer-events: none;
   z-index: 2;
   background: radial-gradient(
-    circle at ${(props) => props.$x}% ${(props) => props.$y}%,
+    circle at calc(var(--glare-x, 50) * 1%) calc(var(--glare-y, 50) * 1%),
     rgba(255, 255, 255, 0.18) 0%,
     ${(props) => props.$accent}18 30%,
     transparent 65%
   );
-  opacity: ${(props) => props.$opacity};
+  opacity: var(--glare-opacity, 0);
   transition: opacity 0.3s ease;
 `;
 
@@ -447,16 +439,14 @@ export default function CyberCard({
   className,
 }: CyberCardProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
-  const [isMobile, setIsMobile] = useState(false);
+  const rafRef = useRef<number | null>(null);
+  const isMobileRef = useRef(false);
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(
+      isMobileRef.current =
         window.innerWidth < 768 ||
-          window.matchMedia("(hover: none) and (pointer: coarse)").matches
-      );
+        window.matchMedia("(hover: none) and (pointer: coarse)").matches;
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
@@ -465,8 +455,9 @@ export default function CyberCard({
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      if (isMobile || !containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
+      if (isMobileRef.current || !containerRef.current) return;
+      const el = containerRef.current;
+      const rect = el.getBoundingClientRect();
       const clientX = e.clientX - rect.left;
       const clientY = e.clientY - rect.top;
 
@@ -474,23 +465,31 @@ export default function CyberCard({
       const normY = (clientY / rect.height - 0.5) * 2;
 
       const maxTilt = 8;
-      setTilt({
-        x: -normY * maxTilt,
-        y: normX * maxTilt,
-      });
+      const tiltX = -normY * maxTilt;
+      const tiltY = normX * maxTilt;
+      const glareX = (clientX / rect.width) * 100;
+      const glareY = (clientY / rect.height) * 100;
 
-      setGlare({
-        x: (clientX / rect.width) * 100,
-        y: (clientY / rect.height) * 100,
-        opacity: 0.75,
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        el.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
+        el.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
+        el.style.setProperty("--glare-x", glareX.toFixed(1));
+        el.style.setProperty("--glare-y", glareY.toFixed(1));
+        el.style.setProperty("--glare-opacity", "0.75");
+        rafRef.current = null;
       });
     },
-    [isMobile]
+    []
   );
 
   const handleMouseLeave = useCallback(() => {
-    setTilt({ x: 0, y: 0 });
-    setGlare((prev) => ({ ...prev, opacity: 0 }));
+    if (!containerRef.current) return;
+    const el = containerRef.current;
+    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    el.style.setProperty("--tilt-x", "0deg");
+    el.style.setProperty("--tilt-y", "0deg");
+    el.style.setProperty("--glare-opacity", "0");
   }, []);
 
   return (
@@ -500,12 +499,17 @@ export default function CyberCard({
       className={className}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      style={{
+        ["--tilt-x" as string]: "0deg",
+        ["--tilt-y" as string]: "0deg",
+        ["--glare-x" as string]: "50",
+        ["--glare-y" as string]: "50",
+        ["--glare-opacity" as string]: "0",
+      }}
     >
       <CardCanvas
         style={{
-          transform: isMobile
-            ? "none"
-            : `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transform: "rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))",
         }}
       >
         <CardInner $accent={accent}>
@@ -519,15 +523,10 @@ export default function CyberCard({
           <AtmosphericGlow />
 
           {/* Diagonal Glare Streak */}
-          <DiagonalGlare $x={glare.x} $y={glare.y} />
+          <DiagonalGlare />
 
           {/* Glare & Light Layers */}
-          <Glare
-            $x={glare.x}
-            $y={glare.y}
-            $opacity={glare.opacity}
-            $accent={accent}
-          />
+          <Glare $accent={accent} />
           <Scanline $accent={accent} />
           <CyberTexture />
 

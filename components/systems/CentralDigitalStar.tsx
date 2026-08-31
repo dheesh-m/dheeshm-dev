@@ -1,9 +1,10 @@
 "use client";
 
+import React, { memo } from "react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
 
-export default function CentralDigitalStar({ isHovered = false }: { isHovered?: boolean }) {
+function CentralDigitalStar({ isHovered = false }: { isHovered?: boolean }) {
   const { isLightMode } = useTheme();
 
   return (
@@ -71,3 +72,5 @@ export default function CentralDigitalStar({ isHovered = false }: { isHovered?: 
     </div>
   );
 }
+
+export default memo(CentralDigitalStar);

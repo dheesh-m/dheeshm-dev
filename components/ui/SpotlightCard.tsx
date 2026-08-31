@@ -1,12 +1,7 @@
 "use client";
 
-import React, { useRef, useState, useCallback } from "react";
+import React, { useRef, useCallback, memo } from "react";
 import { cn } from "@/lib/utils";
-
-interface Position {
-  x: number;
-  y: number;
-}
 
 export interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
@@ -21,38 +16,52 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
   ...props
 }) => {
   const divRef = useRef<HTMLDivElement>(null);
-  const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [position, setPosition] = useState<Position>({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState<number>(0);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const isFocusedRef = useRef(false);
+  const rafRef = useRef<number | null>(null);
 
   const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (e) => {
-      if (!divRef.current || isFocused) return;
+      if (!divRef.current || !overlayRef.current || isFocusedRef.current) return;
       const rect = divRef.current.getBoundingClientRect();
-      setPosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        if (overlayRef.current) {
+          overlayRef.current.style.background = `radial-gradient(180px circle at ${x}px ${y}px, ${spotlightColor}, transparent 80%)`;
+        }
+        rafRef.current = null;
       });
     },
-    [isFocused]
+    [spotlightColor]
   );
 
   const handleFocus = useCallback(() => {
-    setIsFocused(true);
-    setOpacity(0.6);
+    isFocusedRef.current = true;
+    if (overlayRef.current) {
+      overlayRef.current.style.opacity = "0.6";
+    }
   }, []);
 
   const handleBlur = useCallback(() => {
-    setIsFocused(false);
-    setOpacity(0);
+    isFocusedRef.current = false;
+    if (overlayRef.current) {
+      overlayRef.current.style.opacity = "0";
+    }
   }, []);
 
   const handleMouseEnter = useCallback(() => {
-    setOpacity(0.6);
+    if (overlayRef.current) {
+      overlayRef.current.style.opacity = "0.6";
+    }
   }, []);
 
   const handleMouseLeave = useCallback(() => {
-    setOpacity(0);
+    if (!isFocusedRef.current && overlayRef.current) {
+      overlayRef.current.style.opacity = "0";
+    }
   }, []);
 
   return (
@@ -67,10 +76,10 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
       {...props}
     >
       <div
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 ease-out"
+        ref={overlayRef}
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 ease-out will-change-transform"
         style={{
-          opacity,
-          background: `radial-gradient(180px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 80%)`,
+          background: `radial-gradient(180px circle at 50% 50%, ${spotlightColor}, transparent 80%)`,
         }}
       />
 
@@ -79,4 +88,5 @@ const SpotlightCard: React.FC<SpotlightCardProps> = ({
   );
 };
 
-export default SpotlightCard;
+export default memo(SpotlightCard);
+

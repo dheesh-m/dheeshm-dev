@@ -170,6 +170,12 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
   const glowRef = useRef<HTMLDivElement>(null);
   const frontFaceRef = useRef<HTMLDivElement>(null);
 
+  const frontSpotlightBg = useTransform(
+    [smoothMouseX, smoothMouseY],
+    ([x, y]) =>
+      `radial-gradient(420px circle at ${x}% ${y}%, rgba(167, 139, 250, 0.12), rgba(109, 40, 217, 0.05) 40%, transparent 70%)`
+  );
+
   const handleMouseEnter = useCallback(() => {
     isHoveredRef.current = true;
     if (cardRef.current) {
@@ -291,11 +297,7 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                 className="absolute inset-0 rounded-2xl pointer-events-none z-30"
                 style={{
                   opacity: smoothSpotlight,
-                  background: useTransform(
-                    [smoothMouseX, smoothMouseY],
-                    ([x, y]) =>
-                      `radial-gradient(420px circle at ${x}% ${y}%, rgba(167, 139, 250, 0.12), rgba(109, 40, 217, 0.05) 40%, transparent 70%)`
-                  ),
+                  background: frontSpotlightBg,
                 }}
               />
 

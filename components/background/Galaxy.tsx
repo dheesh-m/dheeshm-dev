@@ -223,13 +223,18 @@ export default function Galaxy({
   const targetMouseActive = useRef(0.0);
   const smoothMouseActive = useRef(0.0);
 
+  const focalX = focal[0];
+  const focalY = focal[1];
+  const rotX = rotation[0];
+  const rotY = rotation[1];
+
   useEffect(() => {
     if (!ctnDom.current) return;
     const ctn = ctnDom.current;
     const renderer = new Renderer({
       alpha: transparent,
       premultipliedAlpha: false,
-      dpr: Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 2)
+      dpr: Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)
     });
     const gl = renderer.gl;
 
@@ -258,7 +263,7 @@ export default function Galaxy({
         );
       }
     }
-    window.addEventListener('resize', resize, false);
+    window.addEventListener('resize', resize, { passive: true });
     resize();
 
     const geometry = new Triangle(gl);
@@ -270,8 +275,8 @@ export default function Galaxy({
         uResolution: {
           value: new Color(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height)
         },
-        uFocal: { value: new Float32Array(focal) },
-        uRotation: { value: new Float32Array(rotation) },
+        uFocal: { value: new Float32Array([focalX, focalY]) },
+        uRotation: { value: new Float32Array([rotX, rotY]) },
         uStarSpeed: { value: starSpeed },
         uDensity: { value: density },
         uHueShift: { value: hueShift },
@@ -293,9 +298,11 @@ export default function Galaxy({
     });
 
     const mesh = new Mesh(gl, { geometry, program });
-    let animateId: number;
+    let animateId: number | null = null;
+    let isPaused = false;
 
     function update(t: number) {
+      if (isPaused) return;
       animateId = requestAnimationFrame(update);
       if (!disableAnimation) {
         program.uniforms.uTime.value = t * 0.001;
@@ -315,6 +322,22 @@ export default function Galaxy({
       renderer.render({ scene: mesh });
     }
     animateId = requestAnimationFrame(update);
+
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        isPaused = true;
+        if (animateId !== null) {
+          cancelAnimationFrame(animateId);
+          animateId = null;
+        }
+      } else {
+        if (isPaused) {
+          isPaused = false;
+          animateId = requestAnimationFrame(update);
+        }
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     gl.canvas.style.position = 'absolute';
     gl.canvas.style.top = '0';
@@ -338,12 +361,14 @@ export default function Galaxy({
     }
 
     if (mouseInteraction) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseleave', handleMouseLeave);
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+      window.addEventListener('mouseleave', handleMouseLeave, { passive: true });
     }
 
     return () => {
-      cancelAnimationFrame(animateId);
+      isPaused = true;
+      if (animateId !== null) cancelAnimationFrame(animateId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('resize', resize);
       if (mouseInteraction) {
         window.removeEventListener('mousemove', handleMouseMove);
@@ -355,8 +380,10 @@ export default function Galaxy({
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
   }, [
-    focal,
-    rotation,
+    focalX,
+    focalY,
+    rotX,
+    rotY,
     starSpeed,
     density,
     hueShift,
@@ -374,5 +401,5 @@ export default function Galaxy({
     lightMode
   ]);
 
-  return <div ref={ctnDom} className="w-full h-full relative" {...rest} />;
+  return <div ref={ctnDom} className="w-full h-full relative pointer-events-none" {...rest} />;
 }

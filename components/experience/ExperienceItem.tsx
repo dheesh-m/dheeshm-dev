@@ -35,6 +35,12 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
 
   const rectRef = useRef<DOMRect | null>(null);
 
+  const spotlightBg = useTransform(
+    [smoothMouseX, smoothMouseY],
+    ([x, y]) =>
+      `radial-gradient(500px circle at ${x}% ${y}%, rgba(167, 139, 250, 0.10), rgba(109, 40, 217, 0.03) 40%, transparent 70%)`
+  );
+
   const handleMouseEnter = useCallback(() => {
     if (cardRef.current) {
       rectRef.current = cardRef.current.getBoundingClientRect();
@@ -148,11 +154,7 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
             className="absolute inset-0 rounded-2xl sm:rounded-3xl pointer-events-none z-0"
             style={{
               opacity: isOpen ? 1 : smoothSpotlight,
-              background: useTransform(
-                [smoothMouseX, smoothMouseY],
-                ([x, y]) =>
-                  `radial-gradient(500px circle at ${x}% ${y}%, rgba(167, 139, 250, 0.10), rgba(109, 40, 217, 0.03) 40%, transparent 70%)`
-              ),
+              background: spotlightBg,
             }}
           />
 

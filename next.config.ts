@@ -80,7 +80,7 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    optimizePackageImports: ["framer-motion", "three"],
+    optimizePackageImports: ["framer-motion", "lucide-react", "lenis", "ogl"],
   },
 
   async headers() {

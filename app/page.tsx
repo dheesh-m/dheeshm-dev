@@ -1,24 +1,29 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Navbar from "@/components/navbar/Navbar";
 import Hero from "@/components/hero/Hero";
-import Enterprise from "@/components/enterprise/Enterprise";
-import Projects from "@/components/projects/Projects";
-import GlossarySection from "@/components/glossary/GlossarySection";
-import SystemsSection from "@/components/systems/SystemsSection";
-import ExperienceSection from "@/components/experience/ExperienceSection";
 import GalaxyBackground from "@/components/background/GalaxyBackground";
-import Contact from "@/components/contact/Contact";
-import Footer from "@/components/footer/Footer";
 import ScrollSectionWrapper from "@/components/ui/ScrollSectionWrapper";
-import SplashCursor from "@/components/ui/SplashCursor";
-import GradualBlur from "@/components/ui/GradualBlur";
 import PortfolioLoader from "@/components/ui/PortfolioLoader";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { SAME_AS, EMAIL } from "@/data/socials";
 import { SITE_URL } from "@/lib/siteUrl";
+
+// Below-the-fold sections dynamically imported for instant initial paint
+const Enterprise = dynamic(() => import("@/components/enterprise/Enterprise"), { ssr: true });
+const GlossarySection = dynamic(() => import("@/components/glossary/GlossarySection"), { ssr: true });
+const Projects = dynamic(() => import("@/components/projects/Projects"), { ssr: true });
+const SystemsSection = dynamic(() => import("@/components/systems/SystemsSection"), { ssr: true });
+const ExperienceSection = dynamic(() => import("@/components/experience/ExperienceSection"), { ssr: true });
+const Contact = dynamic(() => import("@/components/contact/Contact"), { ssr: true });
+const Footer = dynamic(() => import("@/components/footer/Footer"), { ssr: true });
+
+// Client-only canvas / overlay effects
+const SplashCursor = dynamic(() => import("@/components/ui/SplashCursor"), { ssr: false });
+const GradualBlur = dynamic(() => import("@/components/ui/GradualBlur"), { ssr: false });
 
 const personJsonLd = {
   "@context": "https://schema.org",
