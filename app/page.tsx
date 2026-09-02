@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import Navbar from "@/components/navbar/Navbar";
 import Hero from "@/components/hero/Hero";
-import GalaxyBackground from "@/components/background/GalaxyBackground";
+import Pattern from "@/components/background/Pattern";
 import ScrollSectionWrapper from "@/components/ui/ScrollSectionWrapper";
 import PortfolioLoader from "@/components/ui/PortfolioLoader";
 import { useTheme } from "@/components/providers/ThemeProvider";
@@ -58,8 +58,10 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
 
-      {/* 1. Background layer (Dedicated full-viewport React Bits Galaxy WebGL) */}
-      <GalaxyBackground />
+      {/* 1. Background layer (Dedicated full-viewport Pattern Starfield) */}
+      <div className="page-background">
+        <Pattern />
+      </div>
 
       {/* 2. SplashCursor global WebGL fluid simulation layer (BEHIND UI, cards, and typography: z-[1]) */}
       <SplashCursor

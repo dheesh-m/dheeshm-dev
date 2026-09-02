@@ -32,7 +32,7 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
   overflow: hidden;
 
   .container {
@@ -40,15 +40,18 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
     width: 100%;
     background: ${(props) =>
       props.$isLightMode
-        ? `radial-gradient(ellipse at 88% 95%, rgba(243, 228, 255, 0.95) 0%, rgba(222, 184, 246, 0.8) 25%, rgba(186, 160, 232, 0.5) 50%, transparent 75%),
-           radial-gradient(ellipse at 20% 15%, rgba(68, 118, 184, 0.35) 0%, transparent 60%),
-           linear-gradient(135deg, #4474b8 0%, #6091cc 28%, #8ea8db 58%, #bba2e4 85%, #caa6e9 100%)`
-        : `radial-gradient(ellipse at 88% 95%, rgba(130, 25, 155, 0.85) 0%, rgba(95, 18, 122, 0.6) 22%, rgba(45, 10, 72, 0.35) 45%, transparent 70%),
-           radial-gradient(ellipse at 20% 15%, rgba(8, 16, 48, 0.5) 0%, transparent 60%),
-           linear-gradient(135deg, #02040c 0%, #05081b 30%, #0d0826 65%, #1c0836 100%)`};
+        ? `radial-gradient(ellipse at bottom, #e2e8f0 0%, #f8fafc 100%)`
+        : `radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%)`};
     transition: background 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
     position: relative;
+  }
+
+  #stars,
+  #stars2,
+  #stars3 {
+    filter: ${(props) => (props.$isLightMode ? "invert(1) opacity(0.35)" : "none")};
+    transition: filter 0.6s ease;
   }
 
   #stars {
