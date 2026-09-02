@@ -3,6 +3,10 @@ import { Inter, Manrope, JetBrains_Mono, Geist } from "next/font/google";
 import "./globals.css";
 import MotionProvider from "@/components/providers/MotionProvider";
 import { siteMetadataBase, SITE_URL } from "@/lib/siteUrl";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { cn } from "@/lib/utils";
 
 // Variable fonts: intentionally no `weight` list. Narrowing weights on a Google
 // variable font makes next/font fetch static instances instead of the single
@@ -24,6 +28,8 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
 });
+
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const TITLE = "Dheesh Medekar — AI / Software Engineer";
 const DESCRIPTION =
@@ -87,14 +93,6 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -105,7 +103,7 @@ export default function RootLayout({
     // longer applies `scroll-behavior: smooth` on its own.
     <html lang="en" className={cn("dark", "font-sans", geist.variable)} data-scroll-behavior="smooth">
       <body
-        className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#050505] text-[#F5F5F5] selection:bg-white/20`}
+        className={`${inter.variable} ${manrope.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[#050505] text-[#F5F5F5] selection:bg-white/20 w-full min-w-full min-h-screen min-h-[100dvh] m-0 p-0 overflow-x-hidden`}
       >
         <ThemeProvider>
           <SmoothScrollProvider>

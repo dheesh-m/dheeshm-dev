@@ -10,10 +10,23 @@ const Pattern = () => {
   return (
     <StyledWrapper $isLightMode={isLightMode}>
       <div className="container">
-        <div id="stars" />
-        <div id="stars2" />
-        <div id="stars3" />
-        <div />
+        <div className="star-field">
+          <div className="star-tile tile-1">
+            <div id="stars" />
+            <div id="stars2" />
+            <div id="stars3" />
+          </div>
+          <div className="star-tile tile-2" aria-hidden="true">
+            <div className="stars-clone-1" />
+            <div className="stars-clone-2" />
+            <div className="stars-clone-3" />
+          </div>
+          <div className="star-tile tile-3" aria-hidden="true">
+            <div className="stars-clone-1" />
+            <div className="stars-clone-2" />
+            <div className="stars-clone-3" />
+          </div>
+        </div>
       </div>
     </StyledWrapper>
   );
@@ -30,31 +43,84 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
   right: 0;
   bottom: 0;
   width: 100%;
+  min-width: 100%;
+  max-width: none;
   height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
 
   .container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     height: 100%;
+    min-height: 100%;
     width: 100%;
+    min-width: 100%;
+    max-width: none;
     background: ${(props) =>
       props.$isLightMode
         ? `radial-gradient(ellipse at bottom, #e2e8f0 0%, #f8fafc 100%)`
         : `radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%)`};
     transition: background 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
-    position: relative;
+  }
+
+  .star-field {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    min-width: 100%;
+    max-width: none;
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .star-tile {
+    position: absolute;
+    top: 0;
+    width: 2000px;
+    height: 2000px;
+    pointer-events: none;
+  }
+
+  .tile-1 {
+    left: 0;
+  }
+
+  .tile-2 {
+    left: 2000px;
+  }
+
+  .tile-3 {
+    left: 4000px;
   }
 
   #stars,
   #stars2,
-  #stars3 {
+  #stars3,
+  .stars-clone-1,
+  .stars-clone-2,
+  .stars-clone-3 {
     filter: ${(props) => (props.$isLightMode ? "invert(1) opacity(0.35)" : "none")};
     transition: filter 0.6s ease;
   }
 
-  #stars {
+  #stars,
+  .stars-clone-1 {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 1px;
     height: 1px;
     background: transparent;
@@ -761,7 +827,8 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
       1954px 838px #fff;
     animation: animStar 50s linear infinite;
   }
-  #stars:after {
+  #stars:after,
+  .stars-clone-1:after {
     content: " ";
     position: absolute;
     top: 2000px;
@@ -1471,7 +1538,11 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
       1954px 838px #fff;
   }
 
-  #stars2 {
+  #stars2,
+  .stars-clone-2 {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 2px;
     height: 2px;
     background: transparent;
@@ -1678,7 +1749,8 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
       314px 739px #fff;
     animation: animStar 100s linear infinite;
   }
-  #stars2:after {
+  #stars2:after,
+  .stars-clone-2:after {
     content: " ";
     position: absolute;
     top: 2000px;
@@ -1888,7 +1960,11 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
       314px 739px #fff;
   }
 
-  #stars3 {
+  #stars3,
+  .stars-clone-3 {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 3px;
     height: 3px;
     background: transparent;
@@ -1995,7 +2071,8 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
       287px 1272px #fff;
     animation: animStar 150s linear infinite;
   }
-  #stars3:after {
+  #stars3:after,
+  .stars-clone-3:after {
     content: " ";
     position: absolute;
     top: 2000px;
