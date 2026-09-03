@@ -5,29 +5,27 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+  --font-sans: var(--font-work-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-work-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-work-sans), ui-monospace, monospace;
 
-  /* Tailwind v4 generates color utilities from --color-* tokens.
-     These previously lived on :root only, which left bg-background and
-     text-foreground compiling to nothing. */
-  --color-background: #050505;
-  --color-foreground: #f5f5f5;
+  --color-background: #05060B;
+  --color-foreground: #F4F6FA;
 }
 
 @layer base {
   :root {
-    --background: #050505;
-    --foreground: #f5f5f5;
-    --border: rgba(255, 255, 255, 0.04);
-    --border-hover: rgba(255, 255, 255, 0.1);
+    --background: #05060B;
+    --foreground: #F4F6FA;
+    --border: rgba(255, 255, 255, 0.08);
+    --border-hover: rgba(255, 255, 255, 0.18);
   }
 
   *,
   *::before,
   *::after {
     box-sizing: border-box;
+    font-family: var(--font-work-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
   html,
@@ -40,6 +38,7 @@
     min-height: 100dvh;
     margin: 0;
     padding: 0;
+    font-family: var(--font-work-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 
   html {
@@ -536,118 +535,37 @@ body.light-theme header .ios-glass-nav .nav-active-indicator {
   }
 }
 
-/* Text Overrides - Light Mode */
-body.light-theme,
-body.light-theme .text-white:not(.console-container *),
-body.light-theme .text-\[\#F5F5F5\],
-body.light-theme .text-\[\#EAEAEA\],
-body.light-theme .text-white\/90:not(.console-container *),
-body.light-theme .text-white\/80:not(.console-container *) {
-  color: #171A1F !important;
-  /* deep charcoal */
+/* Clean Global Light Theme Tokens */
+body.light-theme {
+  background-color: #F8F9FB !important;
+  color: #172033 !important;
 }
 
-body.light-theme .text-gray-400:not(.console-container *),
-body.light-theme .text-zinc-400:not(.console-container *),
-body.light-theme .text-\[\#9A9A9A\],
-body.light-theme .text-\[\#B5B5B5\],
-body.light-theme .text-\[\#A5A5A5\],
-body.light-theme .text-\[\#8A8A8A\],
-body.light-theme .text-white\/60:not(.console-container *) {
-  color: #66717D !important;
-  /* muted slate grey */
+body.light-theme h1,
+body.light-theme h2,
+body.light-theme h3,
+body.light-theme h4 {
+  color: #172033 !important;
 }
 
-/* Ensure Console Container is protected from global light-theme text inversion */
-body.light-theme .console-container .text-white {
-  color: #ffffff !important;
+body.light-theme p {
+  color: #475569 !important;
 }
 
-body.light-theme .console-container .text-yellow-300 {
-  color: #fde047 !important;
+body.light-theme .text-white {
+  color: #172033 !important;
 }
 
-body.light-theme .console-container .text-cyan-300 {
-  color: #67e8f9 !important;
+body.light-theme .text-\[\#94A3B8\] {
+  color: #64748B !important;
 }
 
-body.light-theme .console-container .text-emerald-400 {
-  color: #34d399 !important;
-}
-
-body.light-theme .console-container .text-emerald-300 {
-  color: #6ee7b7 !important;
-}
-
-body.light-theme .console-container .text-blue-300 {
-  color: #93c5fd !important;
-}
-
-body.light-theme .console-container .text-blue-200 {
-  color: #bfdbfe !important;
-}
-
-body.light-theme .console-container .text-zinc-300 {
-  color: #d4d4d8 !important;
-}
-
-body.light-theme .console-container .text-zinc-200 {
-  color: #e4e4e7 !important;
-}
-
-body.light-theme .console-container .text-zinc-400 {
-  color: #a1a1aa !important;
-}
-
-body.light-theme .console-container .text-zinc-500 {
-  color: #71717a !important;
-}
-
-body.light-theme .console-container .text-zinc-600 {
-  color: #52525b !important;
-}
-
-body.light-theme .text-\[\#D4D4D4\] {
-  color: #334155 !important;
-}
-
-body.light-theme .text-gray-500,
-body.light-theme .text-zinc-500,
-body.light-theme .text-white\/40 {
-  color: #66717D !important;
-}
-
-body.light-theme .text-zinc-600 {
-  color: #94A3B8 !important;
-}
-
-/* Section Titles (Engineering Systems & Professional Experience) in Light Mode */
-body.light-theme #expertise h2,
-body.light-theme #projects h2,
-body.light-theme #experience h2 {
-  color: #171A1F !important;
-}
-
-body.light-theme #expertise h2 span:not(.bg-clip-text),
-body.light-theme #projects h2 span:not(.bg-clip-text),
-body.light-theme #experience h2 span:not(.bg-clip-text) {
-  color: #171A1F !important;
-}
-
-body.light-theme #expertise h2 .bg-clip-text,
-body.light-theme #projects h2 .bg-clip-text,
-body.light-theme #experience h2 .bg-clip-text,
-body.light-theme .bg-clip-text,
-body.light-theme .from-\[\#8A8A8A\] {
-  background-image: linear-gradient(90deg, #171A1F 0%, #334663 50%, #394E6E 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-}
-
-/* Section Label & Badges */
-body.light-theme .animate-pulse.bg-white {
-  background-color: #394E6E !important;
-  box-shadow: 0 0 8px rgba(57, 78, 110, 0.4) !important;
+body.light-theme .bg-white\/\[0\.04\],
+body.light-theme .bg-white\/\[0\.03\],
+body.light-theme .bg-white\/\[0\.02\],
+body.light-theme .bg-white\/\[0\.05\] {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 /* Hero Content Layering (Guarantees Content Stays Above Background Ghost Layer) */

@@ -24,10 +24,10 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const startTime = performance.now();
-    // Timing milestones (slower, cinematic smooth countdown ~3.8s total)
-    const tPhase1 = 1750; // 0% -> 86% in 1750ms
-    const tPhase2 = 2950; // 86% -> 96% in 1200ms
-    const tPhase3 = 3750; // 96% -> 100% in 800ms
+    // Timing milestones: snappy, sleek 1.0s entrance
+    const tPhase1 = 450; // 0% -> 86% in 450ms
+    const tPhase2 = 750; // 86% -> 96% in 300ms
+    const tPhase3 = 950; // 96% -> 100% in 200ms
 
     let currentPercent = 0;
     let rafId: number;
@@ -133,7 +133,7 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
                 ? "text-[#0F172A]"
                 : "text-[#F8FAFC] drop-shadow-[0_0_30px_rgba(255,255,255,0.18)]"
             }
-            encryptedClassName="text-violet-400 font-mono opacity-80"
+            encryptedClassName="text-red-500 dark:text-red-400 font-mono opacity-90"
           />
         </h1>
 

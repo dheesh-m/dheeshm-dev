@@ -20,15 +20,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const [isLightMode, setIsLightMode] = useState(false);
 
   useEffect(() => {
-    // Check local storage on mount
+    // Check local storage on mount (default to dark mode)
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "light") {
       setIsLightMode(true);
       document.documentElement.classList.remove("dark");
       document.body.classList.add("light-theme");
     } else {
+      setIsLightMode(false);
       document.documentElement.classList.add("dark");
       document.body.classList.remove("light-theme");
+      localStorage.setItem("theme", "dark");
     }
   }, []);
 

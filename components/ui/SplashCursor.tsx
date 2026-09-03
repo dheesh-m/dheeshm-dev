@@ -102,7 +102,7 @@ export default function SplashCursor({
   SPLAT_FORCE = 4000,
   SHADING = true,
   RAINBOW_MODE = false,
-  COLOR = "#A855F7",
+  COLOR = "#7F1D1D",
   className = "",
 }: SplashCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -1128,13 +1128,15 @@ export default function SplashCursor({
       return delta;
     }
 
+    let crimsonStep = 0;
+
     function hexToRGB(hex: string): ColorRGB {
       let val = hex.replace("#", "");
       if (val.length === 3) val = val[0] + val[0] + val[1] + val[1] + val[2] + val[2];
       const r = parseInt(val.slice(0, 2), 16) / 255;
       const g = parseInt(val.slice(2, 4), 16) / 255;
       const b = parseInt(val.slice(4, 6), 16) / 255;
-      return { r: r * 0.22, g: g * 0.22, b: b * 0.22 };
+      return { r: r * 0.32, g: g * 0.32, b: b * 0.32 };
     }
 
     function HSVtoRGB(h: number, s: number, v: number): ColorRGB {
@@ -1162,7 +1164,16 @@ export default function SplashCursor({
 
     function generateColor(): ColorRGB {
       if (!configRef.current.RAINBOW_MODE) {
-        return hexToRGB(configRef.current.COLOR);
+        // Refined Dark Red / Crimson palette:
+        // Primary: #7F1D1D (rgb(127, 29, 29))
+        // Secondary: #991B1B (rgb(153, 27, 27))
+        // Subtle highlight: #B91C1C (rgb(185, 28, 28))
+        crimsonStep = (crimsonStep + 0.035) % (Math.PI * 2);
+        const factor = (Math.sin(crimsonStep) + 1) / 2;
+        const r = ((127 + factor * (185 - 127)) / 255) * 0.32;
+        const g = ((29 - factor * 2) / 255) * 0.32;
+        const b = ((29 - factor * 2) / 255) * 0.32;
+        return { r, g, b };
       }
       rainbowHue = (rainbowHue + 0.008) % 1;
       return HSVtoRGB(rainbowHue, 0.95, 1.0);

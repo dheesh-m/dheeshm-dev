@@ -1,29 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/navbar/Navbar";
-import Hero from "@/components/hero/Hero";
-import Pattern from "@/components/background/Pattern";
-import ScrollSectionWrapper from "@/components/ui/ScrollSectionWrapper";
+import Footer from "@/components/footer/Footer";
+import HomeView from "@/components/views/HomeView";
+import AboutView from "@/components/views/AboutView";
+import TechView from "@/components/views/TechView";
+import ProjectsView from "@/components/views/ProjectsView";
+import ExperienceView from "@/components/views/ExperienceView";
+import ContactView from "@/components/views/ContactView";
 import PortfolioLoader from "@/components/ui/PortfolioLoader";
-import { useTheme } from "@/components/providers/ThemeProvider";
+import { hyperspeedPresets } from "@/components/HyperSpeedPresets";
 import { SAME_AS, EMAIL } from "@/data/socials";
 import { SITE_URL } from "@/lib/siteUrl";
 
-// Below-the-fold sections dynamically imported for instant initial paint
-const Enterprise = dynamic(() => import("@/components/enterprise/Enterprise"), { ssr: true });
-const GlossarySection = dynamic(() => import("@/components/glossary/GlossarySection"), { ssr: true });
-const Projects = dynamic(() => import("@/components/projects/Projects"), { ssr: true });
-const SystemsSection = dynamic(() => import("@/components/systems/SystemsSection"), { ssr: true });
-const ExperienceSection = dynamic(() => import("@/components/experience/ExperienceSection"), { ssr: true });
-const Contact = dynamic(() => import("@/components/contact/Contact"), { ssr: true });
-const Footer = dynamic(() => import("@/components/footer/Footer"), { ssr: true });
-
-// Client-only canvas / overlay effects
+// Persistent WebGL effects loaded client-side only
+const Hyperspeed = dynamic(() => import("@/components/Hyperspeed"), { ssr: false });
 const SplashCursor = dynamic(() => import("@/components/ui/SplashCursor"), { ssr: false });
-const GradualBlur = dynamic(() => import("@/components/ui/GradualBlur"), { ssr: false });
+
+const VALID_SECTIONS = ["home", "about", "tech", "projects", "experience", "contact"];
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -31,42 +28,75 @@ const personJsonLd = {
   name: "Dheesh Medekar",
   url: SITE_URL,
   email: `mailto:${EMAIL}`,
-  jobTitle: "AI / Software Engineer",
+  jobTitle: "AI / LLM Engineer",
   description:
-    "I build intelligent systems, real-time applications and full-stack products.",
+    "I build intelligent systems, real-time applications and full-stack products — from LLM orchestration and RAG pipelines to production APIs and polished interfaces.",
   sameAs: SAME_AS,
   knowsAbout: [
-    "LLM Engineering",
-    "Retrieval-Augmented Generation",
+    "AI Engineering",
+    "LLM Orchestration",
+    "RAG Pipelines",
     "Backend APIs",
     "Full-Stack Development",
   ],
 };
 
-export default function Home() {
-  const { isLightMode } = useTheme();
-  const [isPageReady, setIsPageReady] = useState(false);
+export default function Page() {
+  const [activeSection, setActiveSection] = useState("home");
+  const [isPageReady, setIsPageReady] = useState(true);
+
+  // Sync section with URL hash on mount & on popstate / hashchange (browser back/forward)
+  useEffect(() => {
+    const handleHashSync = () => {
+      const hash = window.location.hash.replace("#", "").toLowerCase();
+      if (hash && VALID_SECTIONS.includes(hash)) {
+        setActiveSection(hash);
+      }
+    };
+
+    handleHashSync();
+    window.addEventListener("hashchange", handleHashSync);
+    window.addEventListener("popstate", handleHashSync);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashSync);
+      window.removeEventListener("popstate", handleHashSync);
+    };
+  }, []);
+
+  const handleSelectSection = useCallback((sectionKey: string) => {
+    if (!VALID_SECTIONS.includes(sectionKey)) return;
+    setActiveSection(sectionKey);
+
+    // Update URL hash without full reload
+    if (window.location.hash !== `#${sectionKey}`) {
+      window.history.pushState(null, "", `#${sectionKey}`);
+    }
+
+    // Smooth scroll to top of new section
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground selection:bg-white/20 overflow-x-hidden">
-      {/* Initial Entry Loader / Intro Transition */}
+    <div className="relative min-h-screen bg-[#05060B] text-[#F4F6FA] selection:bg-red-500/20 overflow-x-hidden flex flex-col justify-between">
+      {/* ── Entry Intro Loader ── */}
       <PortfolioLoader onStartExit={() => setIsPageReady(true)} />
 
+      {/* ── Structured SEO JSON-LD ── */}
       <script
         type="application/ld+json"
-        // Static, author-controlled object; no user input reaches this.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
 
-      {/* 1. Background layer (Dedicated full-viewport Pattern Starfield) */}
-      <div className="page-background">
-        <Pattern />
+      {/* ── Persistent Hyperspeed Background (Mounted ONCE at root level) ── */}
+      <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#05060B]">
+        <Hyperspeed effectOptions={hyperspeedPresets.three} />
       </div>
 
-      {/* 2. SplashCursor global WebGL fluid simulation layer (BEHIND UI, cards, and typography: z-[1]) */}
+      {/* ── Persistent Crimson SplashCursor WebGL fluid simulation (z-[1]) ── */}
       <SplashCursor
-        COLOR={isLightMode ? "#5B6F86" : "#A855F7"}
-        RAINBOW_MODE={true}
+        COLOR="#7F1D1D"
+        RAINBOW_MODE={false}
         SIM_RESOLUTION={64}
         DYE_RESOLUTION={720}
         PRESSURE_ITERATIONS={12}
@@ -79,70 +109,35 @@ export default function Home() {
         TRANSPARENT={true}
       />
 
-      {/* 3. Portfolio Content & UI — Smooth soft zoom-in reveal upon loader exit */}
-      <motion.div
-        initial={{ scale: 0.94, opacity: 0 }}
-        animate={
-          isPageReady
-            ? { scale: 1, opacity: 1 }
-            : { scale: 0.94, opacity: 0 }
-        }
-        transition={{
-          duration: 1.1,
-          ease: [0.16, 1, 0.3, 1],
-        }}
-        style={{ transformOrigin: "50% 25vh" }}
-        className="w-full"
-      >
-        <Navbar />
+      {/* ── Main Application UI ── */}
+      <div className="relative z-10 w-full flex-1 flex flex-col justify-between">
+        {/* Floating Top Navbar */}
+        <Navbar
+          activeSection={activeSection}
+          onSelectSection={handleSelectSection}
+        />
 
-        <main className="relative z-10 flex flex-col items-center w-full mx-auto overflow-x-hidden">
-          <ScrollSectionWrapper isFirst>
-            <Hero />
-          </ScrollSectionWrapper>
-
-          <ScrollSectionWrapper>
-            <Enterprise />
-          </ScrollSectionWrapper>
-
-          <ScrollSectionWrapper>
-            <GlossarySection />
-          </ScrollSectionWrapper>
-
-          <ScrollSectionWrapper>
-            <Projects />
-          </ScrollSectionWrapper>
-
-          <ScrollSectionWrapper>
-            <SystemsSection />
-          </ScrollSectionWrapper>
-
-          <ScrollSectionWrapper>
-            <ExperienceSection />
-          </ScrollSectionWrapper>
-
-          <ScrollSectionWrapper isLast>
-            <Contact />
-          </ScrollSectionWrapper>
+        {/* Dynamic Section View (Smooth Framer Motion crossfade) */}
+        <main className="w-full flex-1 flex flex-col">
+          <motion.div
+            key={activeSection}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="w-full flex-1 flex flex-col"
+          >
+            {activeSection === "home" && <HomeView onNavigate={handleSelectSection} />}
+            {activeSection === "about" && <AboutView />}
+            {activeSection === "tech" && <TechView />}
+            {activeSection === "projects" && <ProjectsView />}
+            {activeSection === "experience" && <ExperienceView />}
+            {activeSection === "contact" && <ContactView />}
+          </motion.div>
         </main>
 
-        <Footer />
-      </motion.div>
-
-      {/* 4. Global Persistent Viewport Bottom Gradual Blur */}
-      <GradualBlur
-        target="page"
-        position="bottom"
-        height="7rem"
-        mobileHeight="4.5rem"
-        strength={2}
-        divCount={2}
-        curve="bezier"
-        exponential
-        opacity={1}
-        zIndex={35}
-        fadeAtDocumentBottom={true}
-      />
+        {/* Reusable Compact Footer (Immediately following every section view) */}
+        <Footer onBackToTop={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
+      </div>
     </div>
   );
 }

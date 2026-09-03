@@ -1,17 +1,19 @@
 export interface NavItemData {
   id: string;
+  key: string;
   label: string;
   title: string;
   href: string;
 }
 
 export const NAV_ITEMS: NavItemData[] = [
-  { id: "01", label: "HOME", title: "Home", href: "#home" },
-  { id: "02", label: "EXPERTISE", title: "Expertise", href: "#expertise" },
-  { id: "03", label: "PROJECTS", title: "Projects", href: "#projects" },
-  { id: "04", label: "SKILLS", title: "Skills", href: "#skills" },
-  { id: "05", label: "EXPERIENCE", title: "Experience", href: "#experience" },
-  { id: "06", label: "CONTACT", title: "Contact", href: "#contact" },
+  { id: "01", key: "home", label: "Home", title: "01 Home", href: "#home" },
+  { id: "02", key: "about", label: "About", title: "02 About", href: "#about" },
+  { id: "03", key: "tech", label: "Tech", title: "03 Tech", href: "#tech" },
+  { id: "04", key: "projects", label: "Projects", title: "04 Projects", href: "#projects" },
+  { id: "05", key: "experience", label: "Experience", title: "05 Experience", href: "#experience" },
+  { id: "06", key: "contact", label: "Contact", title: "06 Contact", href: "#contact" },
 ];
 
-export const SECTION_IDS = NAV_ITEMS.map((item) => item.href.slice(1));
+export const SECTION_KEYS = NAV_ITEMS.map((item) => item.key);
+export const SECTION_IDS = NAV_ITEMS.map((item) => item.key);

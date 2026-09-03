@@ -84,53 +84,51 @@ export default function MobileMenu({
             aria-label="Mobile"
             className="flex flex-col items-start gap-6 w-full max-w-[280px]"
           >
-            {NAV_ITEMS.map((item, i) => (
-              <motion.a
-                key={item.label}
-                href={item.href}
-                aria-current={activeItem === item.label ? "true" : undefined}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate(item.label, item.href);
-                }}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3, delay: i * 0.05 }}
-                className="group relative flex items-center gap-4 w-full rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-black/60 dark:focus-visible:ring-white/60"
-              >
-                <span
-                  className={cn(
-                    "text-xs font-mono font-medium transition-colors",
-                    activeItem === item.label
-                      ? isLightMode ? "text-[#000000] font-bold" : "text-[#ffffff] font-bold"
-                      : isLightMode ? "text-[#000000]/60 group-hover:text-[#000000]" : "text-gray-400 group-hover:text-white"
-                  )}
+            {NAV_ITEMS.map((item, i) => {
+              const isActive = activeItem === item.key;
+              return (
+                <motion.button
+                  key={item.key}
+                  aria-current={isActive ? "true" : undefined}
+                  onClick={() => {
+                    onNavigate(item.key);
+                  }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3, delay: i * 0.05 }}
+                  className="group relative flex items-center gap-4 w-full text-left outline-none cursor-pointer"
                 >
-                  {item.id}
-                </span>
-                <span
-                  className={cn(
-                    "text-xl font-sans font-bold tracking-tight transition-colors",
-                    activeItem === item.label
-                      ? isLightMode ? "text-[#000000] font-bold" : "text-[#ffffff] font-bold"
-                      : isLightMode ? "text-[#000000] group-hover:text-[#000000]" : "text-gray-300 group-hover:text-white"
-                  )}
-                >
-                  {item.title}
-                </span>
-
-                {activeItem === item.label && (
-                  <motion.div
-                    layoutId="mobile-active"
+                  <span
                     className={cn(
-                      "absolute -left-6 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full",
-                      isLightMode ? "bg-[#000000]" : "bg-[#ffffff]"
+                      "text-xs font-mono font-medium transition-colors",
+                      isActive
+                        ? "text-[#EF4444] font-bold"
+                        : "text-[#64748B] group-hover:text-white"
                     )}
-                  />
-                )}
-              </motion.a>
-            ))}
+                  >
+                    {item.id}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-xl font-sans font-bold tracking-tight transition-colors",
+                      isActive
+                        ? "text-white font-bold"
+                        : "text-[#94A3B8] group-hover:text-white"
+                    )}
+                  >
+                    {item.label}
+                  </span>
+
+                  {isActive && (
+                    <motion.div
+                      layoutId="mobile-active"
+                      className="absolute -left-5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#EF4444] shadow-[0_0_8px_#EF4444]"
+                    />
+                  )}
+                </motion.button>
+              );
+            })}
           </nav>
         </motion.div>
       )}
