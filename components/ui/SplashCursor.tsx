@@ -149,7 +149,13 @@ export default function SplashCursor({
       return;
     }
 
-    const isMobile = typeof window !== "undefined" && (window.innerWidth < 768 || "ontouchstart" in window);
+    // On touch/mobile devices, disable desktop cursor fluid simulation to eliminate GPU overhead and ensure silky-smooth native scroll
+    const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+    if (isTouchDevice) {
+      return;
+    }
+
+    const isMobile = false;
 
     // Responsive simulation tuning
     const effectiveSimRes = isMobile ? Math.min(SIM_RESOLUTION, 48) : SIM_RESOLUTION;

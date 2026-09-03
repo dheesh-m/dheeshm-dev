@@ -36,7 +36,7 @@ export default function HomeView({ onNavigate }: HomeViewProps) {
   const { isLightMode } = useTheme();
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-28 sm:pt-32 pb-12 flex flex-col justify-between min-h-[calc(100vh-140px)]">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-28 sm:pt-32 pb-12 sm:pb-16 flex flex-col justify-between min-h-screen">
       {/* ── Top & Main Content (Center Aligned with Dheesh Medekar in One Line) ── */}
       <div className="w-full flex flex-col items-center text-center my-auto max-w-4xl mx-auto">
         

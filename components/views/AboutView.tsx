@@ -66,7 +66,7 @@ export default function AboutView() {
   const StepIcon = activeStep.icon;
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-28 sm:pt-32 pb-16 min-h-[calc(100vh-140px)] flex flex-col justify-center">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-28 sm:pt-32 pb-16 min-h-screen flex flex-col justify-center">
       {/* ── Section Header ── */}
       <div className="flex flex-col items-center text-center mx-auto mb-8 sm:mb-12">
         <div className={cn(

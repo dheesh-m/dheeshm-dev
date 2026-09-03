@@ -35,8 +35,8 @@ export default function Footer({ onBackToTop }: FooterProps) {
           {/* Top Divider Hairline */}
           <div className="w-full h-[1px] bg-black/[0.08]" />
 
-          {/* Main Signature & Racing Trails Canvas */}
-          <div className="relative w-full h-[280px] sm:h-[340px] md:h-[400px] lg:h-[430px] flex items-center justify-center overflow-hidden select-none">
+          {/* Main Signature & Racing Trails Canvas (Matches Dark Mode Dimensions) */}
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-10 pb-8 sm:pt-14 sm:pb-10 flex items-center justify-center text-center select-none overflow-hidden">
             
             {/* ── Background Racing Trajectory Trails ── */}
             <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
@@ -183,14 +183,13 @@ export default function Footer({ onBackToTop }: FooterProps) {
               </svg>
             </div>
 
-            {/* ── Main Name Heading (Razor-Sharp, Perfectly Centered, Editorial Scale) ── */}
-            <div className="relative z-10 max-w-[1100px] mx-auto px-4 text-center">
+            {/* ── Main Name Heading (Matches Dark Mode Responsive Sizing) ── */}
+            <div className="relative z-10 w-full flex items-center justify-center text-center">
               <h2
-                className="font-normal leading-none whitespace-nowrap text-center"
+                className="w-full text-center font-normal tracking-[0.03em] sm:tracking-[0.05em] leading-none whitespace-nowrap overflow-visible flex items-center justify-center transition-colors duration-300"
                 style={{
-                  fontSize: "clamp(64px, 6.5vw, 118px)",
+                  fontSize: "clamp(1.5rem, 5.6vw, 5.25rem)",
                   fontFamily: "var(--font-work-sans), sans-serif",
-                  letterSpacing: "0.01em",
                 }}
               >
                 <span className="text-[#111111]">Dheesh</span>
@@ -200,12 +199,9 @@ export default function Footer({ onBackToTop }: FooterProps) {
             </div>
           </div>
 
-          {/* Bottom Divider Hairline */}
-          <div className="w-full h-[1px] bg-black/[0.08]" />
-
-          {/* ── Bottom Utility Row (Clean Single Baseline) ── */}
-          <div className="w-full bg-[#FFFFFF]">
-            <div className="w-full max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 py-5 sm:py-6 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6">
+          {/* ── Bottom Utility Row (Shared exact dimensions & padding as dark mode) ── */}
+          <div className="relative z-10 w-full pb-5 pt-1.5 border-t border-black/[0.08]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 select-none">
               
               {/* Left Side: Circular N Badge + dheesh_h Pill + Copyright */}
               <div className="flex items-center gap-3 sm:gap-4.5 shrink-0">
@@ -325,7 +321,7 @@ export default function Footer({ onBackToTop }: FooterProps) {
           </div>
 
           {/* Main Cinematic Signature */}
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-16 pb-12 sm:pt-24 sm:pb-16 flex items-center justify-center text-center select-none">
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-10 pb-8 sm:pt-14 sm:pb-10 flex items-center justify-center text-center select-none">
             <h2
               className="w-full text-center font-normal text-[#F4F6FA] tracking-[0.03em] sm:tracking-[0.05em] leading-none whitespace-nowrap overflow-visible flex items-center justify-center transition-colors duration-300"
               style={{
@@ -338,7 +334,7 @@ export default function Footer({ onBackToTop }: FooterProps) {
           </div>
 
           {/* Footer Metadata & Controls Bar */}
-          <div className="relative z-10 w-full pb-8 pt-2">
+          <div className="relative z-10 w-full pb-5 pt-1.5">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Monogram Logo + Copyright */}
               <div className="flex items-center gap-3">

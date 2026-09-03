@@ -927,6 +927,7 @@ class App {
   timer: THREE.Timer;
   assets: Record<string, any>;
   disposed: boolean;
+  paused: boolean;
   road: Road;
   leftCarLights: CarLights;
   rightCarLights: CarLights;
@@ -948,6 +949,7 @@ class App {
     }
     this.container = container;
     this.hasValidSize = false;
+    this.paused = false;
 
     const initW = Math.max(1, container.offsetWidth);
     const initH = Math.max(1, container.offsetHeight);
@@ -1237,6 +1239,23 @@ class App {
 
   tick() {
     if (this.disposed) return;
+
+    // Pause WebGL rendering loop when browser tab is hidden to conserve GPU/battery
+    if (typeof document !== "undefined" && document.hidden) {
+      if (!this.paused) {
+        this.paused = true;
+        const handleVisibilityChange = () => {
+          if (!document.hidden && !this.disposed) {
+            this.paused = false;
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+            this.timer.reset();
+            requestAnimationFrame(this.tick);
+          }
+        };
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+      }
+      return;
+    }
 
     if (!this.hasValidSize) {
       const w = this.container.offsetWidth;

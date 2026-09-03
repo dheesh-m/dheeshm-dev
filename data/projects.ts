@@ -38,7 +38,7 @@ export const projects: Project[] = [
     description: "Developing a humanoid robot with integrated robotics, programming, and intelligent systems to interact and respond autonomously.",
     categoryBadge: "ROBOTICS / AI",
     iconName: "bot",
-    imageUrl: "/humanoid-head.jpg",
+    imageUrl: "/humanoid-robot.png",
     problem: "Building a humanoid system requires coordinating mechanical components, sensors, software, and intelligent decision-making into one reliable autonomous platform.",
     outcome: "Developing an integrated humanoid robotics platform that combines perception, control, programming, and intelligent systems into a unified autonomous workflow.",
     architecture: "Sensors and perception → processing and decision-making → control logic → robotic actuation. Software components communicate through structured interfaces for coordinated system behavior.",

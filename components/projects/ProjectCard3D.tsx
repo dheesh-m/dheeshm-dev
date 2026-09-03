@@ -165,21 +165,28 @@ const ProjectVisual = ({ id, imageUrl, title, isHovered }: { id: string; imageUr
     return <FarmLensDiagram on={isHovered} />;
   }
 
-  const src = imageUrl || (id === "humanoid" ? "/humanoid-head.jpg" : id === "apt" ? "/apt-transit.jpg" : "/movie-ai-recommendation.png");
+  const src = imageUrl || (id === "humanoid" ? "/humanoid-robot.png" : id === "apt" ? "/apt-transit.jpg" : "/movie-ai-recommendation.png");
 
   return (
-    <div className="absolute inset-0 bg-[#070810] dark:bg-[#06070D] overflow-hidden">
+    <div className="absolute inset-0 bg-[#070810] dark:bg-[#06070D] overflow-hidden flex items-center justify-center">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.08),transparent_70%)] z-10 pointer-events-none" />
 
       <motion.img
         src={src}
         alt={title}
-        className="w-full h-full object-cover object-center filter brightness-95 contrast-105"
+        className={cn(
+          "w-full h-full filter brightness-95 contrast-105",
+          id === "humanoid"
+            ? "object-contain object-center"
+            : "object-cover object-center"
+        )}
         animate={{ scale: isHovered ? 1.04 : 1.0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C19] via-transparent to-transparent opacity-60 z-10" />
+      {id !== "humanoid" && (
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0C19] via-transparent to-transparent opacity-60 z-10" />
+      )}
     </div>
   );
 };

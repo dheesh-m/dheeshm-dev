@@ -20,15 +20,38 @@ export default function Navbar({
 }: NavbarProps) {
   const { isLightMode } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
+  // Exact scroll detection: switches between RESTING and SCROLLED state at scrollY > 2
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const next = window.scrollY > 2;
+      setScrolled((prev) => {
+        if (prev === next) return prev;
+        return next;
+      });
     };
+
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // Also sync with Lenis smooth scroll if present
+    let lenisUnsub: (() => void) | undefined;
+    const checkLenis = () => {
+      const lenis = (window as any).__lenis;
+      if (lenis && typeof lenis.on === "function") {
+        lenis.on("scroll", handleScroll);
+        lenisUnsub = () => lenis.off("scroll", handleScroll);
+      }
+    };
+    checkLenis();
+    const timer = setTimeout(checkLenis, 150);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(timer);
+      lenisUnsub?.();
+    };
   }, []);
 
   const handleItemClick = (key: string) => {
@@ -38,10 +61,15 @@ export default function Navbar({
 
   return (
     <>
-      <header 
+      {/* 
+        Single source of truth for motion: .navbar-motion-root.resting vs .navbar-motion-root.scrolled
+        - RESTING: transform: translate3d(0, 10px, 0) scale(0.97), opacity: 0.78
+        - SCROLLED: transform: translate3d(0, 0px, 0) scale(1), opacity: 1
+      */}
+      <header
         className={cn(
-          "fixed left-0 right-0 z-[100] flex justify-center px-4 sm:px-6 lg:px-12 pointer-events-none transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          isScrolled ? "top-3 sm:top-4" : "top-6 sm:top-8"
+          "navbar-motion-root fixed left-0 right-0 top-5 sm:top-6 z-[100] flex justify-center px-4 sm:px-6 lg:px-12 pointer-events-none",
+          scrolled ? "scrolled" : "resting"
         )}
       >
         <div className="w-full max-w-7xl flex items-center justify-between pointer-events-auto relative">
@@ -53,26 +81,27 @@ export default function Navbar({
             aria-label="Dheesh Medekar - Back to Home"
           >
             <span className={cn(
-              "font-black text-2xl tracking-tighter group-hover:scale-105 transition-transform duration-200",
+              "font-mono font-bold text-lg sm:text-xl tracking-tight group-hover:scale-105 transition-transform duration-200",
               isLightMode ? "text-[#E50909]" : "text-white"
             )}>
-              DM
+              dhees_h
             </span>
           </button>
 
-          {/* ── 2. Navigation Container (Always Center-Aligned) ── */}
+          {/* ── 2. Navigation Container (Depth Elevation Matching Image 1 & Image 2) ── */}
           <div className="hidden md:flex items-center md:absolute md:left-1/2 md:-translate-x-1/2">
             <nav
               aria-label="Primary"
               className={cn(
-                "flex items-center rounded-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-                "backdrop-blur-2xl border shadow-[0_4px_24px_rgba(0,0,0,0.04)]",
-                isLightMode 
-                  ? "bg-white/95 border-black/10 text-[#111111]" 
-                  : "bg-[#090C17]/80 border-white/15 text-white shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
-                isScrolled 
-                  ? "gap-1 p-1.5" 
-                  : "gap-1.5 p-1.5 sm:p-2"
+                "flex items-center gap-1.5 p-1.5 sm:p-2 rounded-full transition-all duration-300 ease-out",
+                scrolled
+                  ? isLightMode
+                    ? "bg-white/90 border border-black/15 shadow-[0_12px_36px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl"
+                    : "bg-[#090C17]/85 border border-white/20 shadow-[0_16px_40px_rgba(0,0,0,0.55),0_2px_8px_rgba(255,255,255,0.05)] backdrop-blur-xl"
+                  : isLightMode
+                    ? "bg-white/40 border border-black/[0.06] shadow-none backdrop-blur-sm"
+                    : "bg-white/[0.04] border border-white/10 shadow-none backdrop-blur-sm",
+                isLightMode ? "text-[#111111]" : "text-white"
               )}
             >
               {NAV_ITEMS.map((item) => {
@@ -83,8 +112,7 @@ export default function Navbar({
                     onClick={() => handleItemClick(item.key)}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "relative z-10 flex items-center gap-1.5 rounded-full text-xs font-mono font-medium transition-all duration-200 outline-none select-none cursor-pointer",
-                      isScrolled ? "px-3 py-1.5" : "px-3.5 sm:px-4 py-1.5 sm:py-2",
+                      "relative z-10 flex items-center gap-1.5 rounded-full px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs font-mono font-medium transition-all duration-200 outline-none select-none cursor-pointer",
                       isActive
                         ? isLightMode
                           ? "text-[#E50909] bg-red-500/[0.06] border border-red-500/20 font-bold"
@@ -127,10 +155,14 @@ export default function Navbar({
               type="button"
               onClick={() => setMobileOpen((open) => !open)}
               className={cn(
-                "flex h-9 w-9 flex-col items-center justify-center rounded-full backdrop-blur-md transition-all cursor-pointer shadow-sm border",
-                isLightMode 
-                  ? "border-black/15 bg-white text-[#111111] hover:bg-black/5" 
-                  : "border-white/15 bg-white/[0.06] text-white hover:bg-white/10"
+                "flex h-9 w-9 flex-col items-center justify-center rounded-full transition-all duration-300 cursor-pointer border",
+                scrolled
+                  ? isLightMode
+                    ? "border-black/15 bg-white/90 text-[#111111] backdrop-blur-xl shadow-md"
+                    : "border-white/20 bg-[#090C17]/85 text-white backdrop-blur-xl shadow-lg"
+                  : isLightMode
+                    ? "border-black/[0.06] bg-white/40 text-[#111111] backdrop-blur-sm shadow-none"
+                    : "border-white/10 bg-white/[0.04] text-white backdrop-blur-sm shadow-none"
               )}
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}

@@ -23,11 +23,17 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    if (prefersReducedMotion) {
+      onStartExit?.();
+      setMounted(false);
+      return () => {};
+    }
+
     const startTime = performance.now();
-    // Timing milestones: snappy, sleek 1.0s entrance
-    const tPhase1 = 450; // 0% -> 86% in 450ms
-    const tPhase2 = 750; // 86% -> 96% in 300ms
-    const tPhase3 = 950; // 96% -> 100% in 200ms
+    // Timing milestones: agile, snappy ~560ms entrance
+    const tPhase1 = 280; // 0% -> 86% in 280ms
+    const tPhase2 = 440; // 86% -> 96% in 160ms
+    const tPhase3 = 560; // 96% -> 100% in 120ms
 
     let currentPercent = 0;
     let rafId: number;
@@ -65,11 +71,10 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
           onStartExit?.();
 
           // Full unmount after transition completes
-          const exitDuration = prefersReducedMotion ? 300 : 800;
           setTimeout(() => {
             setMounted(false);
-          }, exitDuration);
-        }, 220);
+          }, 450);
+        }, 90);
       }
     };
 
@@ -101,8 +106,8 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
       style={{
         backgroundColor: isLightMode ? "#FAFAFA" : "#050508",
         backgroundImage: isLightMode
-          ? "radial-gradient(circle at 50% 50%, rgba(59,130,246,0.06) 0%, rgba(250,250,250,1) 75%)"
-          : "radial-gradient(circle at 50% 50%, rgba(139,92,246,0.09) 0%, rgba(5,5,8,1) 75%)",
+          ? "radial-gradient(circle at 50% 50%, rgba(229,9,9,0.06) 0%, rgba(250,250,250,1) 75%)"
+          : "radial-gradient(circle at 50% 50%, rgba(149,6,6,0.18) 0%, rgba(5,5,8,1) 75%)",
       }}
     >
       <div

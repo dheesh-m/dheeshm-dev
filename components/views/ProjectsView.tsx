@@ -12,7 +12,7 @@ export default function ProjectsView() {
   const { isLightMode } = useTheme();
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-24 sm:pt-32 pb-14 sm:pb-16 min-h-[calc(100vh-140px)] flex flex-col justify-center">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-24 sm:pt-32 pb-14 sm:pb-16 min-h-screen flex flex-col justify-center">
       {/* ── Section Header (Centered) ── */}
       <div className="flex flex-col items-center text-center mx-auto mb-6 sm:mb-10 lg:mb-12 max-w-2xl">
         <div className={cn(
@@ -60,15 +60,26 @@ export default function ProjectsView() {
                   : "bg-white/[0.03] border-white/10 backdrop-blur-xl hover:border-white/25 hover:bg-white/[0.06] shadow-lg"
               )}
             >
-              {/* Media Preview Box */}
-              <div className="relative aspect-[16/10] w-full rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-4 bg-black/30">
+              {/* Media Preview Box — Unified 16:10 dimensions across all cards */}
+              <div className={cn(
+                "relative aspect-[16/10] w-full rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-4 flex items-center justify-center",
+                isLightMode ? "bg-slate-100" : "bg-[#080912]"
+              )}>
+                {project.id === "humanoid" && (
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.04)_0%,transparent_70%)] pointer-events-none" />
+                )}
                 {project.imageUrl ? (
                   <Image
                     src={project.imageUrl}
                     alt={project.title}
                     fill
                     sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 25vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className={cn(
+                      "transition-transform duration-500 group-hover:scale-105",
+                      project.id === "humanoid"
+                        ? "object-contain object-center"
+                        : "object-cover object-center"
+                    )}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900 text-zinc-500 font-mono text-xs">

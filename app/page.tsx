@@ -6,11 +6,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
 import HomeView from "@/components/views/HomeView";
-import AboutView from "@/components/views/AboutView";
-import TechView from "@/components/views/TechView";
-import ProjectsView from "@/components/views/ProjectsView";
-import ExperienceView from "@/components/views/ExperienceView";
-import ContactView from "@/components/views/ContactView";
+
+// Code-split secondary views for maximum initial page load speed
+const AboutView = dynamic(() => import("@/components/views/AboutView"));
+const TechView = dynamic(() => import("@/components/views/TechView"));
+const ProjectsView = dynamic(() => import("@/components/views/ProjectsView"));
+const ExperienceView = dynamic(() => import("@/components/views/ExperienceView"));
+const ContactView = dynamic(() => import("@/components/views/ContactView"));
 import PortfolioLoader from "@/components/ui/PortfolioLoader";
 import { hyperspeedPresets } from "@/components/HyperSpeedPresets";
 import { SAME_AS, EMAIL } from "@/data/socials";

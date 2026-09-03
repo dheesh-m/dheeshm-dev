@@ -13,9 +13,9 @@ const HumanoidVisual = ({ on }: { on: boolean }) => (
 
     {/* High-res Humanoid Robot Head */}
     <motion.img
-      src="/humanoid-head.jpg"
+      src="/humanoid-robot.png"
       alt="Humanoid Autonomous Robotics System"
-      className="w-full h-full object-cover object-center filter brightness-95 contrast-105 transition-transform duration-700 ease-out group-hover/humanoid:scale-105"
+      className="w-full h-full object-contain object-center filter brightness-95 contrast-105 transition-transform duration-700 ease-out group-hover/humanoid:scale-105"
       initial={{ scale: 1 }}
       animate={on ? { scale: [1, 1.03, 1] } : { scale: 1 }}
       transition={on ? { duration: 8, repeat: Infinity, ease: "easeInOut" } : { duration: 0 }}
