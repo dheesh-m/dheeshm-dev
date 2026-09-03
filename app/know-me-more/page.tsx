@@ -168,9 +168,9 @@ export default function KnowMeMorePage() {
       {/* ── Official React Bits MoltenMetal Full-Page WebGL Background ── */}
       <div className="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-auto">
         <MoltenMetal
-          color1="#5227FF"
-          color2="#FF9FFC"
-          color3="#FFFFFF"
+          color1="#8B5CF6"
+          color2="#22D3EE"
+          color3="#D946EF"
           speed={0.35}
           scale={4}
           detail={3}
@@ -197,31 +197,31 @@ export default function KnowMeMorePage() {
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-black/40 hover:bg-white/[0.1] border border-purple-500/30 hover:border-purple-400 text-xs font-mono text-white/90 shadow-[0_0_15px_rgba(168,85,247,0.15)] transition-all duration-200"
+              className="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-black/40 hover:bg-white/[0.1] border border-[#22D3EE]/30 hover:border-[#22D3EE]/60 text-xs font-mono text-white/90 shadow-[0_0_15px_rgba(34,211,238,0.15)] transition-all duration-200"
             >
-              <ArrowLeft className="w-3.5 h-3.5 text-purple-400 group-hover:-translate-x-1 transition-transform" />
+              <ArrowLeft className="w-3.5 h-3.5 text-[#22D3EE] group-hover:-translate-x-1 transition-transform" />
               <span>Back to Home</span>
             </Link>
 
             <div className="h-4 w-[1px] bg-white/20 hidden sm:block" />
 
-            <div className="flex items-center gap-2 text-[11px] font-mono tracking-widest text-purple-300/80">
-              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_#c084fc] animate-pulse" />
+            <div className="flex items-center gap-2 text-[11px] font-mono tracking-widest text-cyan-200/90">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#22D3EE] shadow-[0_0_8px_#22D3EE] animate-pulse" />
               <span>STATUS: ONLINE</span>
             </div>
           </div>
 
           <div className="flex flex-col items-start sm:items-end text-left sm:text-right">
-            <h1 className="text-xl sm:text-2xl font-black tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-100 to-purple-200 drop-shadow-[0_0_20px_rgba(168,85,247,0.4)]">
+            <h1 className="text-xl sm:text-2xl font-black tracking-wider uppercase text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-violet-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.4)]">
               KNOW ME MORE
             </h1>
-            <p className="text-xs font-mono tracking-widest text-purple-300/80 mt-0.5">
+            <p className="text-xs font-mono tracking-widest text-cyan-200/80 mt-0.5">
               &ldquo;Beyond the code.&rdquo;
             </p>
           </div>
         </header>
 
-        {/* ── Asymmetrical Cyber Cards Responsive Grid ── */}
+        {/* ── Asymmetrical Cyber Cards Responsive Grid (Unified Aurora Gradient System) ── */}
         <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
 
           {/* ════════ 1. ROLE (Primary / Larger Card) ════════ */}
@@ -230,12 +230,11 @@ export default function KnowMeMorePage() {
               title="ROLE"
               subtitle="BUILDING INTELLIGENT SYSTEMS"
               badge="PRIMARY // 01"
-              accent="#a855f7"
               size="wide"
               footer={
                 <div className="flex items-center justify-between w-full text-[10px] font-mono text-white/60">
-                  <span className="flex items-center gap-1.5 text-purple-300">
-                    <Activity className="w-3 h-3 text-purple-400 animate-pulse" />
+                  <span className="flex items-center gap-1.5 text-cyan-300">
+                    <Activity className="w-3 h-3 text-[#22D3EE] animate-pulse" />
                     STATUS: ACTIVE
                   </span>
                   <span>CORE INTEL // 2026</span>
@@ -248,17 +247,17 @@ export default function KnowMeMorePage() {
                   return (
                     <div
                       key={r.title}
-                      className="group/item flex items-start gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-purple-500/40 hover:bg-purple-500/[0.07] transition-all duration-200"
+                      className="group/item flex items-start gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-[#22D3EE]/40 hover:bg-[#22D3EE]/[0.06] transition-all duration-200"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover/item:border-purple-400 shadow-[0_0_10px_rgba(168,85,247,0.2)]">
-                        <Icon className="w-4 h-4 text-purple-300 group-hover/item:text-white transition-colors" />
+                      <div className="w-8 h-8 rounded-lg bg-[#22D3EE]/10 border border-[#22D3EE]/25 flex items-center justify-center shrink-0 mt-0.5 group-hover/item:border-[#22D3EE] shadow-[0_0_10px_rgba(34,211,238,0.2)]">
+                        <Icon className="w-4 h-4 text-[#22D3EE] group-hover/item:text-white transition-colors" />
                       </div>
                       <div className="flex flex-col">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold font-mono tracking-wide text-white group-hover/item:text-purple-200">
+                          <span className="text-xs font-bold font-mono tracking-wide text-white group-hover/item:text-cyan-200">
                             {r.title}
                           </span>
-                          <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                          <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-[#22D3EE]/20 text-[#22D3EE] border border-[#22D3EE]/30">
                             0{i + 1}
                           </span>
                         </div>
@@ -279,11 +278,10 @@ export default function KnowMeMorePage() {
               title="ANALYTICS"
               subtitle="CORE CAPABILITIES"
               badge="METRICS // 02"
-              accent="#a855f7"
               size="wide"
               footer={
                 <div className="flex items-center justify-between w-full text-[10px] font-mono text-white/60">
-                  <span className="text-purple-300">BENCHMARK: PEAK</span>
+                  <span className="text-cyan-300">BENCHMARK: PEAK</span>
                   <span>CONFIDENCE: 99.4%</span>
                 </div>
               }
@@ -293,11 +291,11 @@ export default function KnowMeMorePage() {
                   <div key={m.label} className="flex flex-col gap-1">
                     <div className="flex justify-between items-center text-[10.5px] font-mono">
                       <span className="text-white/85 tracking-wider">{m.label}</span>
-                      <span className="text-purple-300 font-bold">{m.value}%</span>
+                      <span className="text-cyan-300 font-bold">{m.value}%</span>
                     </div>
                     <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden p-[0.5px]">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-purple-600 via-purple-400 to-white shadow-[0_0_8px_rgba(168,85,247,0.7)] transition-all duration-500"
+                        className="h-full rounded-full bg-gradient-to-r from-[#22D3EE] via-[#8B5CF6] to-[#D946EF] shadow-[0_0_8px_rgba(34,211,238,0.7)] transition-all duration-500"
                         style={{ width: `${m.value}%` }}
                       />
                     </div>
@@ -313,11 +311,10 @@ export default function KnowMeMorePage() {
               title="LANGUAGES"
               subtitle="SYNTAX & RUNTIMES"
               badge="STACK // 03"
-              accent="#38bdf8"
               size="wide"
               footer={
                 <div className="flex items-center justify-between w-full text-[10px] font-mono text-white/60">
-                  <span className="text-sky-300">RUNTIME: POLYGLOT</span>
+                  <span className="text-cyan-300">RUNTIME: POLYGLOT</span>
                   <span>COMPILED &amp; SCRIPTED</span>
                 </div>
               }
@@ -326,15 +323,15 @@ export default function KnowMeMorePage() {
                 {LANGUAGES.map((l) => (
                   <div
                     key={l.name}
-                    className="flex flex-col p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-sky-400/40 hover:bg-sky-500/[0.06] transition-all duration-200"
+                    className="flex flex-col p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-[#22D3EE]/40 hover:bg-[#22D3EE]/[0.06] transition-all duration-200"
                   >
                     <div className="flex justify-between items-center text-[11px] font-mono mb-1.5">
                       <span className="text-white font-bold">{l.name}</span>
-                      <span className="text-[9.5px] text-sky-300">{l.pct}%</span>
+                      <span className="text-[9.5px] text-cyan-300">{l.pct}%</span>
                     </div>
                     <div className="w-full h-1 rounded-full bg-white/10 overflow-hidden">
                       <div
-                        className="h-full rounded-full bg-gradient-to-r from-sky-500 to-cyan-300 shadow-[0_0_6px_rgba(56,189,248,0.7)]"
+                        className="h-full rounded-full bg-gradient-to-r from-[#22D3EE] via-[#38BDF8] to-[#8B5CF6] shadow-[0_0_6px_rgba(34,211,238,0.7)]"
                         style={{ width: `${l.pct}%` }}
                       />
                     </div>
@@ -353,11 +350,10 @@ export default function KnowMeMorePage() {
               title="HOBBIES"
               subtitle="OFFLINE PROTOCOLS"
               badge="EXP // 04"
-              accent="#ec4899"
               size="wide"
               footer={
                 <div className="flex items-center justify-between w-full text-[10px] font-mono text-white/60">
-                  <span className="text-pink-300">STATE: ENERGIZED</span>
+                  <span className="text-cyan-300">STATE: ENERGIZED</span>
                   <span>PASSION DRIVEN</span>
                 </div>
               }
@@ -368,13 +364,13 @@ export default function KnowMeMorePage() {
                   return (
                     <div
                       key={h.title}
-                      className="group/hobby flex items-start gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-pink-500/40 hover:bg-pink-500/[0.06] transition-all duration-200"
+                      className="group/hobby flex items-start gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-[#22D3EE]/40 hover:bg-[#22D3EE]/[0.06] transition-all duration-200"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover/hobby:border-pink-400 shadow-[0_0_8px_rgba(236,72,153,0.2)]">
-                        <Icon className="w-3.5 h-3.5 text-pink-300 group-hover/hobby:text-white transition-colors" />
+                      <div className="w-7 h-7 rounded-lg bg-[#22D3EE]/10 border border-[#22D3EE]/25 flex items-center justify-center shrink-0 mt-0.5 group-hover/hobby:border-[#22D3EE] shadow-[0_0_8px_rgba(34,211,238,0.25)]">
+                        <Icon className="w-3.5 h-3.5 text-[#22D3EE] group-hover/hobby:text-white transition-colors" />
                       </div>
                       <div className="flex flex-col min-w-0">
-                        <div className="text-[11px] font-bold font-mono text-white truncate group-hover/hobby:text-pink-200">
+                        <div className="text-[11px] font-bold font-mono text-white truncate group-hover/hobby:text-cyan-200">
                           {h.title}
                         </div>
                         <div className="text-[9px] text-white/60 leading-tight truncate mt-0.5">
@@ -394,12 +390,11 @@ export default function KnowMeMorePage() {
               title="HOW I THINK"
               subtitle="COGNITIVE LOOP"
               badge="LOGIC // 05"
-              accent="#06b6d4"
               size="wide"
               footer={
                 <div className="flex items-center justify-between w-full text-[10px] font-mono text-white/60">
                   <span className="text-cyan-300 flex items-center gap-1">
-                    <Workflow className="w-3 h-3 text-cyan-400" />
+                    <Workflow className="w-3 h-3 text-[#22D3EE]" />
                     FIRST PRINCIPLES
                   </span>
                   <span>CONTINUOUS LOOP</span>
@@ -412,13 +407,13 @@ export default function KnowMeMorePage() {
                   return (
                     <div
                       key={st.name}
-                      className="group/step flex flex-col p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-cyan-400/40 hover:bg-cyan-500/[0.06] transition-all duration-200"
+                      className="group/step flex flex-col p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-[#22D3EE]/40 hover:bg-[#22D3EE]/[0.06] transition-all duration-200"
                     >
                       <div className="flex items-center justify-between mb-1.5">
-                        <div className="w-6 h-6 rounded-md bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shadow-[0_0_6px_rgba(6,182,212,0.2)]">
-                          <Icon className="w-3 h-3 text-cyan-300 group-hover/step:text-white" />
+                        <div className="w-6 h-6 rounded-md bg-[#22D3EE]/10 border border-[#22D3EE]/25 flex items-center justify-center shadow-[0_0_6px_rgba(34,211,238,0.2)]">
+                          <Icon className="w-3 h-3 text-[#22D3EE] group-hover/step:text-white" />
                         </div>
-                        <span className="text-[9px] font-mono text-cyan-400/80">
+                        <span className="text-[9px] font-mono text-[#22D3EE]">
                           {st.step}
                         </span>
                       </div>
@@ -444,11 +439,10 @@ export default function KnowMeMorePage() {
               title="OFF THE CLOCK"
               subtitle="THE HUMAN SIDE"
               badge="PERSONAL // 06"
-              accent="#f43f5e"
               size="wide"
               footer={
                 <div className="flex items-center justify-between w-full text-[10px] font-mono text-white/60">
-                  <span className="text-rose-300">AUTHENTIC // REAL</span>
+                  <span className="text-cyan-300">AUTHENTIC // REAL</span>
                   <span>UNPLUGGED ENERGY</span>
                 </div>
               }
@@ -459,11 +453,11 @@ export default function KnowMeMorePage() {
                   return (
                     <div
                       key={p.label}
-                      className="group/clock flex flex-col p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-rose-500/40 hover:bg-rose-500/[0.06] transition-all duration-200"
+                      className="group/clock flex flex-col p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-[#22D3EE]/40 hover:bg-[#22D3EE]/[0.06] transition-all duration-200"
                     >
                       <div className="flex items-center gap-2 mb-1.5">
-                        <div className="w-6 h-6 rounded-md bg-rose-500/10 border border-rose-500/20 flex items-center justify-center shadow-[0_0_6px_rgba(244,63,94,0.2)]">
-                          <Icon className="w-3 h-3 text-rose-300 group-hover/clock:text-white" />
+                        <div className="w-6 h-6 rounded-md bg-[#22D3EE]/10 border border-[#22D3EE]/25 flex items-center justify-center shadow-[0_0_6px_rgba(34,211,238,0.2)]">
+                          <Icon className="w-3 h-3 text-[#22D3EE] group-hover/clock:text-white" />
                         </div>
                         <span className="text-[10px] font-bold font-mono text-white tracking-wider">
                           {p.label}
@@ -485,12 +479,11 @@ export default function KnowMeMorePage() {
               title="MY APPROACH"
               subtitle="PHILOSOPHY & EXECUTION"
               badge="CREED // 07"
-              accent="#a855f7"
               size="wide"
               footer={
                 <div className="flex flex-wrap items-center justify-between gap-2 w-full text-[10.5px] font-mono text-white/60">
-                  <span className="text-purple-300 flex items-center gap-1.5">
-                    <Flame className="w-3.5 h-3.5 text-purple-400" />
+                  <span className="text-cyan-300 flex items-center gap-1.5">
+                    <Flame className="w-3.5 h-3.5 text-[#22D3EE]" />
                     &ldquo;With great code, comes great responsibility.&rdquo;
                   </span>
                   <span>BUILD • BREAK • IMPROVE</span>
@@ -499,9 +492,9 @@ export default function KnowMeMorePage() {
             >
               <div className="flex flex-col gap-4 py-1">
                 {/* Statement Quote */}
-                <div className="p-3.5 rounded-xl bg-gradient-to-r from-purple-500/10 via-purple-500/5 to-transparent border border-purple-500/25">
+                <div className="p-3.5 rounded-xl bg-gradient-to-r from-[#22D3EE]/15 via-[#8B5CF6]/10 to-transparent border border-[#22D3EE]/30">
                   <p className="text-sm sm:text-base font-mono font-medium tracking-wide text-white leading-relaxed">
-                    &ldquo;I don&apos;t just write code. <span className="text-purple-300 font-bold underline decoration-purple-500/50 underline-offset-4">I build solutions that matter.</span>&rdquo;
+                    &ldquo;I don&apos;t just write code. <span className="text-cyan-300 font-bold underline decoration-[#22D3EE]/50 underline-offset-4">I build solutions that matter.</span>&rdquo;
                   </p>
                 </div>
 
@@ -512,13 +505,13 @@ export default function KnowMeMorePage() {
                     return (
                       <div
                         key={t.label}
-                        className="group/trait flex flex-col p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-purple-400/40 hover:bg-purple-500/[0.06] transition-all duration-200"
+                        className="group/trait flex flex-col p-3 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-[#22D3EE]/40 hover:bg-[#22D3EE]/[0.06] transition-all duration-200"
                       >
                         <div className="flex items-center gap-2 mb-1.5">
-                          <div className="w-6 h-6 rounded-md bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shadow-[0_0_8px_rgba(168,85,247,0.25)]">
-                            <Icon className="w-3 h-3 text-purple-300 group-hover/trait:text-white" />
+                          <div className="w-6 h-6 rounded-md bg-[#22D3EE]/15 border border-[#22D3EE]/30 flex items-center justify-center shadow-[0_0_8px_rgba(34,211,238,0.25)]">
+                            <Icon className="w-3 h-3 text-[#22D3EE] group-hover/trait:text-white" />
                           </div>
-                          <span className="text-xs font-bold font-mono tracking-wider text-white group-hover/trait:text-purple-200">
+                          <span className="text-xs font-bold font-mono tracking-wider text-white group-hover/trait:text-cyan-200">
                             {t.label}
                           </span>
                         </div>

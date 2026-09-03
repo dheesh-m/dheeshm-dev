@@ -28,7 +28,7 @@ import {
   Layers,
 } from "lucide-react";
 
-// ── 1. Technology Items per Cluster ──────────────────────────────────────────
+// ── 1. Technology Items per Cluster (Exact Structural Reference) ────────────
 
 const AI_CLUSTER_TECHS: OrbitTechItem[] = [
   { id: "vector-retrieval", name: "VECTOR RETRIEVAL", icon: Database, x: "24%", y: "22%" },
@@ -104,15 +104,41 @@ export default function TechnologyUniverse() {
       onMouseLeave={handleMouseLeave}
       className="relative w-full max-w-7xl mx-auto flex flex-col items-center justify-center select-none py-8"
     >
-      {/* ── Background Deep Atmosphere & Stars ── */}
+      {/* ── Background Faint Cosmic Aurora Ambient Clouds (Preserves Stars) ── */}
       <div className="absolute inset-0 pointer-events-none -z-20 overflow-hidden">
-        {/* Subtle Violet & Crimson Nebula Glow */}
+        {/* Top-Left: Violet/Cyan Aurora Cloud */}
         <div
           className={cn(
-            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full blur-[140px] transition-opacity duration-1000",
-            isLightMode
-              ? "bg-gradient-to-tr from-purple-100/40 via-rose-100/30 to-indigo-100/40 opacity-70"
-              : "bg-gradient-to-tr from-purple-950/20 via-rose-950/20 to-violet-950/20 opacity-80"
+            "absolute top-[15%] left-[10%] w-[420px] h-[320px] rounded-full blur-[130px] transition-opacity duration-1000 pointer-events-none",
+            isLightMode ? "bg-[#8B5CF6]/15 opacity-60" : "bg-[#8B5CF6]/12 opacity-70"
+          )}
+        />
+        {/* Top-Right: Magenta/Pink Aurora Cloud */}
+        <div
+          className={cn(
+            "absolute top-[15%] right-[10%] w-[420px] h-[320px] rounded-full blur-[130px] transition-opacity duration-1000 pointer-events-none",
+            isLightMode ? "bg-[#D946EF]/15 opacity-60" : "bg-[#D946EF]/10 opacity-70"
+          )}
+        />
+        {/* Bottom-Left: Electric Blue/Cyan Aurora Cloud */}
+        <div
+          className={cn(
+            "absolute bottom-[15%] left-[10%] w-[420px] h-[320px] rounded-full blur-[130px] transition-opacity duration-1000 pointer-events-none",
+            isLightMode ? "bg-[#38BDF8]/15 opacity-60" : "bg-[#38BDF8]/10 opacity-70"
+          )}
+        />
+        {/* Bottom-Right: Cyan/Violet Aurora Cloud */}
+        <div
+          className={cn(
+            "absolute bottom-[15%] right-[10%] w-[420px] h-[320px] rounded-full blur-[130px] transition-opacity duration-1000 pointer-events-none",
+            isLightMode ? "bg-[#22D3EE]/15 opacity-60" : "bg-[#22D3EE]/10 opacity-70"
+          )}
+        />
+        {/* Central Core Ambient Halo */}
+        <div
+          className={cn(
+            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[400px] rounded-full blur-[110px] transition-opacity duration-1000 pointer-events-none",
+            isLightMode ? "bg-[#8B5CF6]/15 opacity-50" : "bg-[#8B5CF6]/12 opacity-60"
           )}
         />
       </div>
@@ -127,11 +153,11 @@ export default function TechnologyUniverse() {
           className={cn(
             "inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-mono tracking-widest uppercase mb-4 backdrop-blur-xl border transition-colors shadow-sm",
             isLightMode
-              ? "bg-white/80 text-slate-700 border-slate-200"
-              : "bg-white/5 text-slate-300 border-white/10"
+              ? "bg-white/90 text-slate-800 border-[#D6DAE3] shadow-sm"
+              : "bg-[#0A0C19]/80 text-[#F4F6FA] border-white/[0.14] shadow-[0_0_14px_rgba(139,92,246,0.18),inset_0_1px_1px_rgba(255,255,255,0.2)]"
           )}
         >
-          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+          <Sparkles className="w-3.5 h-3.5 text-[#A78BFA]" />
           <span>Core Capabilities</span>
         </motion.div>
 
@@ -142,7 +168,7 @@ export default function TechnologyUniverse() {
           transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className={cn(
             "text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-normal tracking-[-0.035em] leading-[1.08] font-display mb-3",
-            isLightMode ? "text-slate-900" : "text-white"
+            isLightMode ? "text-slate-900" : "text-[#F4F6FA]"
           )}
         >
           Technologies I Work With
@@ -155,7 +181,7 @@ export default function TechnologyUniverse() {
           transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           className={cn(
             "text-sm sm:text-base font-sans max-w-xl leading-relaxed",
-            isLightMode ? "text-slate-600" : "text-slate-400"
+            isLightMode ? "text-slate-600" : "text-[#A8B0BF]"
           )}
         >
           A constellation of tools, frameworks and platforms that power the systems I build.
@@ -172,7 +198,7 @@ export default function TechnologyUniverse() {
           transformStyle: "preserve-3d",
         }}
       >
-        {/* ── SVG 4-Lobe Gravitational Energy Flux Lines ── */}
+        {/* ── SVG 4-Lobe Gravitational Energy Flux Lines (Aurora Gradient Spectrum) ── */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
           viewBox="0 0 1240 780"
@@ -180,24 +206,52 @@ export default function TechnologyUniverse() {
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            <linearGradient id="flux-grad-topleft" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#A855F7" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#818CF8" stopOpacity="0.8" />
+            {/* Top-Left AI Loop: White -> Violet -> Blue -> Cyan */}
+            <linearGradient id="flux-grad-aurora-tl" x1="100%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
+              <stop offset="35%" stopColor="#8B5CF6" stopOpacity="0.75" />
+              <stop offset="70%" stopColor="#38BDF8" stopOpacity="0.65" />
+              <stop offset="100%" stopColor="#22D3EE" stopOpacity="0.85" />
             </linearGradient>
-            <linearGradient id="flux-grad-topright" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#EF4444" stopOpacity="0.85" />
-              <stop offset="100%" stopColor="#F43F5E" stopOpacity="0.85" />
+
+            {/* Top-Right DATA Loop: White -> Purple -> Magenta -> Pink */}
+            <linearGradient id="flux-grad-aurora-tr" x1="0%" y1="100%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
+              <stop offset="35%" stopColor="#A855F7" stopOpacity="0.75" />
+              <stop offset="70%" stopColor="#D946EF" stopOpacity="0.65" />
+              <stop offset="100%" stopColor="#EC4899" stopOpacity="0.85" />
             </linearGradient>
-            <linearGradient id="flux-grad-botleft" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#A855F7" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="#818CF8" stopOpacity="0.8" />
+
+            {/* Bottom-Left BACKEND Loop: White -> Blue -> Cyan -> Violet */}
+            <linearGradient id="flux-grad-aurora-bl" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
+              <stop offset="35%" stopColor="#38BDF8" stopOpacity="0.75" />
+              <stop offset="70%" stopColor="#22D3EE" stopOpacity="0.65" />
+              <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.85" />
             </linearGradient>
-            <linearGradient id="flux-grad-botright" x1="100%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stopColor="#EF4444" stopOpacity="0.85" />
-              <stop offset="100%" stopColor="#F43F5E" stopOpacity="0.85" />
+
+            {/* Bottom-Right FRONTEND Loop: White -> Cyan -> Blue -> Purple */}
+            <linearGradient id="flux-grad-aurora-br" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.85" />
+              <stop offset="35%" stopColor="#22D3EE" stopOpacity="0.75" />
+              <stop offset="70%" stopColor="#38BDF8" stopOpacity="0.65" />
+              <stop offset="100%" stopColor="#A855F7" stopOpacity="0.85" />
             </linearGradient>
+
+            {/* Crossover Figure-8 Gradients */}
+            <linearGradient id="flux-cross-1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.4" />
+              <stop offset="50%" stopColor="#8B5CF6" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#D946EF" stopOpacity="0.4" />
+            </linearGradient>
+            <linearGradient id="flux-cross-2" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#EC4899" stopOpacity="0.4" />
+              <stop offset="50%" stopColor="#8B5CF6" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.4" />
+            </linearGradient>
+
             <filter id="universe-flux-glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feGaussianBlur stdDeviation="2.5" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
@@ -209,54 +263,56 @@ export default function TechnologyUniverse() {
           {/* Loop to Top-Left AI Cluster (Center x: 300, y: 200) */}
           <path
             d="M 620 390 C 520 390, 420 200, 300 200"
-            stroke="url(#flux-grad-topleft)"
+            stroke="url(#flux-grad-aurora-tl)"
             strokeWidth="1.2"
-            opacity={isLightMode ? 0.45 : 0.35}
+            opacity={isLightMode ? 0.6 : 0.48}
             strokeDasharray="4 4"
             filter="url(#universe-flux-glow)"
           />
-          {/* Loop to Top-Right Data Cluster (Center x: 940, y: 200) [RED] */}
+          {/* Loop to Top-Right Data Cluster (Center x: 940, y: 200) */}
           <path
             d="M 620 390 C 720 390, 820 200, 940 200"
-            stroke="url(#flux-grad-topright)"
+            stroke="url(#flux-grad-aurora-tr)"
             strokeWidth="1.2"
-            opacity={isLightMode ? 0.45 : 0.35}
+            opacity={isLightMode ? 0.6 : 0.48}
             strokeDasharray="4 4"
             filter="url(#universe-flux-glow)"
           />
           {/* Loop to Bottom-Left Backend Cluster (Center x: 300, y: 580) */}
           <path
             d="M 620 390 C 520 390, 420 580, 300 580"
-            stroke="url(#flux-grad-botleft)"
+            stroke="url(#flux-grad-aurora-bl)"
             strokeWidth="1.2"
-            opacity={isLightMode ? 0.45 : 0.35}
+            opacity={isLightMode ? 0.6 : 0.48}
             strokeDasharray="4 4"
             filter="url(#universe-flux-glow)"
           />
-          {/* Loop to Bottom-Right Frontend Cluster (Center x: 940, y: 580) [RED] */}
+          {/* Loop to Bottom-Right Frontend Cluster (Center x: 940, y: 580) */}
           <path
             d="M 620 390 C 720 390, 820 580, 940 580"
-            stroke="url(#flux-grad-botright)"
+            stroke="url(#flux-grad-aurora-br)"
             strokeWidth="1.2"
-            opacity={isLightMode ? 0.45 : 0.35}
+            opacity={isLightMode ? 0.6 : 0.48}
             strokeDasharray="4 4"
             filter="url(#universe-flux-glow)"
           />
 
-          {/* 4 Outer Figure-8 Magnetic Field Lines connecting pairs */}
+          {/* 4 Outer Figure-8 Magnetic Field Lines connecting pairs (Subtle Aurora Tones) */}
           <path
             d="M 300 200 C 620 120, 620 660, 940 580"
-            stroke="rgba(168,85,247,0.18)"
-            strokeWidth="0.8"
+            stroke="url(#flux-cross-1)"
+            strokeWidth="0.85"
+            opacity={isLightMode ? 0.35 : 0.22}
           />
           <path
             d="M 940 200 C 620 120, 620 660, 300 580"
-            stroke="rgba(244,63,94,0.22)"
-            strokeWidth="0.8"
+            stroke="url(#flux-cross-2)"
+            strokeWidth="0.85"
+            opacity={isLightMode ? 0.35 : 0.22}
           />
         </svg>
 
-        {/* ── 1. Top-Left: AI / ML Ecosystem ── */}
+        {/* ── 1. Top-Left: AI / ML Ecosystem (LLM: Indigo -> Violet -> Cyan) ── */}
         <div
           className="absolute top-[20px] left-[40px] z-20"
           onMouseEnter={() => setActiveCluster("ai")}
@@ -268,13 +324,12 @@ export default function TechnologyUniverse() {
             centralTitle="LLM"
             centralSubtitle="LLM ORCHESTRATION"
             centralIcon={Brain}
-            theme="purple"
             technologies={AI_CLUSTER_TECHS}
             isHoveredOverall={activeCluster === "ai"}
           />
         </div>
 
-        {/* ── 2. Top-Right: DATA & CLOUD Ecosystem (RED) ── */}
+        {/* ── 2. Top-Right: DATA & CLOUD Ecosystem (DATA: Violet -> Magenta -> Pink) ── */}
         <div
           className="absolute top-[20px] right-[40px] z-20"
           onMouseEnter={() => setActiveCluster("data")}
@@ -286,13 +341,12 @@ export default function TechnologyUniverse() {
             centralTitle="DATA"
             centralSubtitle="PIPELINES & CLOUD"
             centralIcon={Database}
-            theme="red"
             technologies={DATA_CLUSTER_TECHS}
             isHoveredOverall={activeCluster === "data"}
           />
         </div>
 
-        {/* ── 3. Central Digital Star (Miniature Digital Reactor - Perfectly Centered) ── */}
+        {/* ── 3. Central Digital Star (Primary Aurora Light Source - Center) ── */}
         <div
           className="absolute top-1/2 left-1/2 z-30"
           style={{ transform: "translate(-50%, -50%) translateZ(30px)" }}
@@ -300,7 +354,7 @@ export default function TechnologyUniverse() {
           <CentralDigitalStar isHovered={activeCluster !== null} />
         </div>
 
-        {/* ── 4. Bottom-Left: BACKEND Ecosystem ── */}
+        {/* ── 4. Bottom-Left: BACKEND Ecosystem (API: Blue -> Cyan -> Violet) ── */}
         <div
           className="absolute bottom-[20px] left-[40px] z-20"
           onMouseEnter={() => setActiveCluster("backend")}
@@ -312,13 +366,12 @@ export default function TechnologyUniverse() {
             centralTitle="API"
             centralSubtitle="HIGH-PERFORMANCE APIS"
             centralIcon={Code2}
-            theme="indigo"
             technologies={BACKEND_CLUSTER_TECHS}
             isHoveredOverall={activeCluster === "backend"}
           />
         </div>
 
-        {/* ── 5. Bottom-Right: FRONTEND Ecosystem (RED) ── */}
+        {/* ── 5. Bottom-Right: FRONTEND Ecosystem (TYPESTACK: Cyan -> Blue -> Violet) ── */}
         <div
           className="absolute bottom-[20px] right-[40px] z-20"
           onMouseEnter={() => setActiveCluster("frontend")}
@@ -330,7 +383,6 @@ export default function TechnologyUniverse() {
             centralTitle="TYPESTACK"
             centralSubtitle="MODERN WEB EXPERIENCES"
             centralIcon={Layout}
-            theme="red"
             technologies={FRONTEND_CLUSTER_TECHS}
             isHoveredOverall={activeCluster === "frontend"}
           />
@@ -346,44 +398,44 @@ export default function TechnologyUniverse() {
 
         {/* 1. AI/ML Cluster */}
         <MobileClusterCard
+          id="ai"
           badge="AI / ML"
           centralTitle="LLM"
           centralSubtitle="LLM ORCHESTRATION"
           icon={Brain}
-          theme="purple"
           technologies={AI_CLUSTER_TECHS}
           isLightMode={isLightMode}
         />
 
-        {/* 2. DATA & CLOUD Cluster (RED) */}
+        {/* 2. DATA & CLOUD Cluster */}
         <MobileClusterCard
+          id="data"
           badge="DATA & CLOUD"
           centralTitle="DATA"
           centralSubtitle="PIPELINES & CLOUD"
           icon={Database}
-          theme="red"
           technologies={DATA_CLUSTER_TECHS}
           isLightMode={isLightMode}
         />
 
         {/* 3. BACKEND Cluster */}
         <MobileClusterCard
+          id="backend"
           badge="BACKEND"
           centralTitle="API"
           centralSubtitle="HIGH-PERFORMANCE APIS"
           icon={Code2}
-          theme="indigo"
           technologies={BACKEND_CLUSTER_TECHS}
           isLightMode={isLightMode}
         />
 
-        {/* 4. FRONTEND Cluster (RED) */}
+        {/* 4. FRONTEND Cluster */}
         <MobileClusterCard
+          id="frontend"
           badge="FRONTEND"
           centralTitle="TYPESTACK"
           centralSubtitle="MODERN WEB EXPERIENCES"
           icon={Layout}
-          theme="red"
           technologies={FRONTEND_CLUSTER_TECHS}
           isLightMode={isLightMode}
         />
@@ -392,80 +444,77 @@ export default function TechnologyUniverse() {
   );
 }
 
-// ── Mobile Cluster Component ─────────────────────────────────────────────────
+// ── Mobile Cluster Component (Aurora Glass Aesthetic) ───────────────────────
 function MobileClusterCard({
+  id,
   badge,
   centralTitle,
   centralSubtitle,
   icon: CentralIcon,
-  theme,
   technologies,
   isLightMode,
 }: {
+  id: string;
   badge: string;
   centralTitle: string;
   centralSubtitle: string;
   icon: typeof Brain;
-  theme: "purple" | "blue" | "indigo" | "cyan" | "red";
   technologies: OrbitTechItem[];
   isLightMode: boolean;
 }) {
-  const isPurple = theme === "purple" || theme === "indigo";
-  const isRed = theme === "red";
+  const isData = id === "data";
+  const isAi = id === "ai";
+  const isBackend = id === "backend";
+
+  const accentColor = isData ? "#D946EF" : isAi ? "#8B5CF6" : isBackend ? "#38BDF8" : "#22D3EE";
+  const glowColor = isData ? "rgba(217,70,239,0.2)" : isAi ? "rgba(139,92,246,0.2)" : "rgba(34,211,238,0.2)";
 
   return (
     <div
       className={cn(
         "w-full max-w-md rounded-2xl p-4 sm:p-5 border transition-all flex flex-col items-center text-center shadow-lg relative overflow-hidden",
         isLightMode
-          ? isRed
-            ? "bg-white/95 border-rose-300"
-            : "bg-white/95 border-slate-300"
-          : isRed
-          ? "bg-gradient-to-b from-[#200912]/95 to-[#0b0508]/95 border-rose-500/30"
-          : "bg-gradient-to-b from-[#141622]/95 to-[#0b0d16]/95 border-white/[0.12]"
+          ? "bg-white/95 border-slate-300 shadow-md"
+          : "bg-[#0A0C19]/90 border-white/[0.14]"
       )}
+      style={{
+        boxShadow: !isLightMode ? `0 4px 20px rgba(0,0,0,0.7), 0 0 16px ${glowColor}, inset 0 1px 2px rgba(255,255,255,0.25)` : undefined,
+      }}
     >
+      {/* Specular Top Rim */}
       <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none" />
 
-      {/* Badge */}
+      {/* Category Badge */}
       <div
         className={cn(
-          "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9.5px] font-mono font-semibold tracking-wider uppercase mb-3 border",
+          "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9.5px] font-mono font-semibold tracking-wider uppercase mb-3 border",
           isLightMode
-            ? isRed
-              ? "bg-rose-50 text-rose-700 border-rose-200"
-              : isPurple
-              ? "bg-purple-50 text-purple-700 border-purple-200"
-              : "bg-blue-50 text-blue-700 border-blue-200"
-            : isRed
-            ? "bg-[#220B14]/85 text-rose-300 border-rose-500/35"
-            : isPurple
-            ? "bg-[#18112C]/80 text-violet-300 border-violet-500/30"
-            : "bg-[#0E1B2C]/80 text-cyan-300 border-cyan-500/30"
+            ? "bg-slate-100 text-slate-800 border-slate-300"
+            : "bg-[#0A0C19]/85 text-[#D6DAE3] border-white/[0.14]"
         )}
       >
-        <span className={cn("w-1 h-1 rounded-full", isRed ? "bg-rose-400" : isPurple ? "bg-violet-400" : "bg-cyan-400")} />
+        <span
+          className="w-1.5 h-1.5 rounded-full animate-pulse"
+          style={{ backgroundColor: accentColor, boxShadow: `0 0 6px ${accentColor}` }}
+        />
         <span>{badge}</span>
       </div>
 
-      {/* Central Node Visual */}
+      {/* Central Node Visual (Aurora Glass Disc) */}
       <div
         className={cn(
-          "w-16 h-16 rounded-full flex flex-col items-center justify-center mb-3 border shadow-md",
+          "w-16 h-16 rounded-full flex flex-col items-center justify-center mb-3 border relative overflow-hidden",
           isLightMode
-            ? isRed
-              ? "bg-rose-50 border-rose-300 text-rose-800"
-              : "bg-slate-100 border-slate-300 text-slate-800"
-            : isRed
-            ? "bg-[#280E18] border-rose-400/40 text-rose-300 shadow-[0_0_18px_rgba(244,63,94,0.35)]"
-            : isPurple
-            ? "bg-[#1C1236] border-violet-400/40 text-violet-300 shadow-[0_0_18px_rgba(168,85,247,0.35)]"
-            : "bg-[#0F223B] border-cyan-400/40 text-cyan-300 shadow-[0_0_18px_rgba(56,189,248,0.35)]"
+            ? "bg-gradient-to-b from-white to-slate-200 border-slate-300 text-slate-800"
+            : "bg-[#0A0C19] border-white/[0.18] text-[#F4F6FA]"
         )}
+        style={{
+          boxShadow: !isLightMode ? `0 0 14px ${glowColor}, inset 0 1px 2px rgba(255,255,255,0.4)` : undefined,
+        }}
       >
-        <CentralIcon className="w-5 h-5 mb-0.5" />
-        <span className="text-[10px] font-bold font-mono uppercase">{centralTitle}</span>
+        <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/30 via-white/5 to-transparent pointer-events-none rounded-t-full" />
+        <CentralIcon className="w-5 h-5 mb-0.5 relative z-10" style={{ color: accentColor }} />
+        <span className="text-[9.5px] font-bold font-mono uppercase relative z-10 text-[#F4F6FA]">{centralTitle}</span>
       </div>
 
       {/* Tech Tags Wrap */}
@@ -476,16 +525,15 @@ function MobileClusterCard({
             <div
               key={t.id}
               className={cn(
-                "px-2.5 py-1 rounded-lg text-[10px] font-mono font-semibold border flex items-center gap-1.5",
+                "px-2.5 py-1 rounded-lg text-[10px] font-mono font-semibold border flex items-center gap-1.5 relative overflow-hidden",
                 isLightMode
-                  ? "bg-slate-100/90 border-slate-300 text-slate-800"
-                  : isRed
-                  ? "bg-rose-950/20 border-rose-500/20 text-rose-100"
-                  : "bg-white/[0.06] border-white/[0.12] text-slate-200"
+                  ? "bg-slate-100 border-slate-300 text-slate-800"
+                  : "bg-[#0A0C19]/85 border-white/[0.12] text-[#F4F6FA] shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
               )}
             >
-              <Icon className="w-3 h-3 text-slate-400" />
-              <span>{t.name}</span>
+              <div className="absolute inset-x-0 top-0 h-[45%] bg-gradient-to-b from-white/20 to-transparent pointer-events-none" />
+              <Icon className="w-3 h-3 relative z-10" style={{ color: accentColor }} />
+              <span className="relative z-10">{t.name}</span>
             </div>
           );
         })}

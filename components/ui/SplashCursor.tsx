@@ -1200,7 +1200,7 @@ export default function SplashCursor({
       if (idleFramesRemaining > 0) {
         animationFrameId = requestAnimationFrame(updateFrame);
       } else {
-        animationFrameId = null; // Sleep until next pointer event!
+        animationFrameId = null; // Sleep until next pointer/scroll event
       }
     }
 
@@ -1219,8 +1219,40 @@ export default function SplashCursor({
     }
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // ── Event Handlers with Named References for Strict Cleanup ─────────────
+    // ── Pointer & Scroll Event Handlers ─────────────────────────────────────
+    let lastMouseX = -1;
+    let lastMouseY = -1;
+    let lastScrollY = typeof window !== "undefined" ? window.scrollY : 0;
+
+    const onScroll = () => {
+      wakeUp();
+      if (typeof window === "undefined" || !canvas) return;
+
+      const currentScrollY = window.scrollY;
+      const scrollDeltaY = currentScrollY - lastScrollY;
+      lastScrollY = currentScrollY;
+
+      // Inject continuous fluid momentum when scrolling under cursor
+      if (lastMouseX >= 0 && lastMouseY >= 0 && Math.abs(scrollDeltaY) > 0) {
+        const pointer = pointers[0];
+        const posX = scaleByPixelRatio(lastMouseX);
+        const posY = scaleByPixelRatio(lastMouseY);
+        const color = generateColor();
+
+        pointer.prevTexcoordX = pointer.texcoordX;
+        pointer.prevTexcoordY = pointer.texcoordY;
+        pointer.texcoordX = posX / canvas.width;
+        pointer.texcoordY = 1 - posY / canvas.height;
+        pointer.deltaX = 0;
+        pointer.deltaY = correctDeltaY(-scrollDeltaY * 0.0035);
+        pointer.moved = true;
+        pointer.color = color;
+      }
+    };
+
     const onMouseDown = (e: MouseEvent) => {
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
       const posY = scaleByPixelRatio(e.clientY);
@@ -1230,6 +1262,8 @@ export default function SplashCursor({
     };
 
     const onMouseMove = (e: MouseEvent) => {
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
       const posY = scaleByPixelRatio(e.clientY);
@@ -1269,6 +1303,7 @@ export default function SplashCursor({
       wakeUp();
     };
 
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("mousedown", onMouseDown, { passive: true });
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
@@ -1282,6 +1317,7 @@ export default function SplashCursor({
         animationFrameId = null;
       }
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("touchstart", onTouchStart);

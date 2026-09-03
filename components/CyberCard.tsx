@@ -8,7 +8,7 @@ export interface CyberCardProps {
   subtitle?: string;
   description?: string;
   badge?: string;
-  accent?: string; // default purple #5c67ff
+  accent?: string;
   size?: "sm" | "md" | "lg" | "wide";
   children?: React.ReactNode;
   footer?: React.ReactNode;
@@ -87,21 +87,18 @@ const CardCanvas = styled.div`
   will-change: transform;
 `;
 
-interface CardInnerProps {
-  $accent: string;
-}
-
-const CardInner = styled.div<CardInnerProps>`
+const CardInner = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
   border-radius: 20px;
-  background: #11131a;
+  background: rgba(10, 12, 25, 0.88);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid #282c3c;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8),
-    0 0 20px -5px ${(props) => props.$accent}18;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.85),
+    0 0 25px -5px rgba(139, 92, 246, 0.18),
+    0 0 15px -5px rgba(34, 211, 238, 0.15);
   padding: 1.4rem;
   display: flex;
   flex-direction: column;
@@ -110,9 +107,11 @@ const CardInner = styled.div<CardInnerProps>`
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    border-color: #3e4766;
-    box-shadow: 0 16px 50px -10px rgba(0, 0, 0, 0.9),
-      0 0 30px -5px ${(props) => props.$accent}35;
+    border-color: rgba(34, 211, 238, 0.45);
+    box-shadow: 0 16px 50px -10px rgba(0, 0, 0, 0.95),
+      0 0 30px -5px rgba(34, 211, 238, 0.35),
+      0 0 20px -5px rgba(139, 92, 246, 0.25),
+      inset 0 1px 1px rgba(255, 255, 255, 0.2);
   }
 
   @media (max-width: 640px) {
@@ -120,20 +119,45 @@ const CardInner = styled.div<CardInnerProps>`
   }
 `;
 
-// Atmospheric Emerald / Teal Glow
+// Atmospheric Multi-Color Aurora Glow Behind/Inside Card
 const AtmosphericGlow = styled.div`
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: radial-gradient(
-    circle at 50% 40%,
-    rgba(0, 255, 170, 0.14) 0%,
-    rgba(16, 185, 129, 0.05) 50%,
-    transparent 80%
+    ellipse at 50% 35%,
+    rgba(34, 211, 238, 0.16) 0%,
+    rgba(139, 92, 246, 0.12) 45%,
+    rgba(217, 70, 239, 0.06) 70%,
+    transparent 85%
   );
-  opacity: 0;
+  opacity: 0.6;
   transition: opacity 0.4s ease;
   z-index: 0;
+
+  ${CardContainer}:hover & {
+    opacity: 1;
+  }
+`;
+
+// Top Specular Aurora Light Rim
+const TopSpecularRim = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 20%,
+    rgba(34, 211, 238, 0.6) 50%,
+    rgba(255, 255, 255, 0.3) 80%,
+    transparent 100%
+  );
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+  z-index: 4;
 
   ${CardContainer}:hover & {
     opacity: 1;
@@ -167,11 +191,7 @@ const DiagonalGlare = styled.div`
 `;
 
 // Dynamic Glare Overlay
-interface GlareProps {
-  $accent: string;
-}
-
-const Glare = styled.div<GlareProps>`
+const Glare = styled.div`
   position: absolute;
   inset: 0;
   border-radius: 20px;
@@ -179,20 +199,17 @@ const Glare = styled.div<GlareProps>`
   z-index: 2;
   background: radial-gradient(
     circle at calc(var(--glare-x, 50) * 1%) calc(var(--glare-y, 50) * 1%),
-    rgba(255, 255, 255, 0.18) 0%,
-    ${(props) => props.$accent}18 30%,
-    transparent 65%
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(34, 211, 238, 0.15) 30%,
+    rgba(139, 92, 246, 0.08) 50%,
+    transparent 70%
   );
   opacity: var(--glare-opacity, 0);
   transition: opacity 0.3s ease;
 `;
 
 // Scanline Animation
-interface ScanlineProps {
-  $accent: string;
-}
-
-const Scanline = styled.div<ScanlineProps>`
+const Scanline = styled.div`
   position: absolute;
   left: 0;
   width: 100%;
@@ -200,12 +217,12 @@ const Scanline = styled.div<ScanlineProps>`
   background: linear-gradient(
     90deg,
     transparent 0%,
-    ${(props) => props.$accent}80 30%,
+    rgba(34, 211, 238, 0.7) 30%,
     #ffffff 50%,
-    ${(props) => props.$accent}80 70%,
+    rgba(139, 92, 246, 0.7) 70%,
     transparent 100%
   );
-  box-shadow: 0 0 10px ${(props) => props.$accent};
+  box-shadow: 0 0 10px #22d3ee;
   animation: ${scanlineAnim} 4s linear infinite;
   pointer-events: none;
   z-index: 3;
@@ -227,12 +244,8 @@ const CyberTexture = styled.div`
   z-index: 1;
 `;
 
-// Corner Cyber Brackets (Matching Reference Image 1 & 2)
-interface CornerProps {
-  $accent: string;
-}
-
-const CornerBracket = styled.div<CornerProps>`
+// Corner Cyber Brackets with Aurora Glow
+const CornerBracket = styled.div`
   position: absolute;
   width: 13px;
   height: 13px;
@@ -243,40 +256,39 @@ const CornerBracket = styled.div<CornerProps>`
   &.top-left {
     top: 10px;
     left: 10px;
-    border-top: 2px solid #383f60;
-    border-left: 2px solid #383f60;
+    border-top: 2px solid rgba(148, 163, 184, 0.4);
+    border-left: 2px solid rgba(148, 163, 184, 0.4);
     border-top-left-radius: 3px;
   }
 
   &.top-right {
     top: 10px;
     right: 10px;
-    border-top: 2px solid #383f60;
-    border-right: 2px solid #383f60;
+    border-top: 2px solid rgba(148, 163, 184, 0.4);
+    border-right: 2px solid rgba(148, 163, 184, 0.4);
     border-top-right-radius: 3px;
   }
 
   &.bottom-left {
     bottom: 10px;
     left: 10px;
-    border-bottom: 2px solid #383f60;
-    border-left: 2px solid #383f60;
+    border-bottom: 2px solid rgba(148, 163, 184, 0.4);
+    border-left: 2px solid rgba(148, 163, 184, 0.4);
     border-bottom-left-radius: 3px;
   }
 
   &.bottom-right {
     bottom: 10px;
     right: 10px;
-    border-bottom: 2px solid #383f60;
-    border-right: 2px solid #383f60;
+    border-bottom: 2px solid rgba(148, 163, 184, 0.4);
+    border-right: 2px solid rgba(148, 163, 184, 0.4);
     border-bottom-right-radius: 3px;
   }
 
   ${CardContainer}:hover & {
-    border-color: ${(props) => props.$accent};
-    background-color: ${(props) => props.$accent}30;
-    box-shadow: 0 0 10px ${(props) => props.$accent},
-      inset 0 0 4px ${(props) => props.$accent};
+    border-color: #22d3ee;
+    background-color: rgba(34, 211, 238, 0.25);
+    box-shadow: 0 0 10px #22d3ee, inset 0 0 4px #8b5cf6;
   }
 `;
 
@@ -326,32 +338,28 @@ const TopMeta = styled.div`
   width: 100%;
 `;
 
-interface BadgeProps {
-  $accent: string;
-}
-
-const CyberBadge = styled.span<BadgeProps>`
+const CyberBadge = styled.span`
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   padding: 0.2rem 0.55rem;
   border-radius: 4px;
-  background: ${(props) => props.$accent}18;
-  border: 1px solid ${(props) => props.$accent}40;
+  background: rgba(34, 211, 238, 0.12);
+  border: 1px solid rgba(34, 211, 238, 0.35);
   font-family: var(--font-mono, monospace);
   font-size: 0.65rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #f1f5f9;
-  box-shadow: 0 0 8px ${(props) => props.$accent}20;
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.2);
 
   &::before {
     content: "";
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    background-color: ${(props) => props.$accent};
-    box-shadow: 0 0 6px ${(props) => props.$accent};
+    background-color: #22d3ee;
+    box-shadow: 0 0 6px #22d3ee;
   }
 `;
 
@@ -362,11 +370,7 @@ const SysId = styled.span`
   color: rgba(255, 255, 255, 0.4);
 `;
 
-interface TitleProps {
-  $accent: string;
-}
-
-const CardTitle = styled.h3<TitleProps>`
+const CardTitle = styled.h3`
   font-size: clamp(1.15rem, 2.2vw, 1.45rem);
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -378,23 +382,19 @@ const CardTitle = styled.h3<TitleProps>`
 
   ${CardContainer}:hover & {
     text-shadow: 0 0 14px rgba(255, 255, 255, 0.8),
-      0 0 24px ${(props) => props.$accent}60;
+      0 0 24px rgba(34, 211, 238, 0.6);
   }
 `;
 
-interface SubtitleProps {
-  $accent: string;
-}
-
-const CardSubtitle = styled.p<SubtitleProps>`
+const CardSubtitle = styled.p`
   font-family: var(--font-mono, monospace);
   font-size: 0.7rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: ${(props) => props.$accent};
+  color: #38bdf8;
   margin: 0;
-  opacity: 0.9;
+  opacity: 0.95;
 `;
 
 const CardDescription = styled.p`
@@ -432,7 +432,6 @@ export default function CyberCard({
   subtitle,
   description,
   badge,
-  accent = "#5c67ff",
   size = "md",
   children,
   footer,
@@ -512,41 +511,44 @@ export default function CyberCard({
           transform: "rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))",
         }}
       >
-        <CardInner $accent={accent}>
-          {/* Cyber Corner Brackets */}
-          <CornerBracket className="top-left" $accent={accent} />
-          <CornerBracket className="top-right" $accent={accent} />
-          <CornerBracket className="bottom-left" $accent={accent} />
-          <CornerBracket className="bottom-right" $accent={accent} />
+        <CardInner>
+          {/* Top Specular Rim */}
+          <TopSpecularRim />
 
-          {/* Atmospheric Green Glow */}
+          {/* Cyber Corner Brackets */}
+          <CornerBracket className="top-left" />
+          <CornerBracket className="top-right" />
+          <CornerBracket className="bottom-left" />
+          <CornerBracket className="bottom-right" />
+
+          {/* Atmospheric Aurora Multi-Color Glow */}
           <AtmosphericGlow />
 
           {/* Diagonal Glare Streak */}
           <DiagonalGlare />
 
           {/* Glare & Light Layers */}
-          <Glare $accent={accent} />
-          <Scanline $accent={accent} />
+          <Glare />
+          <Scanline />
           <CyberTexture />
 
-          {/* Glowing Ambient Particles */}
+          {/* Glowing Ambient Aurora Particles */}
           <Particle
             $top="22%"
             $left="18%"
-            $color="#00ffaa"
+            $color="#22d3ee"
             $delay="0s"
           />
           <Particle
             $top="68%"
             $left="82%"
-            $color="#00d9ff"
+            $color="#8b5cf6"
             $delay="1.2s"
           />
           <Particle
             $top="80%"
             $left="26%"
-            $color={accent}
+            $color="#d946ef"
             $delay="2.1s"
           />
 
@@ -554,16 +556,16 @@ export default function CyberCard({
           <HeaderWrapper>
             <TopMeta>
               {badge ? (
-                <CyberBadge $accent={accent}>{badge}</CyberBadge>
+                <CyberBadge>{badge}</CyberBadge>
               ) : (
                 <SysId>SYS // {title.slice(0, 4)}</SysId>
               )}
               <SysId>SEC-01</SysId>
             </TopMeta>
 
-            <CardTitle $accent={accent}>{title}</CardTitle>
+            <CardTitle>{title}</CardTitle>
             {subtitle && (
-              <CardSubtitle $accent={accent}>{subtitle}</CardSubtitle>
+              <CardSubtitle>{subtitle}</CardSubtitle>
             )}
             {description && (
               <CardDescription>{description}</CardDescription>

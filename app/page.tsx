@@ -136,7 +136,7 @@ export default function Home() {
         height="7rem"
         mobileHeight="4.5rem"
         strength={2}
-        divCount={5}
+        divCount={2}
         curve="bezier"
         exponential
         opacity={1}

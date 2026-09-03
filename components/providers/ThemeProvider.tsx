@@ -24,7 +24,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "light") {
       setIsLightMode(true);
+      document.documentElement.classList.remove("dark");
       document.body.classList.add("light-theme");
+    } else {
+      document.documentElement.classList.add("dark");
+      document.body.classList.remove("light-theme");
     }
   }, []);
 
@@ -51,9 +55,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         const transition = doc.startViewTransition(() => {
           setIsLightMode(toLight);
           if (toLight) {
+            document.documentElement.classList.remove("dark");
             document.body.classList.add("light-theme");
             localStorage.setItem("theme", "light");
           } else {
+            document.documentElement.classList.add("dark");
             document.body.classList.remove("light-theme");
             localStorage.setItem("theme", "dark");
           }
@@ -74,7 +80,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
               duration: DURATION,
               easing: "cubic-bezier(0.22, 1, 0.36, 1)",
               pseudoElement: "::view-transition-new(root)",
-              fill: "forwards",
             }
           );
 
@@ -88,9 +93,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         // Fallback for browsers without View Transitions API
         setIsLightMode(toLight);
         if (toLight) {
+          document.documentElement.classList.remove("dark");
           document.body.classList.add("light-theme");
           localStorage.setItem("theme", "light");
         } else {
+          document.documentElement.classList.add("dark");
           document.body.classList.remove("light-theme");
           localStorage.setItem("theme", "dark");
         }

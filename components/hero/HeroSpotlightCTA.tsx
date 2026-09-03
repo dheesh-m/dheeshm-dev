@@ -37,10 +37,6 @@ export default function HeroSpotlightCTA({
     setOpacity(0);
   }, []);
 
-  const spotlightColor = isLightMode
-    ? "rgba(124, 58, 237, 0.16)"
-    : "rgba(168, 85, 247, 0.28)";
-
   return (
     <Link
       ref={btnRef}
@@ -49,38 +45,42 @@ export default function HeroSpotlightCTA({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "group relative inline-flex h-11 sm:h-12 items-center justify-center gap-2 px-5 sm:px-6 rounded-lg text-xs sm:text-sm font-semibold tracking-wide transition-[border-color,box-shadow,transform,background-color] duration-200 outline-none select-none overflow-hidden shrink-0 border",
+        "group relative inline-flex h-11 sm:h-12 items-center justify-center gap-2 px-5 sm:px-6 rounded-lg text-xs sm:text-sm font-semibold tracking-wide transition-all duration-300 outline-none select-none overflow-hidden shrink-0 border",
         isLightMode
-          ? "bg-white/90 backdrop-blur-md border-slate-300 text-[#0F172A] shadow-sm hover:border-violet-500/50 hover:shadow-[0_0_20px_rgba(139,92,246,0.18)]"
-          : "bg-[#0c0d14]/90 backdrop-blur-md border-white/15 text-white shadow-sm hover:border-violet-400/60 hover:shadow-[0_0_24px_rgba(168,85,247,0.28)]",
-        "focus-visible:ring-2 focus-visible:ring-violet-500/50",
+          ? "bg-white/90 backdrop-blur-md border-slate-300 text-[#0F172A] shadow-sm hover:border-[#22D3EE]/60 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)]"
+          : "bg-[#0A0C19]/90 backdrop-blur-md border-white/15 text-[#F4F6FA] shadow-[0_0_14px_rgba(34,211,238,0.08)] hover:border-[#22D3EE]/50 hover:shadow-[0_0_24px_rgba(34,211,238,0.3),0_0_12px_rgba(139,92,246,0.25),inset_0_1px_1px_rgba(255,255,255,0.2)]",
+        "focus-visible:ring-2 focus-visible:ring-[#22D3EE]/50",
         className
       )}
     >
-      {/* ── Pointer-following Spotlight Overlay ── */}
+      {/* ── Cursor-following Aurora Spotlight Overlay ── */}
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 ease-out"
         style={{
           opacity,
-          background: `radial-gradient(130px circle at ${position.x}px ${position.y}px, ${spotlightColor}, transparent 80%)`,
+          background: isLightMode
+            ? `radial-gradient(140px circle at ${position.x}px ${position.y}px, rgba(34, 211, 238, 0.15) 0%, rgba(99, 102, 241, 0.08) 50%, transparent 80%)`
+            : `radial-gradient(140px circle at ${position.x}px ${position.y}px, rgba(34, 211, 238, 0.22) 0%, rgba(139, 92, 246, 0.14) 45%, rgba(217, 70, 239, 0.06) 70%, transparent 85%)`,
         }}
       />
 
-      {/* Subtle Top Specular Rim */}
+      {/* ── Subtle Top Aurora Specular Rim ── */}
       <div
-        className="absolute inset-x-0 top-0 h-[1px] pointer-events-none opacity-30 group-hover:opacity-70 transition-opacity duration-300"
+        className="absolute inset-x-0 top-0 h-[1px] pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity duration-500"
         style={{
           background: isLightMode
-            ? "linear-gradient(90deg, transparent 0%, rgba(139,92,246,0.4) 50%, transparent 100%)"
-            : "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%)",
+            ? "linear-gradient(90deg, transparent 0%, rgba(34,211,238,0.5) 50%, transparent 100%)"
+            : "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 20%, rgba(34,211,238,0.6) 50%, rgba(255,255,255,0.3) 80%, transparent 100%)",
         }}
       />
 
-      {/* ✦ Spark Icon */}
+      {/* ✦ Aurora Sparkle Icon */}
       <Sparkles
         className={cn(
-          "w-3.5 h-3.5 transition-transform duration-200 group-hover:scale-110 group-hover:rotate-12",
-          isLightMode ? "text-violet-600" : "text-violet-400"
+          "w-3.5 h-3.5 transition-all duration-200 group-hover:scale-110 group-hover:rotate-12",
+          isLightMode
+            ? "text-indigo-600 group-hover:text-cyan-600"
+            : "text-[#22D3EE] group-hover:text-[#67e8f9] drop-shadow-[0_0_6px_rgba(34,211,238,0.6)]"
         )}
       />
 
@@ -93,9 +93,12 @@ export default function HeroSpotlightCTA({
       <ArrowRight
         className={cn(
           "w-3.5 h-3.5 relative z-10 transition-transform duration-200 group-hover:translate-x-1",
-          isLightMode ? "text-violet-600" : "text-violet-300"
+          isLightMode
+            ? "text-indigo-600 group-hover:text-cyan-600"
+            : "text-[#38BDF8] group-hover:text-white"
         )}
       />
     </Link>
   );
 }
+

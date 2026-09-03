@@ -3,6 +3,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import ConstellationNetwork from "./ConstellationNetwork";
 
 const Pattern = () => {
   const { isLightMode } = useTheme();
@@ -27,6 +28,8 @@ const Pattern = () => {
             <div className="stars-clone-3" />
           </div>
         </div>
+        {/* Subtle moving constellation network layer */}
+        <ConstellationNetwork />
       </div>
     </StyledWrapper>
   );
@@ -51,6 +54,9 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
+  contain: strict;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 
   .container {
     position: absolute;
@@ -69,6 +75,7 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
         : `radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%)`};
     transition: background 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
+    transform: translate3d(0, 0, 0);
   }
 
   .star-field {
@@ -84,6 +91,8 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
     min-height: 100%;
     overflow: hidden;
     pointer-events: none;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
   }
 
   .star-tile {
@@ -112,8 +121,18 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
   .stars-clone-1,
   .stars-clone-2,
   .stars-clone-3 {
+    border-radius: 50%;
     filter: ${(props) => (props.$isLightMode ? "invert(1) opacity(0.35)" : "none")};
     transition: filter 0.6s ease;
+  }
+
+  #stars:after,
+  #stars2:after,
+  #stars3:after,
+  .stars-clone-1:after,
+  .stars-clone-2:after,
+  .stars-clone-3:after {
+    border-radius: 50%;
   }
 
   #stars,
@@ -123,6 +142,7 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
     left: 0;
     width: 1px;
     height: 1px;
+    border-radius: 50%;
     background: transparent;
     box-shadow:
       501px 811px #fff,
@@ -834,6 +854,7 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
     top: 2000px;
     width: 1px;
     height: 1px;
+    border-radius: 50%;
     background: transparent;
     box-shadow:
       501px 811px #fff,
@@ -1545,6 +1566,7 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
     left: 0;
     width: 2px;
     height: 2px;
+    border-radius: 50%;
     background: transparent;
     box-shadow:
       1925px 1320px #fff,
@@ -1756,6 +1778,7 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
     top: 2000px;
     width: 2px;
     height: 2px;
+    border-radius: 50%;
     background: transparent;
     box-shadow:
       1925px 1320px #fff,
@@ -1967,6 +1990,7 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
     left: 0;
     width: 3px;
     height: 3px;
+    border-radius: 50%;
     background: transparent;
     box-shadow:
       200px 981px #fff,
@@ -2078,6 +2102,7 @@ const StyledWrapper = styled.div<StyledWrapperProps>`
     top: 2000px;
     width: 3px;
     height: 3px;
+    border-radius: 50%;
     background: transparent;
     box-shadow:
       200px 981px #fff,

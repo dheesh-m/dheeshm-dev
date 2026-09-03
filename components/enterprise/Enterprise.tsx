@@ -14,18 +14,18 @@ export default function Enterprise() {
 
   return (
     <section id="expertise" className="relative w-full py-12 sm:py-20 md:py-28 overflow-hidden">
-      {/* ── Subtle Atmospheric Violet Smoke Clouds behind section (Reference 1) ── */}
+      {/* ── Subtle Atmospheric Aurora Gradient Clouds behind section ── */}
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
         <div
           className="absolute top-1/3 left-1/4 w-[500px] h-[350px] rounded-full opacity-[0.07] dark:opacity-[0.14] blur-[90px]"
           style={{
-            background: "radial-gradient(circle, #6D28D9 0%, #8B5CF6 50%, transparent 70%)",
+            background: "radial-gradient(circle, #8B5CF6 0%, #22D3EE 50%, transparent 70%)",
           }}
         />
         <div
           className="absolute top-1/2 right-1/4 w-[450px] h-[300px] rounded-full opacity-[0.05] dark:opacity-[0.10] blur-[80px]"
           style={{
-            background: "radial-gradient(circle, #8B5CF6 0%, #A78BFA 50%, transparent 70%)",
+            background: "radial-gradient(circle, #D946EF 0%, #38BDF8 50%, transparent 70%)",
           }}
         />
       </div>

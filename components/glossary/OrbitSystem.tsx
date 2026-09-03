@@ -102,15 +102,22 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
       const delta = (timestamp - lastTimeRef.current) / 1000;
       lastTimeRef.current = timestamp;
 
-      // Advance simulation clock ONLY when in view and NOT paused
-      if (isInViewRef.current && !isPausedRef.current) {
+      // Skip DOM work when off-screen or tab hidden
+      if (!isInViewRef.current || document.hidden) {
+        rafId = requestAnimationFrame(animate);
+        return;
+      }
+
+      // Advance simulation clock when NOT paused
+      if (!isPausedRef.current) {
         simTimeRef.current += delta;
       }
 
       const simTime = simTimeRef.current;
 
       // Apply exact angles to all orbital nodes and connection lines
-      orbitalNodes.forEach((node) => {
+      for (let i = 0; i < orbitalNodes.length; i++) {
+        const node = orbitalNodes[i];
         const id = node.tech.id;
         const trackEl = trackRefs.current[id];
         const counterEl = counterRefs.current[id];
@@ -129,7 +136,7 @@ export default function OrbitSystem({ centerLabel, technologies }: OrbitSystemPr
         if (lineEl) {
           lineEl.style.transform = `rotate(${currentAngle}deg)`;
         }
-      });
+      }
 
       rafId = requestAnimationFrame(animate);
     };

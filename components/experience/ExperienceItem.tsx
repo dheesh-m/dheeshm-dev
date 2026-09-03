@@ -38,13 +38,15 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
   const spotlightBg = useTransform(
     [smoothMouseX, smoothMouseY],
     ([x, y]) =>
-      `radial-gradient(500px circle at ${x}% ${y}%, rgba(167, 139, 250, 0.10), rgba(109, 40, 217, 0.03) 40%, transparent 70%)`
+      isLightMode
+        ? `radial-gradient(500px circle at ${x}% ${y}%, rgba(99, 102, 241, 0.10), rgba(79, 70, 229, 0.03) 40%, transparent 70%)`
+        : `radial-gradient(500px circle at ${x}% ${y}%, rgba(34, 211, 238, 0.12), rgba(139, 92, 246, 0.06) 40%, transparent 70%)`
   );
 
   const handleMouseEnter = useCallback(() => {
     if (cardRef.current) {
       rectRef.current = cardRef.current.getBoundingClientRect();
-      cardRef.current.style.borderColor = "rgba(167, 139, 250, 0.35)";
+      cardRef.current.style.borderColor = "rgba(34, 211, 238, 0.4)";
       cardRef.current.style.transform = "translateY(-2px)";
     }
     if (glowRef.current) {
@@ -90,21 +92,21 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
 
   return (
     <div ref={containerRef} className="relative w-full">
-      {/* ── Timeline Node Indicator ── */}
+      {/* ── Timeline Node Indicator with Aurora Glow ── */}
       <div className="absolute -left-[20px] sm:-left-[30px] top-6 -translate-y-1/2 z-20">
         {isCurrent ? (
-          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#181a24] border-2 border-[#8B5CF6] flex items-center justify-center shadow-[0_0_12px_rgba(139,92,246,0.4)]">
-            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#A78BFA] shadow-sm" />
+          <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-[#0A0C19] border-2 border-[#22D3EE] flex items-center justify-center shadow-[0_0_12px_rgba(34,211,238,0.5)]">
+            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#8B5CF6] shadow-sm animate-pulse" />
           </div>
         ) : (
-          <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-slate-200 dark:bg-[#1a1b22] border-2 border-slate-300 dark:border-white/20 flex items-center justify-center">
+          <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-slate-200 dark:bg-[#0A0C19] border-2 border-slate-300 dark:border-white/20 flex items-center justify-center">
             <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-slate-400 dark:bg-white/40" />
           </div>
         )}
       </div>
 
       {/* ══════════════════════════════════════════════════════════════════
-          LAYER 0: DIFFUSE ATMOSPHERIC VIOLET GLOW BEHIND CARD (Magic Bento)
+          LAYER 0: DIFFUSE ATMOSPHERIC AURORA GLOW BEHIND CARD
           ══════════════════════════════════════════════════════════════════ */}
       <div
         ref={glowRef}
@@ -113,12 +115,12 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
           opacity: isOpen ? 1 : 0.35,
           transform: isOpen ? "scale(1.01)" : "scale(0.95)",
           transition: "opacity 0.4s ease, transform 0.4s ease",
-          background: "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.18) 0%, rgba(109, 40, 217, 0.08) 45%, rgba(15, 16, 22, 0) 75%)",
+          background: "radial-gradient(ellipse at center, rgba(139, 92, 246, 0.22) 0%, rgba(34, 211, 238, 0.12) 40%, rgba(217, 70, 239, 0.06) 65%, transparent 75%)",
           filter: "blur(28px)",
         }}
       />
 
-      {/* ── Experience Card with BorderGlow ── */}
+      {/* ── Experience Card with Aurora BorderGlow ── */}
       <BorderGlow
         edgeSensitivity={25}
         glowRadius={40}
@@ -127,18 +129,18 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
         borderRadius={24}
         animated={false}
         fillOpacity={0.4}
-        backgroundColor={isLightMode ? "#E7E8EB" : "#0f1016"}
-        glowColor={isLightMode ? "210 80 65" : "280 85 75"}
+        backgroundColor={isLightMode ? "#E7E8EB" : "#0A0C19"}
+        glowColor={isLightMode ? "210 80 65" : "185 85 75"}
         colors={
           isLightMode
             ? ["#60a5fa", "#38bdf8", "#818cf8"]
-            : ["#c084fc", "#f472b6", "#38bdf8"]
+            : ["#22D3EE", "#8B5CF6", "#D946EF", "#38BDF8"]
         }
         className={cn(
           "group relative flex flex-col w-full rounded-2xl sm:rounded-3xl border transition-[border-color,background-color,transform,box-shadow] duration-300 overflow-hidden cursor-pointer",
           isOpen
-            ? "border-[#8B5CF6]/50 shadow-[0_10px_30px_rgba(57,78,110,0.08),0_2px_8px_rgba(0,0,0,0.04)] dark:border-[#8B5CF6]/40 dark:shadow-[0_16px_48px_rgba(0,0,0,0.85),0_0_24px_rgba(139,92,246,0.15)]"
-            : "border-[#D0D5DD] hover:border-[#B8C0CC] shadow-[0_4px_20px_rgba(57,78,110,0.04),0_1px_3px_rgba(0,0,0,0.02)] dark:border-white/[0.14] dark:hover:border-white/25 dark:shadow-[0_12px_36px_rgba(0,0,0,0.65)]"
+            ? "border-[#22D3EE]/50 shadow-[0_10px_30px_rgba(57,78,110,0.08)] dark:border-white/30 dark:shadow-[0_0_28px_rgba(139,92,246,0.22),0_0_14px_rgba(34,211,238,0.2),0_16px_48px_rgba(0,0,0,0.85)]"
+            : "border-[#D0D5DD] hover:border-[#B8C0CC] shadow-[0_4px_20px_rgba(57,78,110,0.04)] dark:border-white/[0.14] dark:hover:border-white/25 dark:shadow-[0_12px_36px_rgba(0,0,0,0.65)]"
         )}
       >
         <div
@@ -149,7 +151,7 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
           onClick={onClick}
           className="relative w-full h-full flex flex-col"
         >
-          {/* Magic Bento Internal Spotlight — driven by motion value */}
+          {/* Aurora Internal Spotlight */}
           <motion.div
             className="absolute inset-0 rounded-2xl sm:rounded-3xl pointer-events-none z-0"
             style={{
@@ -158,11 +160,11 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
             }}
           />
 
-          {/* Top Edge Specular Highlight */}
+          {/* Top Edge Aurora Specular Highlight */}
           <div
-            className="absolute inset-x-0 top-0 h-[1px] rounded-t-2xl sm:rounded-t-3xl pointer-events-none opacity-40 dark:opacity-60 group-hover:opacity-100 transition-opacity duration-500 z-10"
+            className="absolute inset-x-0 top-0 h-[1px] rounded-t-2xl sm:rounded-t-3xl pointer-events-none opacity-40 dark:opacity-70 group-hover:opacity-100 transition-opacity duration-500 z-10"
             style={{
-              background: "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 30%, rgba(167, 139, 250, 0.45) 50%, rgba(255, 255, 255, 0.4) 70%, transparent 100%)",
+              background: "linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 25%, rgba(34, 211, 238, 0.45) 50%, rgba(255, 255, 255, 0.3) 75%, transparent 100%)",
             }}
           />
 
@@ -172,7 +174,7 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
               {/* Role & Company Title with Company Logo Badge */}
               <div className="flex items-start gap-2.5 sm:gap-3.5 flex-1 min-w-0">
                 {experience.logo && (
-                  <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-black/[0.04] border border-black/10 dark:bg-white/[0.04] dark:border-white/[0.12] p-1.5 shrink-0 flex items-center justify-center shadow-sm mt-0.5 group-hover:scale-105 group-hover:border-[#8B5CF6]/40 transition-[transform,border-color] duration-200">
+                  <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-black/[0.04] border border-black/10 dark:bg-white/[0.04] dark:border-white/[0.12] p-1.5 shrink-0 flex items-center justify-center shadow-sm mt-0.5 group-hover:scale-105 group-hover:border-[#22D3EE]/40 transition-[transform,border-color] duration-200">
                     <Image
                       src={experience.logo}
                       alt={`${experience.company} logo`}
@@ -183,9 +185,9 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-[14px] sm:text-base md:text-lg font-bold text-[#000000] dark:text-[#CBD5E1] dark:group-hover:text-white font-display tracking-tight leading-snug transition-colors">
+                  <h3 className="text-[14px] sm:text-base md:text-lg font-bold text-[#172033] dark:text-[#CBD5E1] dark:group-hover:text-white font-display tracking-tight leading-snug transition-colors">
                     {experience.role}{" "}
-                    <span className="font-semibold text-[#000000] dark:text-[#94A3B8] transition-colors">
+                    <span className="font-semibold text-[#344054] dark:text-[#94A3B8] transition-colors">
                       @ {experience.company}
                     </span>
                   </h3>
@@ -196,11 +198,11 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
-                      className="flex flex-wrap items-center gap-2.5 sm:gap-4 text-[11px] sm:text-[12.5px] font-mono text-[#000000] dark:text-[#94A3B8] mt-1.5"
+                      className="flex flex-wrap items-center gap-2.5 sm:gap-4 text-[11px] sm:text-[12.5px] font-mono text-[#667085] dark:text-[#94A3B8] mt-1.5"
                     >
                       {experience.location && (
-                        <div className="flex items-center gap-1 text-[#000000] dark:text-[#94A3B8]">
-                          <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#000000] dark:text-[#A78BFA] shrink-0" />
+                        <div className="flex items-center gap-1 text-[#667085] dark:text-[#94A3B8]">
+                          <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#667085] dark:text-[#22D3EE] shrink-0" />
                           <span>{experience.location}</span>
                         </div>
                       )}
@@ -211,9 +213,9 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="flex items-center gap-1 text-[#000000] hover:text-black dark:text-[#A78BFA] dark:hover:text-white transition-colors hover:underline font-semibold"
+                          className="flex items-center gap-1 text-[#172033] hover:text-black dark:text-[#38BDF8] dark:hover:text-white transition-colors hover:underline font-semibold"
                         >
-                          <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#000000] dark:text-[#A78BFA] shrink-0" />
+                          <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#667085] dark:text-[#38BDF8] shrink-0" />
                           <span>{experience.companyUrl}</span>
                         </a>
                       )}
@@ -224,15 +226,15 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
 
               {/* Date & Expand Chevron Button */}
               <div className="flex items-center gap-2 sm:gap-3 shrink-0 mt-0.5">
-                <div className="text-[11px] sm:text-xs md:text-sm font-mono font-semibold tracking-tight text-[#000000] dark:text-[#94A3B8] whitespace-nowrap">
+                <div className="text-[11px] sm:text-xs md:text-sm font-mono font-semibold tracking-tight text-[#344054] dark:text-[#94A3B8] whitespace-nowrap">
                   <span>{startYear}</span>
-                  <span className="text-black/40 dark:text-zinc-500 mx-1">-</span>
+                  <span className="text-[#667085] dark:text-zinc-500 mx-1">-</span>
                   {isPresent ? (
-                    <span className="text-[#000000] dark:text-[#CBD5E1] font-bold">
+                    <span className="text-[#172033] dark:text-[#CBD5E1] font-bold">
                       Present
                     </span>
                   ) : (
-                    <span className="text-[#000000] dark:text-[#94A3B8]">{periodParts[1]}</span>
+                    <span className="text-[#344054] dark:text-[#94A3B8]">{periodParts[1]}</span>
                   )}
                 </div>
 
@@ -240,7 +242,7 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
                 <motion.div
                   animate={{ rotate: isOpen ? 180 : 0 }}
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/[0.04] border border-black/10 dark:bg-white/[0.04] dark:border-white/[0.12] flex items-center justify-center text-[#000000] dark:text-[#CBD5E1] group-hover:border-[#8B5CF6]/40 group-hover:bg-[#8B5CF6]/[0.08] group-hover:text-[#8B5CF6] dark:group-hover:text-white transition-[border-color,background-color,color] duration-200"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-black/[0.04] border border-black/10 dark:bg-white/[0.04] dark:border-white/[0.12] flex items-center justify-center text-[#172033] dark:text-[#CBD5E1] group-hover:border-[#22D3EE]/40 group-hover:bg-[#22D3EE]/[0.08] group-hover:text-[#22D3EE] dark:group-hover:text-white transition-[border-color,background-color,color] duration-200"
                 >
                   <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </motion.div>
@@ -260,16 +262,16 @@ function ExperienceItem({ experience, isCurrent = false, isOpen, onClick }: Expe
               >
                 <div className="px-4 pb-4 pt-1 sm:px-5 sm:pb-5 md:px-6 md:pb-6 border-t border-black/10 dark:border-white/[0.08] relative z-10">
                   <div className="space-y-3 pt-2.5 w-full">
-                    <p className="text-[13px] sm:text-[14px] text-[#000000] dark:text-[#94A3B8] leading-relaxed font-sans font-normal">
+                    <p className="text-[13px] sm:text-[14px] text-[#344054] dark:text-[#94A3B8] leading-relaxed font-sans font-normal">
                       {experience.description}
                     </p>
 
-                    {/* Technology Pills in Black font styling */}
+                    {/* Technology Pills */}
                     <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
                       {experience.technologies.map((tech) => (
                         <span
                           key={tech}
-                          className="px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-full text-[10.5px] sm:text-[11.5px] font-mono font-bold bg-black/[0.06] border border-black/15 text-[#000000] hover:border-black/35 hover:bg-black/[0.09] dark:bg-white/[0.04] dark:border-white/[0.10] dark:text-[#CBD5E1] dark:hover:border-[#8B5CF6]/35 transition-colors"
+                          className="px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-full text-[10.5px] sm:text-[11.5px] font-mono font-bold bg-black/[0.04] border border-black/15 text-[#172033] hover:border-black/35 hover:bg-black/[0.08] dark:bg-white/[0.04] dark:border-white/[0.10] dark:text-[#CBD5E1] dark:hover:border-[#22D3EE]/35 dark:hover:text-white transition-colors"
                         >
                           {tech}
                         </span>
