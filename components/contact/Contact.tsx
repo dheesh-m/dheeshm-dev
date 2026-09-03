@@ -46,8 +46,6 @@ export default function Contact() {
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard can be blocked (insecure origin, denied permission); the
-      // mailto action next to this button still works.
       setCopied(false);
     }
   }, []);
@@ -62,25 +60,6 @@ export default function Contact() {
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.015] to-transparent" />
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[80%] max-w-[1000px] h-[300px] bg-white/[0.03] blur-[120px] rounded-[100%]" />
-
-        {Array.from({ length: 8 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-30"
-            style={{ top: `${15 + i * 10}%` }}
-            animate={isInView ? { x: ["-100%", "100%"] } : { x: "-100%" }}
-            transition={
-              isInView
-                ? {
-                  duration: 10 + i * 2,
-                  repeat: Infinity,
-                  ease: "linear",
-                  delay: i * 0.5,
-                }
-                : { duration: 0 }
-            }
-          />
-        ))}
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center w-full">
@@ -93,9 +72,10 @@ export default function Contact() {
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className={cn(
-              "text-[clamp(1.85rem,7vw,4.5rem)] font-black tracking-[-0.04em] leading-tight mb-4 sm:mb-6 font-sans whitespace-normal break-words max-w-full transition-colors duration-300",
-              isLightMode ? "text-[#394E6E]" : "text-[#D1D5DB]"
+              "text-[clamp(1.85rem,7vw,4.5rem)] font-normal tracking-tight leading-tight mb-4 sm:mb-6 whitespace-normal break-words max-w-full transition-colors duration-300",
+              isLightMode ? "text-[#111111]" : "text-white"
             )}
+            style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
           >
             LET&apos;S BUILD SOMETHING.
           </motion.h2>
@@ -105,7 +85,10 @@ export default function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className="text-sm sm:text-lg md:text-xl text-gray-400 max-w-xl mx-auto mb-6 sm:mb-10 font-sans px-2"
+            className={cn(
+              "text-sm sm:text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-10 font-normal px-2 transition-colors",
+              isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
+            )}
           >
             Have an interesting problem, AI system or product idea? I&apos;m
             always open to discussing new opportunities.
@@ -117,12 +100,15 @@ export default function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.7, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center justify-center gap-2 font-mono text-[10.5px] sm:text-[11px] tracking-[0.16em] sm:tracking-[0.2em] text-zinc-500 uppercase mb-8 sm:mb-12"
+            className={cn(
+              "flex items-center justify-center gap-2 font-mono text-[10.5px] sm:text-[11px] tracking-[0.16em] sm:tracking-[0.2em] uppercase mb-8 sm:mb-12 transition-colors",
+              isLightMode ? "text-[#667085]" : "text-zinc-500"
+            )}
           >
             <span
               className={cn(
-                "contact-status-dot h-1.5 w-1.5 rounded-full inline-block shrink-0",
-                isLightMode ? "bg-[#394E6E]" : "bg-[#ffffff]"
+                "h-1.5 w-1.5 rounded-full inline-block shrink-0",
+                isLightMode ? "bg-[#E50909] shadow-[0_0_6px_#E50909]" : "bg-[#950606] shadow-[0_0_6px_#950606]"
               )}
             />
             Open to new opportunities
@@ -137,7 +123,12 @@ export default function Contact() {
           >
             <MagneticButton
               href={SOCIALS.email}
-              className="contact-btn-primary group flex h-11 sm:h-14 items-center justify-center gap-2.5 sm:gap-3 px-6 sm:px-8 rounded-xl bg-white text-[#030712] text-xs sm:text-sm font-bold tracking-wide hover:bg-gray-200 transition-colors w-full sm:w-auto shadow-sm"
+              className={cn(
+                "contact-btn-primary group flex h-11 sm:h-14 items-center justify-center gap-2.5 sm:gap-3 px-6 sm:px-8 rounded-full text-white text-xs sm:text-sm font-bold tracking-wide transition-all w-full sm:w-auto",
+                isLightMode 
+                  ? "bg-[#E50909] hover:bg-[#CC0808] shadow-[0_4px_14px_rgba(229,9,9,0.25)]" 
+                  : "bg-[#950606] hover:bg-[#7D0505] shadow-[0_4px_14px_rgba(149,6,6,0.35)]"
+              )}
             >
               EMAIL ME
               <ArrowIcon className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -148,7 +139,12 @@ export default function Contact() {
                 href={SOCIALS.linkedin}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="contact-btn-secondary group flex h-11 sm:h-14 items-center justify-center gap-2 px-4 sm:px-6 rounded-xl border border-white/10 text-white text-xs sm:text-sm font-semibold hover:border-white/20 hover:bg-white/5 transition-colors flex-1 sm:flex-none shadow-sm"
+                className={cn(
+                  "contact-btn-secondary group flex h-11 sm:h-14 items-center justify-center gap-2 px-4 sm:px-6 rounded-full text-xs sm:text-sm font-semibold transition-all flex-1 sm:flex-none shadow-sm",
+                  isLightMode
+                    ? "bg-white text-[#111111] border border-black/15 hover:bg-black/[0.03]"
+                    : "border border-white/10 text-white hover:border-white/20 hover:bg-white/5"
+                )}
               >
                 LINKEDIN
                 <ArrowIcon className="opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -157,7 +153,12 @@ export default function Contact() {
                 href={SOCIALS.github}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="contact-btn-secondary group flex h-11 sm:h-14 items-center justify-center gap-2 px-4 sm:px-6 rounded-xl border border-white/10 text-white text-xs sm:text-sm font-semibold hover:border-white/20 hover:bg-white/5 transition-colors flex-1 sm:flex-none shadow-sm"
+                className={cn(
+                  "contact-btn-secondary group flex h-11 sm:h-14 items-center justify-center gap-2 px-4 sm:px-6 rounded-full text-xs sm:text-sm font-semibold transition-all flex-1 sm:flex-none shadow-sm",
+                  isLightMode
+                    ? "bg-white text-[#111111] border border-black/15 hover:bg-black/[0.03]"
+                    : "border border-white/10 text-white hover:border-white/20 hover:bg-white/5"
+                )}
               >
                 GITHUB
                 <ArrowIcon className="opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -173,17 +174,21 @@ export default function Contact() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.7, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="contact-email-btn mt-6 sm:mt-8 inline-flex items-center gap-2.5 sm:gap-3 rounded-lg border border-white/10 px-3.5 sm:px-4 py-2 sm:py-2.5 font-mono text-[10.5px] sm:text-xs tracking-widest text-zinc-400 transition-colors hover:border-white/25 hover:bg-white/5 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 max-w-full truncate shadow-sm cursor-pointer"
+            className={cn(
+              "contact-email-btn mt-6 sm:mt-8 inline-flex items-center gap-2.5 sm:gap-3 rounded-xl border px-4 py-2 sm:py-2.5 font-mono text-[10.5px] sm:text-xs tracking-widest transition-all max-w-full truncate shadow-sm cursor-pointer",
+              isLightMode
+                ? "bg-white border-black/10 text-[#343A40] hover:border-black/20"
+                : "border-white/10 text-zinc-400 hover:border-white/25 hover:bg-white/5 hover:text-white"
+            )}
           >
             <span className="truncate">{EMAIL}</span>
             <span
               aria-hidden="true"
-              className={copied ? "text-emerald-400 font-bold" : "text-zinc-600"}
+              className={cn("font-bold uppercase", isLightMode ? "text-[#E50909]" : "text-[#950606]")}
             >
-              {copied ? "COPIED" : "COPY"}
+              {copied ? "COPIED ✓" : "COPY"}
             </span>
           </motion.button>
-          {/* Announced to screen readers without shifting layout. */}
           <span aria-live="polite" className="sr-only">
             {copied ? `${EMAIL} copied to clipboard` : ""}
           </span>

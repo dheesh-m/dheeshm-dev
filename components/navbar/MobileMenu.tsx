@@ -76,8 +76,8 @@ export default function MobileMenu({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
           className={cn(
-            "fixed inset-0 z-[90] backdrop-blur-xl md:hidden flex flex-col justify-center items-center",
-            isLightMode ? "bg-[#f7f6fb]/95" : "bg-[#050505]/95"
+            "fixed inset-0 z-[90] backdrop-blur-2xl md:hidden flex flex-col justify-center items-center",
+            isLightMode ? "bg-white/98" : "bg-[#050505]/95"
           )}
         >
           <nav
@@ -101,10 +101,10 @@ export default function MobileMenu({
                 >
                   <span
                     className={cn(
-                      "text-xs font-mono font-medium transition-colors",
+                      "text-xs font-mono font-bold transition-colors",
                       isActive
-                        ? "text-[#EF4444] font-bold"
-                        : "text-[#64748B] group-hover:text-white"
+                        ? "text-[#E50909]"
+                        : isLightMode ? "text-[#667085]" : "text-[#64748B]"
                     )}
                   >
                     {item.id}
@@ -113,8 +113,8 @@ export default function MobileMenu({
                     className={cn(
                       "text-xl font-sans font-bold tracking-tight transition-colors",
                       isActive
-                        ? "text-white font-bold"
-                        : "text-[#94A3B8] group-hover:text-white"
+                        ? isLightMode ? "text-[#E50909]" : "text-white"
+                        : isLightMode ? "text-[#343A40] group-hover:text-[#111111]" : "text-[#94A3B8] group-hover:text-white"
                     )}
                   >
                     {item.label}
@@ -123,7 +123,7 @@ export default function MobileMenu({
                   {isActive && (
                     <motion.div
                       layoutId="mobile-active"
-                      className="absolute -left-5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#EF4444] shadow-[0_0_8px_#EF4444]"
+                      className="absolute -left-5 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#E50909] shadow-[0_0_8px_#E50909]"
                     />
                   )}
                 </motion.button>

@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, Brain, Code2, Rocket, ArrowRight, Sparkles, Target, Compass, CheckCircle2 } from "lucide-react";
+import { Eye, Brain, Code2, Rocket, ArrowRight, Target, Compass, CheckCircle2 } from "lucide-react";
+import { useTheme } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
 
 const PROCESS_STEPS = [
@@ -10,9 +11,9 @@ const PROCESS_STEPS = [
     step: "01",
     name: "OBSERVE",
     subtitle: "Understand Deeply",
-    desc: "I observe problems from multiple angles, analyze user behavior, system patterns, and computational bottlenecks to uncover the real challenge worth solving before writing a single line of code.",
+    desc: "I observe problems from multiple angles, analyze user behavior, system patterns and constraints to uncover the real challenge worth solving.",
     icon: Eye,
-    tags: ["System Thinking", "Constraint Mapping", "Root Variables", "User Patterns"],
+    tags: ["Research", "User Insights", "Data", "Empathy"],
   },
   {
     step: "02",
@@ -59,6 +60,7 @@ const CORE_PILLARS = [
 ];
 
 export default function AboutView() {
+  const { isLightMode } = useTheme();
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const activeStep = PROCESS_STEPS[activeStepIndex];
   const StepIcon = activeStep.icon;
@@ -66,26 +68,43 @@ export default function AboutView() {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-28 sm:pt-32 pb-16 min-h-[calc(100vh-140px)] flex flex-col justify-center">
       {/* ── Section Header ── */}
-      <div className="flex flex-col items-start mb-10 sm:mb-14">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md mb-4">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] shadow-[0_0_8px_#EF4444]" />
-          <span className="font-mono text-[11px] font-semibold tracking-[0.2em] text-white/80 uppercase">
+      <div className="flex flex-col items-center text-center mx-auto mb-8 sm:mb-12">
+        <div className={cn(
+          "inline-flex items-center gap-2 px-3.5 py-1 rounded-full backdrop-blur-md mb-4 transition-colors",
+          isLightMode 
+            ? "bg-red-500/[0.05] border border-red-500/20 text-[#E50909]" 
+            : "bg-white/[0.04] border border-white/10 text-white/80"
+        )}>
+          <span className={cn(
+            "w-1.5 h-1.5 rounded-full",
+            isLightMode ? "bg-[#E50909] shadow-[0_0_8px_#E50909]" : "bg-[#950606] shadow-[0_0_8px_#950606]"
+          )} />
+          <span className="font-mono text-[11px] font-bold tracking-[0.2em] uppercase">
             02 / ENGINEERING PHILOSOPHY
           </span>
         </div>
 
-        <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-white mb-3 uppercase">
+        <h2 
+          className={cn(
+            "text-4xl sm:text-6xl font-normal tracking-tight mb-3 transition-colors",
+            isLightMode ? "text-[#111111]" : "text-white"
+          )}
+          style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+        >
           How I Think
         </h2>
-        <p className="text-sm sm:text-base text-[#94A3B8] max-w-2xl font-normal">
-          &ldquo;I don&apos;t just write code. <strong className="text-white font-medium">I build systems that solve problems.</strong>&rdquo;
+        <p className={cn(
+          "text-sm sm:text-base max-w-2xl font-normal transition-colors",
+          isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
+        )}>
+          &ldquo;I don&apos;t just write code. <strong className={isLightMode ? "text-[#E50909] font-semibold" : "text-[#950606] font-semibold"}>I build systems that solve problems.</strong>&rdquo;
         </p>
       </div>
 
       {/* ── 2-Column Process Stage (Left: Step list, Right: Step details card) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-start mb-12">
         
-        {/* Left: Step Buttons */}
+        {/* Left: Step List Buttons */}
         <div className="lg:col-span-5 flex flex-col gap-3">
           {PROCESS_STEPS.map((step, idx) => {
             const isActive = idx === activeStepIndex;
@@ -95,32 +114,41 @@ export default function AboutView() {
                 onClick={() => setActiveStepIndex(idx)}
                 className={cn(
                   "group relative w-full flex items-center justify-between p-4 sm:p-5 rounded-2xl border text-left transition-all duration-300 cursor-pointer",
-                  isActive
-                    ? "bg-white/[0.12] border-white/30 shadow-[0_0_30px_rgba(239,68,68,0.2)] backdrop-blur-md"
-                    : "bg-white/[0.04] border-white/10 hover:bg-white/[0.08] hover:border-white/20"
+                  isLightMode
+                    ? isActive
+                      ? "bg-white border-red-500/30 shadow-[0_4px_20px_rgba(229,9,9,0.08)]"
+                      : "bg-white/80 border-black/[0.08] hover:bg-white hover:border-black/20"
+                    : isActive
+                      ? "bg-white/[0.12] border-white/30 shadow-[0_0_30px_rgba(149,6,6,0.25)] backdrop-blur-md"
+                      : "bg-white/[0.04] border-white/10 hover:bg-white/[0.08] hover:border-white/20"
                 )}
               >
                 <div className="flex items-center gap-4">
-                  {/* Red indicator bar for active item */}
                   <span
                     className={cn(
-                      "w-1 h-7 rounded-full transition-all duration-300",
-                      isActive ? "bg-[#EF4444] shadow-[0_0_10px_#EF4444]" : "bg-transparent"
+                      "w-1.5 h-7 rounded-full transition-all duration-300",
+                      isActive 
+                        ? isLightMode ? "bg-[#E50909] shadow-[0_0_10px_#E50909]" : "bg-[#950606] shadow-[0_0_10px_#950606]" 
+                        : "bg-transparent"
                     )}
                   />
                   <div className="flex items-baseline gap-3">
                     <span
                       className={cn(
                         "font-mono text-xs font-bold transition-colors",
-                        isActive ? "text-[#EF4444]" : "text-[#94A3B8] group-hover:text-white"
+                        isActive 
+                          ? isLightMode ? "text-[#E50909]" : "text-[#950606]" 
+                          : isLightMode ? "text-[#98A2B3]" : "text-[#94A3B8]"
                       )}
                     >
                       {step.step}
                     </span>
                     <span
                       className={cn(
-                        "text-xl sm:text-2xl font-black tracking-wider transition-colors",
-                        isActive ? "text-white" : "text-white/70 group-hover:text-white"
+                        "text-xl sm:text-2xl font-bold tracking-wide transition-colors",
+                        isActive 
+                          ? isLightMode ? "text-[#E50909]" : "text-[#950606]" 
+                          : isLightMode ? "text-[#98A2B3] group-hover:text-[#111111]" : "text-white/70 group-hover:text-white"
                       )}
                     >
                       {step.name}
@@ -132,8 +160,8 @@ export default function AboutView() {
                   className={cn(
                     "w-4 h-4 transition-all duration-300",
                     isActive
-                      ? "text-white translate-x-0 opacity-100"
-                      : "text-white/40 -translate-x-1 opacity-0 group-hover:opacity-80"
+                      ? isLightMode ? "text-[#E50909] translate-x-0 opacity-100" : "text-[#950606] translate-x-0 opacity-100"
+                      : "text-zinc-400 -translate-x-1 opacity-0 group-hover:opacity-80"
                   )}
                 />
               </button>
@@ -150,39 +178,56 @@ export default function AboutView() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25 }}
-              className="p-6 sm:p-8 rounded-2xl sm:rounded-3xl bg-white/[0.04] border border-white/15 backdrop-blur-xl shadow-2xl relative overflow-hidden"
+              className={cn(
+                "p-6 sm:p-8 rounded-3xl border transition-all duration-300 relative overflow-hidden",
+                isLightMode
+                  ? "bg-white border-black/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.03)]"
+                  : "bg-white/[0.04] border-white/15 backdrop-blur-xl shadow-2xl"
+              )}
             >
-              {/* Top Accent Rim */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#EF4444]/60 to-transparent" />
-
-              {/* Step Header */}
-              <div className="flex items-center justify-between gap-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center">
-                    <StepIcon className="w-5 h-5 text-[#EF4444]" />
-                  </div>
-                  <div>
-                    <span className="block font-mono text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-[#EF4444] uppercase">
-                      STEP {activeStep.step} / 04
-                    </span>
-                    <h3 className="text-lg sm:text-xl font-bold text-white tracking-wide">
-                      {activeStep.name} — {activeStep.subtitle}
-                    </h3>
-                  </div>
+              {/* Header Icon + Step Badge */}
+              <div className="flex items-center gap-3.5 mb-6">
+                <div className={cn(
+                  "w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
+                  isLightMode ? "bg-red-500/[0.08] text-[#E50909]" : "bg-white/[0.08] text-[#950606]"
+                )}>
+                  <StepIcon className={cn("w-5 h-5", isLightMode ? "text-[#E50909]" : "text-[#950606]")} />
+                </div>
+                <div>
+                  <span className={cn(
+                    "font-mono text-[10.5px] font-bold tracking-widest uppercase block",
+                    isLightMode ? "text-[#E50909]" : "text-[#950606]"
+                  )}>
+                    STEP {activeStep.step} / 04
+                  </span>
+                  <h3 className={cn(
+                    "text-xl sm:text-2xl font-bold tracking-tight",
+                    isLightMode ? "text-[#111111]" : "text-white"
+                  )}>
+                    {activeStep.name} — {activeStep.subtitle}
+                  </h3>
                 </div>
               </div>
 
-              {/* Description */}
-              <p className="text-sm sm:text-base leading-relaxed text-[#94A3B8] font-normal mb-8">
+              {/* Description Paragraph */}
+              <p className={cn(
+                "text-sm sm:text-base leading-relaxed mb-6 font-normal",
+                isLightMode ? "text-[#475467]" : "text-[#D1D5DB]"
+              )}>
                 {activeStep.desc}
               </p>
 
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-white/10">
+              {/* Tag Pills */}
+              <div className="flex flex-wrap gap-2 pt-4 border-t border-black/[0.06] dark:border-white/10">
                 {activeStep.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 rounded-lg text-xs font-mono font-medium tracking-wide bg-white/[0.04] border border-white/10 text-white/80"
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-xs font-mono font-medium tracking-wide transition-colors",
+                      isLightMode
+                        ? "bg-white border border-black/10 text-[#343A40]"
+                        : "bg-white/[0.04] border border-white/10 text-white/80"
+                    )}
                   >
                     {tag}
                   </span>
@@ -194,22 +239,33 @@ export default function AboutView() {
 
       </div>
 
-      {/* ── 3 Core Mindset Pillars (Compact Grid) ── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-white/10">
-        {CORE_PILLARS.map((pillar) => {
+      {/* ── 3 Core Pillars ── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        {CORE_PILLARS.map((pillar, idx) => {
           const Icon = pillar.icon;
           return (
             <div
-              key={pillar.label}
-              className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.06] backdrop-blur-md"
+              key={idx}
+              className={cn(
+                "p-5 sm:p-6 rounded-2xl border transition-all duration-300",
+                isLightMode
+                  ? "bg-white border-black/[0.08] shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:border-black/20"
+                  : "bg-white/[0.04] border-white/10 backdrop-blur-md hover:border-white/20"
+              )}
             >
-              <div className="flex items-center gap-2.5 mb-2">
-                <Icon className="w-4 h-4 text-[#EF4444]" />
-                <h4 className="font-mono text-xs font-bold text-white tracking-wider">
+              <div className="flex items-center gap-2.5 mb-3">
+                <Icon className={cn("w-4 h-4", isLightMode ? "text-[#E50909]" : "text-[#950606]")} />
+                <h4 className={cn(
+                  "font-mono text-xs font-bold tracking-wider",
+                  isLightMode ? "text-[#111111]" : "text-white"
+                )}>
                   {pillar.label}
                 </h4>
               </div>
-              <p className="text-xs text-[#94A3B8] leading-relaxed">
+              <p className={cn(
+                "text-xs sm:text-sm leading-relaxed",
+                isLightMode ? "text-[#667085]" : "text-[#94A3B8]"
+              )}>
                 {pillar.desc}
               </p>
             </div>

@@ -3,8 +3,12 @@
 import { motion } from "framer-motion";
 import ExperienceAccordion from "./ExperienceAccordion";
 import SectionLabel from "../ui/SectionLabel";
+import { useTheme } from "@/components/providers/ThemeProvider";
+import { cn } from "@/lib/utils";
 
 export default function ExperienceSection() {
+  const { isLightMode } = useTheme();
+
   return (
     <section id="experience" className="relative w-full py-16 md:py-24 px-4 sm:px-6 lg:px-8 z-10">
       <div className="max-w-6xl mx-auto flex flex-col items-center">
@@ -15,13 +19,24 @@ export default function ExperienceSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-          className="text-center mb-16 md:mb-24 flex flex-col items-center"
+          className="text-center mb-12 sm:mb-16 md:mb-20 flex flex-col items-center"
         >
           <SectionLabel number="05" text="EXPERIENCE" />
-          <h2 className="text-[clamp(2.5rem,10vw,5rem)] font-light tracking-[-0.04em] leading-[0.95] font-display mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:via-[#D1D5DB] dark:to-[#FFFFFF]">
-            Professional<br />
-            Experience
+          <h2 
+            className={cn(
+              "text-[clamp(2.5rem,10vw,5rem)] font-normal tracking-tight leading-[0.95] mb-4 transition-colors",
+              isLightMode ? "text-[#111111]" : "text-white"
+            )}
+            style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+          >
+            Professional Experience
           </h2>
+          <p className={cn(
+            "text-sm sm:text-base font-normal",
+            isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
+          )}>
+            Building products. Solving problems. Creating impact.
+          </p>
         </motion.div>
 
         {/* Experience List */}
@@ -36,9 +51,6 @@ export default function ExperienceSection() {
         </motion.div>
 
       </div>
-
-      {/* Background ambient light */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/5 blur-[120px] rounded-full pointer-events-none -z-10" />
     </section>
   );
 }

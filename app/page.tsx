@@ -15,6 +15,8 @@ import PortfolioLoader from "@/components/ui/PortfolioLoader";
 import { hyperspeedPresets } from "@/components/HyperSpeedPresets";
 import { SAME_AS, EMAIL } from "@/data/socials";
 import { SITE_URL } from "@/lib/siteUrl";
+import { useTheme } from "@/components/providers/ThemeProvider";
+import { cn } from "@/lib/utils";
 
 // Persistent WebGL effects loaded client-side only
 const Hyperspeed = dynamic(() => import("@/components/Hyperspeed"), { ssr: false });
@@ -41,31 +43,26 @@ const personJsonLd = {
   ],
 };
 
-export default function Page() {
+export default function Home() {
   const [activeSection, setActiveSection] = useState("home");
-  const [isPageReady, setIsPageReady] = useState(true);
+  const [isPageReady, setIsPageReady] = useState(false);
+  const { isLightMode } = useTheme();
 
-  // Sync section with URL hash on mount & on popstate / hashchange (browser back/forward)
+  // URL Hash Sync
   useEffect(() => {
-    const handleHashSync = () => {
-      const hash = window.location.hash.replace("#", "").toLowerCase();
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
       if (hash && VALID_SECTIONS.includes(hash)) {
         setActiveSection(hash);
       }
     };
 
-    handleHashSync();
-    window.addEventListener("hashchange", handleHashSync);
-    window.addEventListener("popstate", handleHashSync);
-
-    return () => {
-      window.removeEventListener("hashchange", handleHashSync);
-      window.removeEventListener("popstate", handleHashSync);
-    };
+    handleHashChange();
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
   const handleSelectSection = useCallback((sectionKey: string) => {
-    if (!VALID_SECTIONS.includes(sectionKey)) return;
     setActiveSection(sectionKey);
 
     // Update URL hash without full reload
@@ -78,7 +75,10 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#05060B] text-[#F4F6FA] selection:bg-red-500/20 overflow-x-hidden flex flex-col justify-between">
+    <div className={cn(
+      "relative min-h-screen selection:bg-red-500/20 overflow-x-hidden flex flex-col justify-between transition-colors duration-300",
+      isLightMode ? "bg-[#FFFFFF] text-[#111111]" : "bg-[#05060B] text-[#F4F6FA]"
+    )}>
       {/* ── Entry Intro Loader ── */}
       <PortfolioLoader onStartExit={() => setIsPageReady(true)} />
 
@@ -89,13 +89,19 @@ export default function Page() {
       />
 
       {/* ── Persistent Hyperspeed Background (Mounted ONCE at root level) ── */}
-      <div className="fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden bg-[#05060B]">
-        <Hyperspeed effectOptions={hyperspeedPresets.three} />
+      <div className={cn(
+        "fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden transition-colors duration-300",
+        isLightMode ? "bg-[#FFFFFF]" : "bg-[#05060B]"
+      )}>
+        <Hyperspeed 
+          effectOptions={isLightMode ? hyperspeedPresets.light : hyperspeedPresets.three} 
+          lightMode={isLightMode} 
+        />
       </div>
 
       {/* ── Persistent Crimson SplashCursor WebGL fluid simulation (z-[1]) ── */}
       <SplashCursor
-        COLOR="#7F1D1D"
+        COLOR={isLightMode ? "#E50909" : "#7F1D1D"}
         RAINBOW_MODE={false}
         SIM_RESOLUTION={64}
         DYE_RESOLUTION={720}

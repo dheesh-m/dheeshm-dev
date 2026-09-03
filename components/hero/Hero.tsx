@@ -38,35 +38,23 @@ export default function Hero() {
             <SectionLabel number="01" text="INTRODUCTION" />
           </div>
 
-          <h1 className="flex flex-col gap-1 sm:gap-2 mb-6 sm:mb-8 text-[clamp(2.35rem,11vw,4.5rem)] font-light tracking-[-0.04em] leading-[0.98] font-display">
+          <h1 
+            className="flex items-center mb-6 sm:mb-8 text-[clamp(2.35rem,8vw,4.5rem)] font-bold tracking-tight leading-[0.98] whitespace-nowrap"
+            style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+          >
             <span
               className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
               style={delay(0.05)}
             >
               <DecryptedText
-                text="Dheesh"
-                animateOn="view"
-                speed={80}
-                maxIterations={18}
-                sequential={true}
-                revealDirection="start"
-                className="text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
-                encryptedClassName="text-violet-400 dark:text-violet-300 font-mono opacity-80"
-              />
-            </span>
-            <span
-              className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
-              style={delay(0.1)}
-            >
-              <DecryptedText
-                text="Medekar"
+                text="Dheesh Medekar"
                 animateOn="view"
                 speed={80}
                 maxIterations={20}
                 sequential={true}
                 revealDirection="start"
                 className="text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
-                encryptedClassName="text-violet-400 dark:text-violet-300 font-mono opacity-80"
+                encryptedClassName="text-red-400 dark:text-red-300 font-mono opacity-80"
               />
             </span>
           </h1>

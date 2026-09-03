@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Lenis from "lenis";
+import { frame, cancelFrame } from "framer-motion";
 
 export default function SmoothScrollProvider({
   children,
@@ -18,21 +19,21 @@ export default function SmoothScrollProvider({
       return;
     }
 
-    // On mobile touch devices, preserve 100% native compositor scrolling for instant touch response
+    // On mobile touch devices, preserve native high-performance touch response
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
     if (isTouch) {
       return;
     }
 
-    // High-precision smooth glide with exponential decay
+    // High-performance smooth scroll synced with Framer Motion's animation frame pipeline
     const lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Snappy response with luxurious glide
+      duration: 0.8, // Faster, snappier acceleration and smooth settle
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Silky exponential ease-out
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      wheelMultiplier: 1.0,
-      touchMultiplier: 1.0,
+      wheelMultiplier: 1.4, // Faster travel per wheel notch for agile, effortless navigation
+      touchMultiplier: 1.5,
       infinite: false,
       autoResize: true,
     });
@@ -46,19 +47,19 @@ export default function SmoothScrollProvider({
       clearTimeout(isScrollingTimer);
       isScrollingTimer = setTimeout(() => {
         (window as any).__isScrolling = false;
-      }, 150);
+      }, 100);
     });
 
-    let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
+    // Synchronize Lenis raf directly into Framer Motion's frame update pipeline
+    function update(time: { timestamp: number }) {
+      lenis.raf(time.timestamp);
     }
-    rafId = requestAnimationFrame(raf);
+
+    frame.update(update, true);
 
     return () => {
       clearTimeout(isScrollingTimer);
-      cancelAnimationFrame(rafId);
+      cancelFrame(update);
       lenis.destroy();
       delete (window as any).__lenis;
       delete (window as any).__isScrolling;

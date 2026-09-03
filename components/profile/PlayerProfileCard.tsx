@@ -153,8 +153,8 @@ export default function PlayerProfileCard() {
                 <DeadpoolMascot isAvatar />
               </div>
               <div>
-                <h2 className="text-base sm:text-lg font-bold font-display tracking-tight text-white drop-shadow-sm">
-                  DHEESH <span className="text-slate-300">MEDEKAR</span>
+                <h2 className="text-base sm:text-lg font-medium font-display tracking-tight text-white drop-shadow-sm">
+                  Dheesh <span className="text-slate-300">Medekar</span>
                 </h2>
                 <div className="flex flex-col gap-0.5 mt-1 font-mono text-[9.5px] tracking-wider text-white/75 font-medium uppercase">
                   <span>AI / ML Engineer</span>

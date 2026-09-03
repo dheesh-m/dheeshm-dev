@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import MoltenMetal from "@/components/MoltenMetal";
 import CyberCard from "@/components/CyberCard";
+import Footer from "@/components/footer/Footer";
 
 // ── Data Definitions ──
 
@@ -529,13 +530,16 @@ export default function KnowMeMorePage() {
         </div>
 
         {/* ── Bottom Spacing ── */}
-        <div className="w-full max-w-6xl mt-8 sm:mt-12 text-center">
+        <div className="w-full max-w-6xl mt-8 sm:mt-12 mb-8 text-center">
           <p className="text-[10px] font-mono tracking-widest text-white/30 uppercase">
             DESIGNED WITH FUTURISTIC CYBER CARD SYSTEMS // 2026
           </p>
         </div>
 
       </div>
+
+      {/* Standard Full-Site Footer */}
+      <Footer onBackToTop={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
     </main>
   );
 }
