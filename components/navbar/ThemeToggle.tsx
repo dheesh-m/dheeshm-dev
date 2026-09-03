@@ -159,8 +159,8 @@ export default function ThemeToggle() {
                   !isLit &&
                     (isLightMode
                       ? isLastLight && !isAnimating
-                        // In light mode idle: 5th light shows subtle steel-blue active indicator
-                        ? "bg-[#394E6E] border border-[#394E6E]/60 shadow-[0_0_5px_rgba(57,78,110,0.5)]"
+                        // In light mode idle: 5th light shows vibrant F1 red indicator
+                        ? "bg-[#E50909] border border-[#E50909]/60 shadow-[0_0_6px_rgba(229,9,9,0.7)]"
                         : "bg-[#CBD5E1] border border-black/10 shadow-[inset_0_1px_2px_rgba(0,0,0,0.15)]"
                       : isLastLight && !isAnimating
                         // In dark mode idle: 5th light shows subtle red ready indicator
@@ -169,10 +169,10 @@ export default function ThemeToggle() {
                   // ── ACTIVE ILLUMINATED STATES (DURING F1 SEQUENCE) ──
                   isLit &&
                     (!isLightMode
-                      // Dark → Light: Deep Racing Green lights (dark, refined, slightly luminous)
+                      // Dark → Light: Deep Racing Green lights (dark, refined, luminous)
                       ? "bg-[#14532D] border border-[#22C55E]/60 shadow-[0_0_8px_#166534,0_0_14px_rgba(22,101,52,0.7)] scale-105"
-                      // Light → Dark: Clean Steel-Blue / Ice-White Lights
-                      : "bg-[#394E6E] border border-[#93C5FD] shadow-[0_0_8px_rgba(57,78,110,0.7),0_0_12px_rgba(147,197,253,0.5)] scale-105")
+                      // Light → Dark: F1 Red starting lights
+                      : "bg-[#E50909] border border-[#FCA5A5] shadow-[0_0_8px_rgba(229,9,9,0.8),0_0_14px_rgba(229,9,9,0.5)] scale-105")
                 )}
               >
                 {/* Tiny high-precision optical lens highlight */}

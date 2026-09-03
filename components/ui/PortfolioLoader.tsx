@@ -26,7 +26,7 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
     if (prefersReducedMotion) {
       onStartExit?.();
       setMounted(false);
-      return () => {};
+      return () => { };
     }
 
     const startTime = performance.now();
@@ -98,11 +98,10 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
       role="status"
       aria-label="Loading portfolio"
       aria-live="polite"
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center select-none transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-        isExiting
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center select-none transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isExiting
           ? "opacity-0 pointer-events-none backdrop-blur-none"
           : "opacity-100"
-      }`}
+        }`}
       style={{
         backgroundColor: isLightMode ? "#FAFAFA" : "#050508",
         backgroundImage: isLightMode
@@ -112,19 +111,17 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
     >
       <div
         ref={contentRef}
-        className={`flex flex-col items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          isExiting
+        className={`flex flex-col items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${isExiting
             ? "scale-[1.08] blur-[8px] opacity-0"
             : "scale-100 blur-none opacity-100"
-        }`}
+          }`}
       >
         {/* Main Logo / Title with DecryptedText effect */}
         <h1
-          className={`font-sans text-[clamp(2.5rem,8vw,5.5rem)] font-light tracking-[0.08em] leading-none text-center ${
-            isLightMode
+          className={`font-sans text-[clamp(2.5rem,8vw,5.5rem)] font-light tracking-[0.08em] leading-none text-center ${isLightMode
               ? "text-[#0F172A]"
               : "text-[#F8FAFC] drop-shadow-[0_0_30px_rgba(255,255,255,0.18)]"
-          }`}
+            }`}
         >
           <DecryptedText
             text="dhees_h"
@@ -145,9 +142,8 @@ export default function PortfolioLoader({ onStartExit }: PortfolioLoaderProps) {
         {/* Dynamic Percentage */}
         <span
           ref={percentTextRef}
-          className={`font-mono text-xs sm:text-sm font-medium tracking-[0.25em] mt-3.5 sm:mt-4 transition-colors duration-300 ${
-            isLightMode ? "text-slate-500" : "text-zinc-400"
-          }`}
+          className={`font-mono text-xs sm:text-sm font-medium tracking-[0.25em] mt-3.5 sm:mt-4 transition-colors duration-300 ${isLightMode ? "text-slate-500" : "text-zinc-400"
+            }`}
         >
           0%
         </span>
