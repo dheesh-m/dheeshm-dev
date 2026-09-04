@@ -10,27 +10,31 @@ import { cn } from "@/lib/utils";
 const STEP_DARK_TONES = [
   {
     // 01 OBSERVE: Rich Dark Crimson Red
-    bg: "rgba(130, 10, 22, 0.92)",
+    bg: "rgba(130, 10, 22, 0.94)",
     border: "rgba(255, 255, 255, 0.20)",
-    shadow: "0 24px 60px rgba(0, 0, 0, 0.55), 0 0 35px rgba(130, 10, 22, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22)",
+    desktopShadow: "0 24px 60px rgba(0, 0, 0, 0.55), 0 0 35px rgba(130, 10, 22, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22)",
+    mobileShadow: "0 10px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.22)",
   },
   {
     // 02 THINK: Deep Blood Red
-    bg: "rgba(112, 8, 18, 0.93)",
+    bg: "rgba(112, 8, 18, 0.95)",
     border: "rgba(255, 255, 255, 0.18)",
-    shadow: "0 24px 60px rgba(0, 0, 0, 0.55), 0 0 25px rgba(112, 8, 18, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.20)",
+    desktopShadow: "0 24px 60px rgba(0, 0, 0, 0.55), 0 0 25px rgba(112, 8, 18, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.20)",
+    mobileShadow: "0 10px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.20)",
   },
   {
     // 03 BUILD: Dark Burgundy Red
-    bg: "rgba(96, 7, 16, 0.94)",
+    bg: "rgba(96, 7, 16, 0.96)",
     border: "rgba(255, 255, 255, 0.16)",
-    shadow: "0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.18)",
+    desktopShadow: "0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.18)",
+    mobileShadow: "0 10px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18)",
   },
   {
     // 04 SHIP: Deepest Oxblood Maroon
-    bg: "rgba(80, 5, 14, 0.95)",
+    bg: "rgba(80, 5, 14, 0.97)",
     border: "rgba(255, 255, 255, 0.14)",
-    shadow: "0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+    desktopShadow: "0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
+    mobileShadow: "0 10px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15)",
   }
 ];
 
@@ -132,9 +136,10 @@ export default function AboutView() {
       {/* ── Centered Process ScrollStack ── */}
       <div className="w-full max-w-2xl sm:max-w-3xl mx-auto mb-6 sm:mb-8">
         <ScrollStack
-          itemDistance={65}
+          itemDistance={60}
           itemScale={0.025}
           itemStackDistance={30}
+          mobileItemStackDistance={20}
           stackPosition="12%"
           scaleEndPosition="8%"
           baseScale={0.93}
@@ -150,16 +155,18 @@ export default function AboutView() {
               <ScrollStackItem
                 key={step.step}
                 itemClassName={cn(
-                  "group relative w-full min-h-[290px] sm:min-h-[320px] flex flex-col justify-between p-6 sm:p-8 md:p-9 rounded-[24px] sm:rounded-[28px] border transition-colors duration-300 select-none backdrop-blur-[20px]",
+                  "group relative w-full min-h-[250px] sm:min-h-[310px] flex flex-col justify-between p-5 sm:p-8 md:p-9 rounded-[22px] sm:rounded-[28px] border transition-[border-color,background-color] duration-200 select-none",
+                  "backdrop-blur-none sm:backdrop-blur-[20px]",
                   isLightMode
-                    ? "bg-white/95 border-black/[0.08] shadow-[0_12px_36px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.9)]"
-                    : ""
+                    ? "bg-white/95 border-black/[0.08] shadow-[0_10px_24px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] sm:shadow-[0_12px_36px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.9)]"
+                    : "[box-shadow:var(--card-shadow-mobile)] sm:[box-shadow:var(--card-shadow-desktop)]"
                 )}
                 style={{
                   backgroundColor: isLightMode ? undefined : tone.bg,
                   borderColor: isLightMode ? undefined : tone.border,
-                  boxShadow: isLightMode ? undefined : tone.shadow,
-                }}
+                  "--card-shadow-mobile": tone.mobileShadow,
+                  "--card-shadow-desktop": tone.desktopShadow,
+                } as React.CSSProperties}
               >
                 {/* Top Header: Icon + Step Badge + Title */}
                 <div className="flex items-center gap-3 sm:gap-4 mb-2.5 sm:mb-3">
@@ -174,12 +181,12 @@ export default function AboutView() {
                   <div>
                     <h3
                       className={cn(
-                        "text-lg sm:text-xl md:text-2xl font-bold uppercase italic tracking-tight font-primary",
+                        "text-base sm:text-xl md:text-2xl font-bold uppercase italic tracking-tight font-primary",
                         isLightMode ? "text-[#111111]" : "text-white"
                       )}
                       style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
                     >
-                      {step.name} <span className="opacity-80 font-bold text-sm sm:text-base md:text-lg not-italic tracking-normal">— {step.subtitle}</span>
+                      {step.name} <span className="opacity-80 font-bold text-xs sm:text-base md:text-lg not-italic tracking-normal">— {step.subtitle}</span>
                     </h3>
                   </div>
                 </div>
@@ -231,8 +238,8 @@ export default function AboutView() {
                 "p-5 sm:p-6 rounded-[18px] border transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
                 "hover:-translate-y-0.5",
                 isLightMode
-                  ? "bg-white/75 border-black/[0.07] hover:bg-white/90 hover:border-black/15 shadow-[0_8px_24px_rgba(0,0,0,0.03),inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-[14px]"
-                  : "bg-[#0F1118]/52 border-white/10 hover:border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-[16px]"
+                  ? "bg-white/75 border-black/[0.07] hover:bg-white/90 hover:border-black/15 shadow-[0_8px_24px_rgba(0,0,0,0.03),inset_0_1px_0_rgba(255,255,255,0.8)] backdrop-blur-none sm:backdrop-blur-[14px]"
+                  : "bg-[#0F1118]/52 border-white/10 hover:border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-none sm:backdrop-blur-[16px]"
               )}
             >
               <div className="flex items-center gap-2.5 mb-3">
