@@ -56,18 +56,19 @@ export default function ProjectsView() {
 
         <h2
           className={cn(
-            "text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight mb-2 transition-colors",
+            "text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-2 transition-colors font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
           )}
-          style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+          style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
         >
           Engineering Systems
         </h2>
         <p
           className={cn(
-            "text-xs sm:text-sm md:text-base font-normal transition-colors",
+            "text-xs sm:text-sm md:text-base font-normal transition-colors font-body",
             isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
           )}
+          style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
         >
           Real-world systems. Real impact.
         </p>
@@ -159,17 +160,17 @@ export default function ProjectsView() {
                   </span>
                   <h3
                     className={cn(
-                      "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight",
+                      "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight font-primary",
                       isLightMode ? "text-[#111111]" : "text-white"
                     )}
-                    style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+                    style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
                   >
                     {activeProject.title}
                   </h3>
                 </div>
                 <p
                   className={cn(
-                    "text-xs sm:text-sm font-mono tracking-wide uppercase",
+                    "text-xs sm:text-sm font-primary font-semibold tracking-wide uppercase",
                     isLightMode ? "text-[#E50909]" : "text-[#E50909]"
                   )}
                 >
@@ -180,9 +181,10 @@ export default function ProjectsView() {
               <div className="lg:col-span-7 flex flex-col gap-4">
                 <p
                   className={cn(
-                    "text-sm sm:text-base leading-relaxed font-normal",
+                    "text-sm sm:text-base leading-relaxed font-normal font-body",
                     isLightMode ? "text-[#343A40]" : "text-[#CBD5E1]"
                   )}
+                  style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
                 >
                   {activeProject.description}
                 </p>

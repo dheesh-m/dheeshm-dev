@@ -186,10 +186,11 @@ export default function Footer({ onBackToTop }: FooterProps) {
             {/* ── Main Name Heading (Matches Dark Mode Responsive Sizing) ── */}
             <div className="relative z-10 w-full flex items-center justify-center text-center">
               <h2
-                className="w-full text-center font-normal tracking-[0.03em] sm:tracking-[0.05em] leading-none whitespace-nowrap overflow-visible flex items-center justify-center transition-colors duration-300"
+                className="w-full text-center font-bold tracking-[0.03em] sm:tracking-[0.05em] leading-none whitespace-nowrap overflow-visible flex items-center justify-center transition-colors duration-300 font-primary"
                 style={{
                   fontSize: "clamp(1.5rem, 5.6vw, 5.25rem)",
-                  fontFamily: "var(--font-work-sans), sans-serif",
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontWeight: 750,
                 }}
               >
                 <span className="text-[#111111]">Dheesh</span>
@@ -203,18 +204,13 @@ export default function Footer({ onBackToTop }: FooterProps) {
           <div className="relative z-10 w-full pb-5 pt-1.5 border-t border-black/[0.08]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 select-none">
               
-              {/* Left Side: Circular N Badge + dheesh_h Pill + Copyright */}
+              {/* Left Side: dheesh_h Pill + Copyright */}
               <div className="flex items-center gap-3 sm:gap-4.5 shrink-0">
-                {/* Circular N Mark */}
-                <div className="relative w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-black/15 bg-white flex items-center justify-center shrink-0">
-                  <span className="font-sans text-xs font-semibold text-[#111111] leading-none">N</span>
-                  <span className="absolute top-1.5 right-2 w-1.5 h-1.5 rounded-full bg-[#E50909]" />
-                </div>
 
-                {/* Compact dheesh_h Pill */}
-                <div className="px-2.5 py-1 rounded-md border border-black/15 bg-white shrink-0">
-                  <span className="font-mono text-xs font-bold text-[#111111] tracking-tight">dheesh_h</span>
-                </div>
+                {/* dhees_h Monogram */}
+                <span className="font-mono text-xs sm:text-sm font-bold text-[#E50909]/75 tracking-tight shrink-0 select-none">
+                  dhees_h
+                </span>
 
                 {/* Copyright Text */}
                 <span className="text-xs text-[#475467] font-sans whitespace-nowrap">
@@ -323,10 +319,11 @@ export default function Footer({ onBackToTop }: FooterProps) {
           {/* Main Cinematic Signature */}
           <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-10 pb-8 sm:pt-14 sm:pb-10 flex items-center justify-center text-center select-none">
             <h2
-              className="w-full text-center font-normal text-[#F4F6FA] tracking-[0.03em] sm:tracking-[0.05em] leading-none whitespace-nowrap overflow-visible flex items-center justify-center transition-colors duration-300"
+              className="w-full text-center font-bold text-[#F4F6FA] tracking-[0.03em] sm:tracking-[0.05em] leading-none whitespace-nowrap overflow-visible flex items-center justify-center transition-colors duration-300 font-primary"
               style={{
                 fontSize: "clamp(1.5rem, 5.6vw, 5.25rem)",
-                fontFamily: "var(--font-work-sans), sans-serif",
+                fontFamily: "var(--font-inter), sans-serif",
+                fontWeight: 750,
               }}
             >
               Dheesh Medekar
@@ -338,7 +335,7 @@ export default function Footer({ onBackToTop }: FooterProps) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 flex flex-col sm:flex-row items-center justify-between gap-4">
               {/* Monogram Logo + Copyright */}
               <div className="flex items-center gap-3">
-                <span className="font-bold text-xs sm:text-sm tracking-tight text-white bg-white/10 px-2.5 py-0.5 rounded border border-white/10 font-mono">
+                <span className="font-mono text-xs sm:text-sm font-bold tracking-tight text-[#E50909]/75 shrink-0 select-none">
                   dhees_h
                 </span>
                 <span className="text-xs text-zinc-300 font-sans tracking-wide">
@@ -424,8 +421,8 @@ export default function Footer({ onBackToTop }: FooterProps) {
 
               {modalContent === "privacy" ? (
                 <div>
-                  <h3 className="text-xl font-bold tracking-tight mb-4">Privacy Policy</h3>
-                  <div className="space-y-3 text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
+                  <h3 className="text-xl font-bold tracking-tight mb-4 font-primary">Privacy Policy</h3>
+                  <div className="space-y-3 text-xs sm:text-sm text-[#94A3B8] leading-relaxed font-body" style={{ fontFamily: "var(--font-josefin), sans-serif" }}>
                     <p>This portfolio is a personal showcase designed to highlight my engineering projects, skills, and background.</p>
                     <p><strong className="text-white">Data Collection:</strong> We do not collect personal data, sell user telemetry, or use tracking cookies.</p>
                     <p><strong className="text-white">Contact:</strong> If you reach out via email, your address will only be used to reply to your inquiry.</p>
@@ -433,8 +430,8 @@ export default function Footer({ onBackToTop }: FooterProps) {
                 </div>
               ) : (
                 <div>
-                  <h3 className="text-xl font-bold tracking-tight mb-4">Terms of Service</h3>
-                  <div className="space-y-3 text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
+                  <h3 className="text-xl font-bold tracking-tight mb-4 font-primary">Terms of Service</h3>
+                  <div className="space-y-3 text-xs sm:text-sm text-[#94A3B8] leading-relaxed font-body" style={{ fontFamily: "var(--font-josefin), sans-serif" }}>
                     <p>Welcome to Dheesh Medekar&apos;s personal portfolio.</p>
                     <p><strong className="text-white">Intellectual Property:</strong> The code, project showcases, and design implementations presented on this portfolio are the creative work of Dheesh Medekar unless cited otherwise.</p>
                     <p><strong className="text-white">Usage:</strong> You are welcome to browse the project architectures for educational and review purposes.</p>

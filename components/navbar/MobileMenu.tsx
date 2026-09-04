@@ -76,13 +76,13 @@ export default function MobileMenu({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
           className={cn(
-            "fixed inset-0 z-[90] backdrop-blur-2xl md:hidden flex flex-col justify-center items-center",
+            "fixed inset-0 z-[90] backdrop-blur-2xl md:hidden flex flex-col justify-center items-center font-nav",
             isLightMode ? "bg-white/98" : "bg-[#050505]/95"
           )}
         >
           <nav
             aria-label="Mobile"
-            className="flex flex-col items-start gap-6 w-full max-w-[280px]"
+            className="flex flex-col items-start gap-6 w-full max-w-[280px] font-nav"
           >
             {NAV_ITEMS.map((item, i) => {
               const isActive = activeItem === item.key;
@@ -97,11 +97,11 @@ export default function MobileMenu({
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.3, delay: i * 0.05 }}
-                  className="group relative flex items-center gap-4 w-full text-left outline-none cursor-pointer"
+                  className="group relative flex items-center gap-4 w-full text-left outline-none cursor-pointer font-nav"
                 >
                   <span
                     className={cn(
-                      "text-xs font-mono font-bold transition-colors",
+                      "text-xs font-nav font-bold transition-colors",
                       isActive
                         ? "text-[#E50909]"
                         : isLightMode ? "text-[#667085]" : "text-[#64748B]"
@@ -111,7 +111,7 @@ export default function MobileMenu({
                   </span>
                   <span
                     className={cn(
-                      "text-xl font-sans font-bold tracking-tight transition-colors",
+                      "text-xl font-nav font-bold tracking-tight transition-colors",
                       isActive
                         ? isLightMode ? "text-[#E50909]" : "text-white"
                         : isLightMode ? "text-[#343A40] group-hover:text-[#111111]" : "text-[#94A3B8] group-hover:text-white"

@@ -161,11 +161,7 @@ const FarmLensDiagram = ({ on }: { on: boolean }) => (
 
 // ── Visual Selector ───────────────────────────────────────────────────────────
 const ProjectVisual = ({ id, imageUrl, title, isHovered }: { id: string; imageUrl?: string; title: string; isHovered: boolean }) => {
-  if (id === "farmlens") {
-    return <FarmLensDiagram on={isHovered} />;
-  }
-
-  const src = imageUrl || (id === "humanoid" ? "/humanoid-robot.png" : id === "apt" ? "/apt-transit.jpg" : "/movie-ai-recommendation.png");
+  const src = imageUrl || (id === "farmlens" ? "/farmlens-leaf-analysis.jpg" : id === "humanoid" ? "/humanoid-robot.png" : id === "apt" ? "/apt-transit.jpg" : "/movie-ai-recommendation.png");
 
   return (
     <div className="absolute inset-0 bg-[#070810] dark:bg-[#06070D] overflow-hidden flex items-center justify-center">
@@ -449,17 +445,20 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                 {/* Title & Description */}
                 <div>
                   <h3 className={cn(
-                    "text-[13.5px] sm:text-base lg:text-lg font-bold tracking-tight font-display mb-1 transition-colors leading-snug",
+                    "text-[13.5px] sm:text-base lg:text-lg font-bold tracking-tight font-primary mb-1 transition-colors leading-snug",
                     isLightMode
                       ? "text-[#0F172A] group-hover:text-slate-900"
                       : "text-[#F4F6FA] group-hover:text-white"
                   )}>
                     {project.title}
                   </h3>
-                  <p className={cn(
-                    "text-[11px] sm:text-[12.5px] lg:text-[13px] leading-snug sm:leading-relaxed font-sans line-clamp-2 sm:line-clamp-3 mb-2 sm:mb-2.5",
-                    isLightMode ? "text-[#1E293B]" : "text-[#A8B0BF]"
-                  )}>
+                  <p 
+                    className={cn(
+                      "text-[11px] sm:text-[12.5px] lg:text-[13px] leading-snug sm:leading-relaxed font-body line-clamp-2 sm:line-clamp-3 mb-2 sm:mb-2.5",
+                      isLightMode ? "text-[#1E293B]" : "text-[#A8B0BF]"
+                    )}
+                    style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.55 }}
+                  >
                     {project.description}
                   </p>
                 </div>
@@ -470,7 +469,7 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
                     <span
                       key={tech}
                       className={cn(
-                        "px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9.5px] font-mono rounded font-medium transition-colors",
+                        "px-1.5 sm:px-2 py-0.5 text-[8.5px] sm:text-[9.5px] font-primary rounded font-semibold transition-colors",
                         isLightMode
                           ? "bg-[#CBD5E1]/60 border border-[#94A3B8]/60 text-[#0F172A]"
                           : "bg-white/[0.04] border border-white/[0.10] text-[#CBD5E1] group-hover:border-white/25 group-hover:text-white"
@@ -483,7 +482,7 @@ function ProjectCard3D({ project, index, isFlipped, onFlipToggle }: ProjectCard3
 
                 {/* Footer Row */}
                 <div className={cn(
-                  "flex items-center justify-between text-[10.5px] sm:text-xs font-semibold pt-1 border-t",
+                  "flex items-center justify-between text-[10.5px] sm:text-xs font-primary font-semibold pt-1 border-t",
                   isLightMode ? "border-black/10" : "border-white/[0.08]"
                 )}>
                   <div className="flex items-center gap-2.5 sm:gap-3">

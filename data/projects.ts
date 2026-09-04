@@ -8,6 +8,7 @@ export const projects: Project[] = [
     description: "AI-powered crop disease detection platform with real-time analysis and confidence scoring through a FastAPI inference pipeline.",
     categoryBadge: "AI / ML SYSTEM",
     iconName: "leaf",
+    imageUrl: "/farmlens-leaf-analysis.jpg",
     problem: "Smallholder farmers often identify crop disease too late, when treatment costs are highest and yield has already been affected.",
     outcome: "Built an end-to-end pipeline for leaf upload → image preprocessing → disease classification → confidence scoring → prediction history, with results persisted for later querying.",
     architecture: "Flutter/mobile and web clients → FastAPI inference service → SQL records for predictions. Image preprocessing and model inference run server-side with structured response payloads.",

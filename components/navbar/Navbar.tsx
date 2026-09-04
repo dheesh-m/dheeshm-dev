@@ -151,7 +151,7 @@ export default function Navbar({
       */}
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-[100] flex justify-center w-full pointer-events-none transition-[padding] duration-[320ms] ease-out",
+          "fixed top-0 left-0 right-0 z-[100] flex justify-center w-full pointer-events-none transition-[padding] duration-[320ms] ease-out font-nav",
           scrolled
             ? "pt-3 px-3 sm:px-4 lg:px-8"
             : "pt-5 sm:pt-6 px-4 sm:px-6 lg:px-12"
@@ -176,18 +176,18 @@ export default function Navbar({
           {/* ── 1. Brand (Left): Wordmark Split at TLD ── */}
           <button
             onClick={() => handleItemClick("home")}
-            className="group flex items-center gap-0.5 outline-none select-none cursor-pointer z-10 shrink-0 py-1"
+            className="group flex items-center gap-0.5 outline-none select-none cursor-pointer z-10 shrink-0 py-1 font-nav"
             aria-label="Dheesh Medekar - Portfolio Home"
           >
             <span
               className={cn(
-                "font-mono font-bold text-lg sm:text-xl tracking-tight transition-colors duration-200",
+                "font-nav font-bold text-lg sm:text-xl tracking-tight transition-colors duration-200",
                 isLightMode ? "text-[#111111]" : "text-white"
               )}
             >
               {domainParts.stem}
             </span>
-            <span className="font-mono font-bold text-lg sm:text-xl tracking-tight text-[#E50909]">
+            <span className="font-nav font-bold text-lg sm:text-xl tracking-tight text-[#E50909]">
               {domainParts.tld}
             </span>
           </button>
@@ -195,7 +195,7 @@ export default function Navbar({
           {/* ── 2. Nav Links (Centered): Nested Tray & Sliding Pill ── */}
           <div
             className={cn(
-              "hidden md:flex items-center",
+              "hidden md:flex items-center font-nav",
               // Step 6: Absolutely centered at second-largest breakpoint (xl: >= 1280px);
               // at md/lg drops pin and uses margin-inline: auto so it never collides with actions
               "xl:absolute xl:left-1/2 xl:-translate-x-1/2 mx-auto xl:mx-0"
@@ -207,7 +207,7 @@ export default function Navbar({
               onPointerLeave={handlePointerLeave}
               aria-label="Primary navigation"
               className={cn(
-                "liquid-glass-tray relative flex items-center gap-1 p-1 sm:p-1.5 rounded-full select-none",
+                "liquid-glass-tray relative flex items-center gap-1 p-1 sm:p-1.5 rounded-full select-none font-nav",
                 isLightMode ? "light-theme" : "dark-theme"
               )}
             >
@@ -239,7 +239,7 @@ export default function Navbar({
                     onClick={() => handleItemClick(item.key)}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
-                      "relative z-10 flex items-center gap-1.5 rounded-full px-3 sm:px-3.5 py-1 sm:py-1.5 text-xs font-mono font-medium transition-colors duration-200 outline-none select-none cursor-pointer focus-visible:ring-2 focus-visible:ring-red-500/50",
+                      "relative z-10 flex items-center gap-1.5 rounded-full px-3 sm:px-3.5 py-1 sm:py-1.5 text-xs font-nav font-medium transition-colors duration-200 outline-none select-none cursor-pointer focus-visible:ring-2 focus-visible:ring-red-500/50",
                       isActive
                         ? isLightMode
                           ? "text-[#111111] font-bold"
@@ -251,7 +251,7 @@ export default function Navbar({
                   >
                     <span
                       className={cn(
-                        "text-[10px] font-bold transition-colors duration-200",
+                        "text-[10px] font-nav font-bold transition-colors duration-200",
                         isActive
                           ? "text-[#E50909]"
                           : isLightMode
@@ -261,7 +261,7 @@ export default function Navbar({
                     >
                       {item.id}
                     </span>
-                    <span>{item.label}</span>
+                    <span className="font-nav">{item.label}</span>
                     {isActive && isLightMode && (
                       <span className="w-1.5 h-1.5 rounded-full bg-[#E50909] ml-0.5" />
                     )}

@@ -379,7 +379,7 @@ export default function AccordionGallery({
                     isLightMode ? "text-[#111111]" : "text-white"
                   )}
                   style={{
-                    fontFamily: "var(--font-work-sans), sans-serif",
+                    fontFamily: "var(--font-inter), sans-serif",
                     textShadow: isLightMode ? "0 1px 4px rgba(255,255,255,0.8)" : "0 2px 14px rgba(0,0,0,0.8)"
                   }}
                 >

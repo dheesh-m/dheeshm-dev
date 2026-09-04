@@ -25,17 +25,19 @@ export default function About() {
           <SectionLabel number="02" text="ENGINEERING PHILOSOPHY" />
           <h2 
             className={cn(
-              "text-[clamp(2.3rem,9vw,5rem)] font-normal tracking-tight leading-[0.95] mb-4 sm:mb-6 transition-colors",
+              "text-[clamp(2.3rem,9vw,5rem)] font-bold tracking-tight leading-[0.95] mb-4 sm:mb-6 transition-colors font-primary",
               isLightMode ? "text-[#111111]" : "text-white"
             )}
-            style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+            style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
           >
             How I Think
           </h2>
           <p className={cn(
-            "text-sm sm:text-base max-w-xl font-normal",
+            "text-sm sm:text-base max-w-xl font-normal font-body",
             isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
-          )}>
+          )}
+          style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+          >
             &ldquo;I don&apos;t just write code. <strong className={isLightMode ? "text-[#E50909] font-semibold" : "text-[#950606] font-semibold"}>I build systems that solve problems.</strong>&rdquo;
           </p>
         </motion.div>

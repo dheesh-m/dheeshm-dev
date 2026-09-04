@@ -40,20 +40,23 @@ export default function ContactView() {
         {/* Heading */}
         <h2 
           className={cn(
-            "text-5xl sm:text-7xl lg:text-[5.5rem] font-normal tracking-tight leading-[0.95] mb-6 uppercase transition-colors text-center",
+            "text-5xl sm:text-7xl lg:text-[5.5rem] font-bold tracking-tight leading-[0.95] mb-6 uppercase transition-colors text-center font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
           )}
-          style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+          style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 750 }}
         >
           LET&apos;S BUILD<br />
           <span>SOMETHING.</span>
         </h2>
 
         {/* Supporting Text */}
-        <p className={cn(
-          "text-sm sm:text-base leading-relaxed max-w-lg mb-8 font-normal transition-colors text-center",
-          isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
-        )}>
+        <p 
+          className={cn(
+            "text-sm sm:text-base leading-relaxed max-w-lg mb-8 font-normal transition-colors text-center font-body",
+            isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
+          )}
+          style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+        >
           Have an interesting problem, AI system or product idea? I&apos;m always open to discussing new opportunities.
         </p>
 

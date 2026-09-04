@@ -72,10 +72,10 @@ export default function Contact() {
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className={cn(
-              "text-[clamp(1.85rem,7vw,4.5rem)] font-normal tracking-tight leading-tight mb-4 sm:mb-6 whitespace-normal break-words max-w-full transition-colors duration-300",
+              "text-[clamp(1.85rem,7vw,4.5rem)] font-bold tracking-tight leading-tight mb-4 sm:mb-6 whitespace-normal break-words max-w-full transition-colors duration-300 font-primary",
               isLightMode ? "text-[#111111]" : "text-white"
             )}
-            style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+            style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 750 }}
           >
             LET&apos;S BUILD SOMETHING.
           </motion.h2>
@@ -86,9 +86,10 @@ export default function Contact() {
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.75, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
             className={cn(
-              "text-sm sm:text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-10 font-normal px-2 transition-colors",
+              "text-sm sm:text-lg md:text-xl max-w-xl mx-auto mb-6 sm:mb-10 font-normal px-2 transition-colors font-body",
               isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
             )}
+            style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
           >
             Have an interesting problem, AI system or product idea? I&apos;m
             always open to discussing new opportunities.

@@ -39,8 +39,8 @@ export default function Hero() {
           </div>
 
           <h1 
-            className="flex items-center mb-6 sm:mb-8 text-[clamp(2.35rem,8vw,4.5rem)] font-bold tracking-tight leading-[0.98] whitespace-nowrap"
-            style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+            className="flex items-center mb-6 sm:mb-8 text-[clamp(2.35rem,8vw,4.5rem)] font-bold tracking-tight leading-[0.98] whitespace-nowrap font-primary"
+            style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 750 }}
           >
             <span
               className="reveal-up block text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F8FAFC] dark:to-[#CBD5E1]"
@@ -60,7 +60,7 @@ export default function Hero() {
           </h1>
 
           <div
-            className="hero-roles reveal-up flex flex-col gap-2 sm:gap-2.5 mb-6 sm:mb-8 w-full"
+            className="hero-roles reveal-up flex flex-col gap-2 sm:gap-2.5 mb-6 sm:mb-8 w-full font-primary"
             style={delay(0.15)}
           >
             {["AI / LLM ENGINEER", "BACKEND ENGINEER", "FULL-STACK DEVELOPER"].map(
@@ -91,8 +91,8 @@ export default function Hero() {
           </div>
 
           <p
-            className="hero-description reveal-up text-[#1e293b] dark:text-gray-400 text-sm sm:text-base max-w-[420px] mb-8 sm:mb-10 leading-relaxed font-sans font-normal"
-            style={delay(0.2)}
+            className="hero-description reveal-up text-[#1e293b] dark:text-gray-400 text-sm sm:text-base max-w-[420px] mb-8 sm:mb-10 leading-relaxed font-body"
+            style={{ ...delay(0.2), fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.65 }}
           >
             I build{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#8A8A8A] dark:to-[#FFFFFF] font-semibold">

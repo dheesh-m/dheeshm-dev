@@ -18,17 +18,19 @@ export default function Projects() {
           <SectionLabel number="04" text="FEATURED PROJECTS" />
           <h2 
             className={cn(
-              "text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight mb-2 transition-colors",
+              "text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-2 transition-colors font-primary",
               isLightMode ? "text-[#111111]" : "text-white"
             )}
-            style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+            style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
           >
             Engineering Systems
           </h2>
           <p className={cn(
-            "text-sm sm:text-base font-normal",
+            "text-sm sm:text-base font-normal font-body",
             isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
-          )}>
+          )}
+          style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+          >
             Real-world systems. Real impact.
           </p>
 

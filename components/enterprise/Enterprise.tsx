@@ -42,12 +42,15 @@ export default function Enterprise() {
           >
             <div>
               <h2 
-                className="text-[clamp(2rem,8vw,4.5rem)] font-normal tracking-[-0.04em] leading-none mb-3 sm:mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F1F5F9] dark:to-[#CBD5E1]"
-                style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+                className="text-[clamp(2rem,8vw,4.5rem)] font-bold tracking-[-0.04em] leading-none mb-3 sm:mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#171A1F] via-[#334155] to-[#394E6E] dark:from-[#94A3B8] dark:via-[#F1F5F9] dark:to-[#CBD5E1] font-primary"
+                style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
               >
                 Engineering Systems
               </h2>
-              <p className="text-[#94A3B8] font-sans max-w-2xl text-sm sm:text-base">
+              <p 
+                className="text-[#94A3B8] max-w-2xl text-sm sm:text-base font-body"
+                style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+              >
                 Hover over cards for reactive 3D perspective or click to reveal system architectures and implementation details.
               </p>
             </div>

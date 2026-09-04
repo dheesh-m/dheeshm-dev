@@ -111,17 +111,20 @@ export default function AboutView() {
 
         <h2 
           className={cn(
-            "text-4xl sm:text-6xl font-normal tracking-tight mb-3 transition-colors",
+            "text-4xl sm:text-6xl font-bold tracking-tight mb-3 transition-colors font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
           )}
-          style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+          style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
         >
           How I Think
         </h2>
-        <p className={cn(
-          "text-sm sm:text-base max-w-2xl font-normal transition-colors",
-          isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
-        )}>
+        <p 
+          className={cn(
+            "text-sm sm:text-base max-w-2xl font-normal transition-colors font-body",
+            isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
+          )}
+          style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+        >
           &ldquo;I don&apos;t just write code. <strong className={isLightMode ? "text-[#E50909] font-semibold" : "text-[#E50909] font-semibold"}>I build systems that solve problems.</strong>&rdquo;
         </p>
       </div>
@@ -171,21 +174,24 @@ export default function AboutView() {
                   <div>
                     <h3
                       className={cn(
-                        "text-lg sm:text-xl md:text-2xl font-black uppercase italic tracking-tight",
+                        "text-lg sm:text-xl md:text-2xl font-bold uppercase italic tracking-tight font-primary",
                         isLightMode ? "text-[#111111]" : "text-white"
                       )}
-                      style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+                      style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
                     >
-                      {step.name} <span className="opacity-80 font-extrabold text-sm sm:text-base md:text-lg not-italic tracking-normal">— {step.subtitle}</span>
+                      {step.name} <span className="opacity-80 font-bold text-sm sm:text-base md:text-lg not-italic tracking-normal">— {step.subtitle}</span>
                     </h3>
                   </div>
                 </div>
 
                 {/* Body: Full Description Paragraph in High-Contrast White Font */}
-                <p className={cn(
-                  "text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-2 font-medium",
-                  isLightMode ? "text-[#475467]" : "text-white/95"
-                )}>
+                <p 
+                  className={cn(
+                    "text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-2 font-normal font-body",
+                    isLightMode ? "text-[#475467]" : "text-white/95"
+                  )}
+                  style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+                >
                   {step.desc}
                 </p>
 
@@ -198,7 +204,7 @@ export default function AboutView() {
                     <span
                       key={tag}
                       className={cn(
-                        "px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-bold uppercase italic tracking-wider border transition-colors",
+                        "px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-primary font-bold uppercase italic tracking-wider border transition-colors",
                         isLightMode
                           ? "bg-black/[0.03] border-black/[0.08] text-[#343A40]"
                           : "bg-white/15 border-white/25 text-white shadow-sm"
@@ -234,16 +240,19 @@ export default function AboutView() {
                   <Icon className="w-3.5 h-3.5 text-[#E50909]" />
                 </div>
                 <h4 className={cn(
-                  "font-mono text-xs font-bold tracking-wider",
+                  "font-primary text-xs font-bold tracking-wider",
                   isLightMode ? "text-[#111111]" : "text-white"
                 )}>
                   {pillar.label}
                 </h4>
               </div>
-              <p className={cn(
-                "text-xs sm:text-sm leading-relaxed",
-                isLightMode ? "text-[#667085]" : "text-[#94A3B8]"
-              )}>
+              <p 
+                className={cn(
+                  "text-xs sm:text-sm leading-relaxed font-body",
+                  isLightMode ? "text-[#667085]" : "text-[#94A3B8]"
+                )}
+                style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+              >
                 {pillar.desc}
               </p>
             </div>

@@ -106,59 +106,35 @@ const APTDemoVisual = ({ on }: { on: boolean }) => (
 );
 
 const FarmLensVisual = ({ on }: { on: boolean }) => (
-  <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0d0d12] overflow-hidden p-2.5 sm:p-4 gap-2 sm:gap-3">
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(168,85,247,0.06),transparent_70%)]" />
+  <div className="absolute inset-0 flex items-center justify-center bg-[#07090e] overflow-hidden group/farmlens">
+    {/* Background subtle radial glow */}
+    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(34,211,238,0.12),transparent_70%)] z-10 pointer-events-none" />
 
-    {/* 01 Leaf Upload Step */}
+    {/* High-res FarmLens AI Leaf Analysis Visual */}
+    <motion.img
+      src="/farmlens-leaf-analysis.jpg"
+      alt="FarmLens — AI Leaf Analysis & Crop Disease Detection"
+      className="w-full h-full object-cover object-center filter brightness-95 contrast-105 transition-transform duration-700 ease-out group-hover/farmlens:scale-105"
+      initial={{ scale: 1 }}
+      animate={on ? { scale: [1, 1.025, 1] } : { scale: 1 }}
+      transition={on ? { duration: 8, repeat: Infinity, ease: "easeInOut" } : { duration: 0 }}
+    />
+
+    {/* Vignette border and subtle overlay */}
+    <div className="absolute inset-0 bg-gradient-to-t from-[#0a0d14]/80 via-transparent to-black/20 pointer-events-none z-10" />
+
+    {/* Subtle futuristic scanline effect */}
     <motion.div
-      className="w-full max-w-[175px] sm:max-w-[200px] border border-white/10 rounded-md sm:rounded-lg p-2 sm:p-2.5 bg-white/[0.03] backdrop-blur-sm relative overflow-hidden"
-      animate={on ? { borderColor: ['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.1)'] } : {}}
-      transition={{ duration: 4, repeat: Infinity }}
-    >
-      <div className="text-[8px] sm:text-[9px] font-mono uppercase tracking-widest text-zinc-400 mb-1 sm:mb-1.5">01 · Leaf Upload</div>
-      <div className="flex items-center gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] font-mono text-zinc-400">
-        <span className="text-white">Image</span>
-        <span className="text-zinc-600">→</span>
-        <span>Preprocess</span>
-        <span className="text-zinc-600">→</span>
-        <span className="text-purple-300">Infer</span>
-      </div>
+      className="absolute inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#22D3EE]/50 to-transparent z-20 pointer-events-none"
+      animate={on ? { top: ["0%", "100%", "0%"] } : { top: "0%" }}
+      transition={on ? { duration: 5, repeat: Infinity, ease: "linear" } : { duration: 0 }}
+    />
 
-      {/* Scanning effect */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-400/10 to-transparent h-[200%] w-full"
-        animate={on ? { top: ['-100%', '100%'] } : {}}
-        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-      />
-    </motion.div>
-
-    {/* Connecting line */}
-    <div className="w-px h-2.5 sm:h-3 bg-gradient-to-b from-white/20 to-white/5" />
-
-    {/* 02 Prediction Record */}
-    <motion.div
-      className="w-full max-w-[205px] sm:max-w-[230px] border border-white/10 rounded-md sm:rounded-lg p-2 sm:p-2.5 bg-white/[0.03] backdrop-blur-sm"
-      initial={{ opacity: 0.7 }}
-      animate={on ? { opacity: [0.7, 1, 0.7] } : {}}
-      transition={{ duration: 4, repeat: Infinity, delay: 1 }}
-    >
-      <div className="text-[8px] sm:text-[9px] font-mono uppercase tracking-widest text-zinc-400 mb-1 sm:mb-1.5">02 · Prediction Record</div>
-
-      <div className="flex justify-between items-end mb-1 sm:mb-1.5">
-        <div className="flex flex-col">
-          <span className="text-[8px] sm:text-[9px] text-zinc-500 uppercase tracking-widest">Condition</span>
-          <span className="text-[11px] sm:text-xs text-white">Tomato — Early Blight</span>
-        </div>
-        <div className="flex flex-col text-right">
-          <span className="text-[8px] sm:text-[9px] text-zinc-500 uppercase tracking-widest">Confidence</span>
-          <span className="text-[11px] sm:text-xs text-emerald-400 font-mono">91.4%</span>
-        </div>
-      </div>
-
-      <div className="text-[8px] sm:text-[9px] font-mono text-zinc-500 border-t border-white/10 pt-1 mt-1">
-        Treatment recommended · logged
-      </div>
-    </motion.div>
+    {/* AI System badge */}
+    <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[9px] font-mono text-cyan-300">
+      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+      <span>LEAF_AI_DIAGNOSIS</span>
+    </div>
   </div>
 );
 
@@ -212,18 +188,21 @@ export default function ProjectCard({ project, index }: { project: Project; inde
         {/* Content Area */}
         <div className="p-4 sm:p-6 md:p-8 flex flex-col flex-grow">
           <motion.h3
-            className="text-lg sm:text-xl md:text-2xl font-light text-[#F5F5F5] tracking-tight mb-1.5 sm:mb-3 group-hover/card:text-white transition-colors font-display"
+            className="text-lg sm:text-xl md:text-2xl font-bold text-[#F5F5F5] tracking-tight mb-1.5 sm:mb-3 group-hover/card:text-white transition-colors font-primary"
           >
             {project.title}
           </motion.h3>
 
-          <div className={`text-xs sm:text-sm text-zinc-400 leading-relaxed font-sans mb-3 sm:mb-6 ${!isExpanded ? "line-clamp-3" : ""}`}>
+          <div 
+            className={`text-xs sm:text-sm text-zinc-400 leading-relaxed font-body mb-3 sm:mb-6 ${!isExpanded ? "line-clamp-3" : ""}`}
+            style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+          >
             {project.description}
           </div>
 
           <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3.5 sm:mb-6">
             {project.technologies.map((tech) => (
-              <span key={tech} className="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-[10px] font-mono bg-white/5 border border-white/10 text-[#9A9A9A] rounded group-hover/card:border-white/20 group-hover/card:bg-white/10 group-hover/card:text-white transition-colors">
+              <span key={tech} className="px-2 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-[10px] font-primary bg-white/5 border border-white/10 text-[#9A9A9A] rounded group-hover/card:border-white/20 group-hover/card:bg-white/10 group-hover/card:text-white transition-colors">
                 {tech}
               </span>
             ))}

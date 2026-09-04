@@ -30,17 +30,20 @@ export default function ExperienceView() {
 
         <h2 
           className={cn(
-            "text-4xl sm:text-6xl font-normal tracking-tight mb-3 transition-colors",
+            "text-4xl sm:text-6xl font-bold tracking-tight mb-3 transition-colors font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
           )}
-          style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+          style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
         >
           Professional Experience
         </h2>
-        <p className={cn(
-          "text-sm sm:text-base max-w-2xl font-normal transition-colors",
-          isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
-        )}>
+        <p 
+          className={cn(
+            "text-sm sm:text-base max-w-2xl font-normal transition-colors font-body",
+            isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
+          )}
+          style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+        >
           Building products. Solving problems. Creating impact.
         </p>
       </div>
@@ -90,12 +93,12 @@ export default function ExperienceView() {
                   </div>
                   <div>
                     <h3 className={cn(
-                      "text-base sm:text-lg font-bold tracking-tight",
+                      "text-base sm:text-lg font-bold tracking-tight font-primary",
                       isLightMode ? "text-[#111111]" : "text-white"
                     )}>
                       Full-Stack Developer, UI/UX
                     </h3>
-                    <div className="flex items-center gap-2 text-xs sm:text-sm font-medium">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm font-medium font-primary">
                       <span className={isLightMode ? "text-[#475467]" : "text-[#94A3B8]"}>
                         @ Raftaar-Theme-Park
                       </span>
@@ -103,7 +106,7 @@ export default function ExperienceView() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 text-xs font-mono mt-1 text-[#667085]">
+                <div className="flex items-center gap-3 text-xs font-primary mt-1 text-[#667085]">
                   <span>Pune, Maharashtra</span>
                   {experiences[0]?.companyUrl && (
                     <a
@@ -121,10 +124,13 @@ export default function ExperienceView() {
 
               {/* Right Col: Responsibilities & Impact */}
               <div className="lg:w-2/3 flex flex-col justify-between">
-                <ul className={cn(
-                  "space-y-2 mb-4 text-xs sm:text-sm leading-relaxed",
-                  isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
-                )}>
+                <ul 
+                  className={cn(
+                    "space-y-2 mb-4 text-xs sm:text-sm leading-relaxed font-body",
+                    isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
+                  )}
+                  style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+                >
                   <li className="flex items-start gap-2.5">
                     <span className={cn("w-1.5 h-1.5 rounded-full mt-2 shrink-0", isLightMode ? "bg-[#E50909]" : "bg-[#950606]")} />
                     <span>Developed responsive web applications with modern UI/UX, implementing high-performance frontend features and seamless state management.</span>
@@ -200,12 +206,12 @@ export default function ExperienceView() {
                   </div>
                   <div>
                     <h3 className={cn(
-                      "text-base sm:text-lg font-bold tracking-tight",
+                      "text-base sm:text-lg font-bold tracking-tight font-primary",
                       isLightMode ? "text-[#111111]" : "text-white"
                     )}>
                       Full-Stack Developer
                     </h3>
-                    <div className="flex items-center gap-2 text-xs sm:text-sm font-medium">
+                    <div className="flex items-center gap-2 text-xs sm:text-sm font-medium font-primary">
                       <span className={isLightMode ? "text-[#475467]" : "text-[#94A3B8]"}>
                         @ BhoomiTrace Analytics
                       </span>
@@ -213,7 +219,7 @@ export default function ExperienceView() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 text-xs font-mono mt-1 text-[#667085]">
+                <div className="flex items-center gap-3 text-xs font-primary mt-1 text-[#667085]">
                   <span>India</span>
                   {experiences[1]?.companyUrl && (
                     <a
@@ -231,10 +237,13 @@ export default function ExperienceView() {
 
               {/* Right Col: Responsibilities & Impact */}
               <div className="lg:w-2/3 flex flex-col justify-between">
-                <ul className={cn(
-                  "space-y-2 mb-4 text-xs sm:text-sm leading-relaxed",
-                  isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
-                )}>
+                <ul 
+                  className={cn(
+                    "space-y-2 mb-4 text-xs sm:text-sm leading-relaxed font-body",
+                    isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
+                  )}
+                  style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.6 }}
+                >
                   <li className="flex items-start gap-2.5">
                     <span className={cn("w-1.5 h-1.5 rounded-full mt-2 shrink-0", isLightMode ? "bg-[#E50909]" : "bg-[#950606]")} />
                     <span>Built full-stack analytics platform with responsive UI, AI-powered property intelligence, and real-time data feeds.</span>

@@ -190,7 +190,7 @@ export default function ThemeToggle() {
 
       {/* Small hover tooltip indicator */}
       <div className="absolute top-[calc(100%+8px)] left-1/2 -translate-x-1/2 opacity-0 pointer-events-none group-hover/toggle:opacity-100 group-hover/toggle:translate-y-0 translate-y-1 transition-all duration-200 z-50 whitespace-nowrap">
-        <div className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold tracking-wider uppercase bg-white/95 dark:bg-[#090C15]/95 text-[#111111] dark:text-white border border-black/10 dark:border-white/15 shadow-[0_4px_16px_rgba(0,0,0,0.15)] backdrop-blur-md">
+        <div className="px-2.5 py-1 rounded-full text-[10px] font-nav font-bold tracking-wider uppercase bg-white/95 dark:bg-[#090C15]/95 text-[#111111] dark:text-white border border-black/10 dark:border-white/15 shadow-[0_4px_16px_rgba(0,0,0,0.15)] backdrop-blur-md">
           {isAnimating
             ? "F1 STARTING SEQUENCE..."
             : isLightMode

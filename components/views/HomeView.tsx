@@ -59,41 +59,44 @@ export default function HomeView({ onNavigate }: HomeViewProps) {
         {/* Hero Name Heading */}
         <h1 
           className={cn(
-            "text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-normal tracking-tight leading-none mb-6 whitespace-nowrap text-center transition-colors select-none",
+            "text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-none mb-6 whitespace-nowrap text-center transition-colors select-none font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
           )}
-          style={{ fontFamily: "var(--font-work-sans), sans-serif" }}
+          style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 750 }}
         >
           Dheesh Medekar
         </h1>
 
         {/* Roles Stack */}
-        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mb-6 text-xs sm:text-sm font-mono tracking-widest">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mb-6 text-xs sm:text-sm font-primary tracking-widest">
           <div className="flex items-center gap-2">
             <span className={isLightMode ? "text-[#E50909] font-bold" : "text-[#950606] font-bold"}>—</span>
-            <span className={cn("font-bold", isLightMode ? "text-[#111111]" : "text-white/90")}>
+            <span className={cn("font-bold tracking-wider", isLightMode ? "text-[#111111]" : "text-white/90")}>
               AI / LLM ENGINEER
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className={isLightMode ? "text-[#E50909] font-bold" : "text-[#950606] font-bold"}>—</span>
-            <span className={cn("font-bold", isLightMode ? "text-[#111111]" : "text-white/90")}>
+            <span className={cn("font-bold tracking-wider", isLightMode ? "text-[#111111]" : "text-white/90")}>
               BACKEND ENGINEER
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className={isLightMode ? "text-[#E50909] font-bold" : "text-[#950606] font-bold"}>—</span>
-            <span className={cn("font-bold", isLightMode ? "text-[#111111]" : "text-white/90")}>
+            <span className={cn("font-bold tracking-wider", isLightMode ? "text-[#111111]" : "text-white/90")}>
               FULL-STACK DEVELOPER
             </span>
           </div>
         </div>
 
         {/* Bio Summary */}
-        <p className={cn(
-          "text-sm sm:text-base leading-relaxed max-w-2xl mb-8 font-normal text-center transition-colors",
-          isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
-        )}>
+        <p 
+          className={cn(
+            "text-sm sm:text-base leading-relaxed max-w-2xl mb-8 font-normal text-center transition-colors font-body",
+            isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
+          )}
+          style={{ fontFamily: "var(--font-josefin), sans-serif", lineHeight: 1.65 }}
+        >
           I build <strong className={cn("font-medium", isLightMode ? "text-[#111111]" : "text-white")}>intelligent systems</strong>, real-time applications and full-stack products — from LLM orchestration and RAG pipelines to production APIs and polished interfaces.
         </p>
 
