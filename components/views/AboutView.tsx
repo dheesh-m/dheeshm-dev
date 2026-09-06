@@ -100,8 +100,8 @@ export default function AboutView() {
       <div className="flex flex-col items-center text-center mx-auto mb-10 sm:mb-14">
         <div className={cn(
           "inline-flex items-center gap-2 px-3.5 py-1 rounded-full backdrop-blur-md mb-4 transition-colors",
-          isLightMode 
-            ? "bg-red-500/[0.05] border border-red-500/20 text-[#E50909]" 
+          isLightMode
+            ? "bg-red-500/[0.05] border border-red-500/20 text-[#E50909]"
             : "bg-white/[0.04] border border-white/10 text-white/80"
         )}>
           <span className={cn(
@@ -113,7 +113,7 @@ export default function AboutView() {
           </span>
         </div>
 
-        <h2 
+        <h2
           className={cn(
             "text-4xl sm:text-6xl font-bold tracking-tight mb-3 transition-colors font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
@@ -122,7 +122,7 @@ export default function AboutView() {
         >
           How I Think
         </h2>
-        <p 
+        <p
           className={cn(
             "text-sm sm:text-base max-w-2xl font-normal transition-colors font-body",
             isLightMode ? "text-[#475467]" : "text-[#94A3B8]"
@@ -136,13 +136,13 @@ export default function AboutView() {
       {/* ── Centered Process ScrollStack ── */}
       <div className="w-full max-w-2xl sm:max-w-3xl mx-auto mb-6 sm:mb-8">
         <ScrollStack
-          itemDistance={60}
-          itemScale={0.025}
+          itemDistance={200}
+          itemScale={0.03}
           itemStackDistance={30}
-          mobileItemStackDistance={20}
-          stackPosition="12%"
-          scaleEndPosition="8%"
-          baseScale={0.93}
+          stackPosition="25%"
+          scaleEndPosition="10%"
+          baseScale={0.85}
+          scaleDuration={0.5}
           rotationAmount={0}
           blurAmount={0}
           useWindowScroll={true}
@@ -192,7 +192,7 @@ export default function AboutView() {
                 </div>
 
                 {/* Body: Full Description Paragraph in High-Contrast White Font */}
-                <p 
+                <p
                   className={cn(
                     "text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-2 font-normal font-body",
                     isLightMode ? "text-[#475467]" : "text-white/95"
@@ -253,7 +253,7 @@ export default function AboutView() {
                   {pillar.label}
                 </h4>
               </div>
-              <p 
+              <p
                 className={cn(
                   "text-xs sm:text-sm leading-relaxed font-body",
                   isLightMode ? "text-[#667085]" : "text-[#94A3B8]"
