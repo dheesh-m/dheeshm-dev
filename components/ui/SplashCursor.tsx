@@ -149,15 +149,9 @@ export default function SplashCursor({
       return;
     }
 
-    // On touch/mobile devices, disable desktop cursor fluid simulation to eliminate GPU overhead and ensure silky-smooth native scroll
-    const isTouchDevice = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
-    if (isTouchDevice) {
-      return;
-    }
+    const isMobile = typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches);
 
-    const isMobile = false;
-
-    // Responsive simulation tuning
+    // Responsive simulation tuning: optimize grid resolution for touch fluidity while preserving visual style
     const effectiveSimRes = isMobile ? Math.min(SIM_RESOLUTION, 48) : SIM_RESOLUTION;
     const effectiveDyeRes = isMobile ? Math.min(DYE_RESOLUTION, 480) : DYE_RESOLUTION;
     const effectivePressureIters = isMobile ? Math.min(PRESSURE_ITERATIONS, 8) : PRESSURE_ITERATIONS;
@@ -1236,10 +1230,71 @@ export default function SplashCursor({
     }
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // ── Pointer & Scroll Event Handlers ─────────────────────────────────────
-    let lastMouseX = -1;
-    let lastMouseY = -1;
+    // ── Unified Pointer & Scroll Event Handlers ─────────────────────────────
+    let lastPointerX = -1;
+    let lastPointerY = -1;
+    let lastPointerType: string = "mouse";
     let lastScrollY = typeof window !== "undefined" ? window.scrollY : 0;
+
+    const onPointerDown = (e: PointerEvent) => {
+      lastPointerType = e.pointerType;
+      lastPointerX = e.clientX;
+      lastPointerY = e.clientY;
+      const pointer = pointers[0];
+      const posX = scaleByPixelRatio(e.clientX);
+      const posY = scaleByPixelRatio(e.clientY);
+      updatePointerDownData(pointer, e.pointerId, posX, posY);
+      clickSplat(pointer);
+      wakeUp();
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      lastPointerType = e.pointerType;
+      lastPointerX = e.clientX;
+      lastPointerY = e.clientY;
+      const pointer = pointers[0];
+
+      // On desktop mouse: always track position even without clicking
+      // On touch / stylus: track whenever finger is touching down
+      if (e.pointerType === "mouse" || pointer.down) {
+        const posX = scaleByPixelRatio(e.clientX);
+        const posY = scaleByPixelRatio(e.clientY);
+        const color = generateColor();
+        updatePointerMoveData(pointer, posX, posY, color);
+        wakeUp();
+      }
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      lastPointerType = e.pointerType;
+      const pointer = pointers[0];
+      updatePointerUpData(pointer);
+      wakeUp();
+    };
+
+    const onPointerCancel = (e: PointerEvent) => {
+      lastPointerType = e.pointerType;
+      const pointer = pointers[0];
+      updatePointerUpData(pointer);
+      pointer.moved = false;
+      pointer.deltaX = 0;
+      pointer.deltaY = 0;
+    };
+
+    // Passive touchmove backup for mobile browsers that transfer pointer events to compositor scroll
+    const onTouchMove = (e: TouchEvent) => {
+      if (!e.targetTouches || e.targetTouches.length === 0) return;
+      const touch = e.targetTouches[0];
+      lastPointerType = "touch";
+      lastPointerX = touch.clientX;
+      lastPointerY = touch.clientY;
+      const pointer = pointers[0];
+      const posX = scaleByPixelRatio(touch.clientX);
+      const posY = scaleByPixelRatio(touch.clientY);
+      const color = generateColor();
+      updatePointerMoveData(pointer, posX, posY, color);
+      wakeUp();
+    };
 
     const onScroll = () => {
       wakeUp();
@@ -1249,83 +1304,33 @@ export default function SplashCursor({
       const scrollDeltaY = currentScrollY - lastScrollY;
       lastScrollY = currentScrollY;
 
-      // Inject continuous fluid momentum when scrolling under cursor
-      if (lastMouseX >= 0 && lastMouseY >= 0 && Math.abs(scrollDeltaY) > 0) {
+      // Inject continuous fluid momentum when scrolling under cursor (desktop mouse or active touch)
+      if (lastPointerX >= 0 && lastPointerY >= 0 && Math.abs(scrollDeltaY) > 0) {
         const pointer = pointers[0];
-        const posX = scaleByPixelRatio(lastMouseX);
-        const posY = scaleByPixelRatio(lastMouseY);
-        const color = generateColor();
+        // Only inject if mouse is hovered (desktop) or touch is currently held down (mobile)
+        if (lastPointerType === "mouse" || pointer.down) {
+          const posX = scaleByPixelRatio(lastPointerX);
+          const posY = scaleByPixelRatio(lastPointerY);
+          const color = generateColor();
 
-        pointer.prevTexcoordX = pointer.texcoordX;
-        pointer.prevTexcoordY = pointer.texcoordY;
-        pointer.texcoordX = posX / canvas.width;
-        pointer.texcoordY = 1 - posY / canvas.height;
-        pointer.deltaX = 0;
-        pointer.deltaY = correctDeltaY(-scrollDeltaY * 0.0035);
-        pointer.moved = true;
-        pointer.color = color;
+          pointer.prevTexcoordX = pointer.texcoordX;
+          pointer.prevTexcoordY = pointer.texcoordY;
+          pointer.texcoordX = posX / canvas.width;
+          pointer.texcoordY = 1 - posY / canvas.height;
+          pointer.deltaX = 0;
+          pointer.deltaY = correctDeltaY(-scrollDeltaY * 0.0035);
+          pointer.moved = true;
+          pointer.color = color;
+        }
       }
     };
 
-    const onMouseDown = (e: MouseEvent) => {
-      lastMouseX = e.clientX;
-      lastMouseY = e.clientY;
-      const pointer = pointers[0];
-      const posX = scaleByPixelRatio(e.clientX);
-      const posY = scaleByPixelRatio(e.clientY);
-      updatePointerDownData(pointer, -1, posX, posY);
-      clickSplat(pointer);
-      wakeUp();
-    };
-
-    const onMouseMove = (e: MouseEvent) => {
-      lastMouseX = e.clientX;
-      lastMouseY = e.clientY;
-      const pointer = pointers[0];
-      const posX = scaleByPixelRatio(e.clientX);
-      const posY = scaleByPixelRatio(e.clientY);
-      const color = generateColor();
-      updatePointerMoveData(pointer, posX, posY, color);
-      wakeUp();
-    };
-
-    const onTouchStart = (e: TouchEvent) => {
-      const touches = e.targetTouches;
-      const pointer = pointers[0];
-      for (let i = 0; i < touches.length; i++) {
-        const posX = scaleByPixelRatio(touches[i].clientX);
-        const posY = scaleByPixelRatio(touches[i].clientY);
-        updatePointerDownData(pointer, touches[i].identifier, posX, posY);
-      }
-      wakeUp();
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      const touches = e.targetTouches;
-      const pointer = pointers[0];
-      for (let i = 0; i < touches.length; i++) {
-        const posX = scaleByPixelRatio(touches[i].clientX);
-        const posY = scaleByPixelRatio(touches[i].clientY);
-        updatePointerMoveData(pointer, posX, posY, generateColor());
-      }
-      wakeUp();
-    };
-
-    const onTouchEnd = (e: TouchEvent) => {
-      const touches = e.changedTouches;
-      const pointer = pointers[0];
-      for (let i = 0; i < touches.length; i++) {
-        updatePointerUpData(pointer);
-      }
-      wakeUp();
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("mousedown", onMouseDown, { passive: true });
-    window.addEventListener("mousemove", onMouseMove, { passive: true });
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("pointerdown", onPointerDown, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("pointerup", onPointerUp, { passive: true });
+    window.addEventListener("pointercancel", onPointerCancel, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: true });
-    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
       isRunning = false;
@@ -1334,12 +1339,12 @@ export default function SplashCursor({
         animationFrameId = null;
       }
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("mousedown", onMouseDown);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerCancel);
       window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("scroll", onScroll);
     };
   }, [
     SIM_RESOLUTION,

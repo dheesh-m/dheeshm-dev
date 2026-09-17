@@ -22,7 +22,6 @@ export const ScrollStackItem: React.FC<ScrollStackItemProps> = ({
     style={{
       backfaceVisibility: 'hidden',
       WebkitBackfaceVisibility: 'hidden',
-      transformStyle: 'preserve-3d',
       ...style
     }}
   >
@@ -114,34 +113,48 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
       ? windowHeight
       : (scrollerRef.current ? scrollerRef.current.clientHeight : windowHeight);
 
-    const rootScope = useWindowScroll ? containerRef.current || document : scrollerRef.current;
-    const endElement = rootScope
-      ? (rootScope.querySelector('.scroll-stack-end') as HTMLElement | null)
-      : null;
+    if (useWindowScroll) {
+      const container = containerRef.current;
+      if (!container) return;
 
-    if (endElement) {
-      if (useWindowScroll) {
-        const rect = endElement.getBoundingClientRect();
-        endElementTopRef.current = rect.top + window.scrollY;
-      } else {
+      // Container's document top: container has no transforms, so its getBoundingClientRect() is completely stable
+      const containerRect = container.getBoundingClientRect();
+      const containerDocTop = containerRect.top + window.scrollY;
+
+      const endElement = container.querySelector('.scroll-stack-end') as HTMLElement | null;
+      if (endElement) {
+        let endTop = 0;
+        let el: HTMLElement | null = endElement;
+        while (el && el !== container) {
+          endTop += el.offsetTop;
+          el = el.offsetParent as HTMLElement | null;
+        }
+        endElementTopRef.current = containerDocTop + endTop;
+      }
+
+      // Stable card base positions: compute static layout top relative to container via offsetTop.
+      // offsetTop is completely invariant to CSS transforms (translate3d, scale, rotate), preventing any feedback loops.
+      cardTopsRef.current = cards.map((card) => {
+        if (!card) return 0;
+        let top = 0;
+        let el: HTMLElement | null = card;
+        while (el && el !== container) {
+          top += el.offsetTop;
+          el = el.offsetParent as HTMLElement | null;
+        }
+        return containerDocTop + top;
+      });
+    } else {
+      const scroller = scrollerRef.current;
+      const endElement = scroller ? (scroller.querySelector('.scroll-stack-end') as HTMLElement | null) : null;
+      if (endElement) {
         endElementTopRef.current = endElement.offsetTop;
       }
+      cardTopsRef.current = cards.map((card) => (card ? card.offsetTop : 0));
     }
-
-    // Stable card base positions: subtract active translateY to keep base invariant
-    cardTopsRef.current = cards.map((card, i) => {
-      if (!card) return 0;
-      if (useWindowScroll) {
-        const rect = card.getBoundingClientRect();
-        const activeTranslateY = lastTransformsRef.current.get(i)?.translateY || 0;
-        return rect.top + window.scrollY - activeTranslateY;
-      } else {
-        return card.offsetTop;
-      }
-    });
   }, [useWindowScroll]);
 
-  // Pure Write Phase: zero layout reads (getBoundingClientRect) during animation frames
+  // Pure Write Phase: zero layout reads (getBoundingClientRect/offsetTop) during animation frames
   const updateCardTransforms = useCallback((currentScrollTop?: number) => {
     const cards = cardsRef.current;
     if (!cards.length || isUpdatingRef.current) return;
@@ -286,52 +299,82 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     measureGeometry
   ]);
 
-  // Single coherent scroll pipeline: connects directly to existing global Lenis
+  // Single coherent scroll pipeline: connects directly to existing global Lenis or native window scroll
   const setupLenis = useCallback(() => {
     if (useWindowScroll) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const globalLenis = typeof window !== 'undefined' ? (window as any).__lenis : null;
+      let isSubscribedToLenis = false;
+      let cleanupLenisSub: (() => void) | null = null;
 
+      // Direct scroll handler: synchronous update without RAF delay for 1:1 mobile touch tracking
+      const handleScroll = (scrollY?: number) => {
+        const y = scrollY !== undefined ? scrollY : window.scrollY;
+        updateCardTransforms(y);
+      };
+
+      // Native scroll handler for touch or when Lenis is not active
+      const onNativeScroll = () => {
+        // If Lenis is actively handling scroll, let Lenis be the single scroll pipeline
+        if (isSubscribedToLenis) return;
+        handleScroll(window.scrollY);
+      };
+
+      // Debounced resize to avoid layout thrashing during mobile address-bar collapse
+      let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
       const onResize = () => {
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          measureGeometry();
+          updateCardTransforms();
+        }, 100);
+      };
+
+      const onOrientationChange = () => {
+        if (resizeTimeout) clearTimeout(resizeTimeout);
         measureGeometry();
         updateCardTransforms();
       };
 
       window.addEventListener('resize', onResize, { passive: true });
-      window.addEventListener('orientationchange', onResize, { passive: true });
-
-      if (globalLenis && typeof globalLenis.on === 'function') {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const onLenisScroll = (e: any) => {
-          updateCardTransforms(e.scroll !== undefined ? e.scroll : window.scrollY);
-        };
-
-        globalLenis.on('scroll', onLenisScroll);
-
-        return () => {
-          globalLenis.off('scroll', onLenisScroll);
-          window.removeEventListener('resize', onResize);
-          window.removeEventListener('orientationchange', onResize);
-        };
-      }
-
-      // Native fallback when Lenis is not active (e.g. mobile touch)
-      let rafId: number | null = null;
-      const onNativeScroll = () => {
-        if (rafId !== null) return;
-        rafId = requestAnimationFrame(() => {
-          rafId = null;
-          updateCardTransforms(window.scrollY);
-        });
-      };
-
+      window.addEventListener('orientationchange', onOrientationChange, { passive: true });
       window.addEventListener('scroll', onNativeScroll, { passive: true });
 
+      // Connect to global Lenis if active (e.g. desktop smooth scroll)
+      const tryConnectLenis = () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const globalLenis = typeof window !== 'undefined' ? (window as any).__lenis : null;
+        if (globalLenis && typeof globalLenis.on === 'function' && !isSubscribedToLenis) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const onLenisScroll = (e: any) => {
+            handleScroll(e.scroll !== undefined ? e.scroll : window.scrollY);
+          };
+          globalLenis.on('scroll', onLenisScroll);
+          isSubscribedToLenis = true;
+          cleanupLenisSub = () => {
+            globalLenis.off('scroll', onLenisScroll);
+            isSubscribedToLenis = false;
+          };
+          return true;
+        }
+        return false;
+      };
+
+      const connected = tryConnectLenis();
+
+      // If Lenis mounts slightly later (e.g. after React layout effect), poll once after mount
+      let checkLenisTimer: ReturnType<typeof setTimeout> | null = null;
+      if (!connected) {
+        checkLenisTimer = setTimeout(() => {
+          tryConnectLenis();
+        }, 50);
+      }
+
       return () => {
-        if (rafId !== null) cancelAnimationFrame(rafId);
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        if (checkLenisTimer) clearTimeout(checkLenisTimer);
+        cleanupLenisSub?.();
         window.removeEventListener('scroll', onNativeScroll);
         window.removeEventListener('resize', onResize);
-        window.removeEventListener('orientationchange', onResize);
+        window.removeEventListener('orientationchange', onOrientationChange);
       };
     } else {
       const scroller = scrollerRef.current;
@@ -391,9 +434,8 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
       card.style.transformOrigin = 'top center';
       card.style.backfaceVisibility = 'hidden';
       card.style.webkitBackfaceVisibility = 'hidden';
-      card.style.transformStyle = 'preserve-3d';
-      card.style.transform = 'translateZ(0)';
-      card.style.webkitTransform = 'translateZ(0)';
+      card.style.transform = 'translate3d(0, 0, 0)';
+      card.style.webkitTransform = 'translate3d(0, 0, 0)';
       card.style.zIndex = String(i + 1);
     });
 
@@ -401,12 +443,16 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     const cleanupLenis = setupLenis();
     updateCardTransforms();
 
-    // Observe container size changes without per-frame reads
+    // Observe container size changes with debounce to prevent layout thrashing
     let resizeObserver: ResizeObserver | null = null;
     if (typeof ResizeObserver !== 'undefined') {
+      let roTimeout: ReturnType<typeof setTimeout> | null = null;
       resizeObserver = new ResizeObserver(() => {
-        measureGeometry();
-        updateCardTransforms();
+        if (roTimeout) clearTimeout(roTimeout);
+        roTimeout = setTimeout(() => {
+          measureGeometry();
+          updateCardTransforms();
+        }, 100);
       });
       resizeObserver.observe(scope);
     }

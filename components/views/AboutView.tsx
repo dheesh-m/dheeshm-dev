@@ -181,12 +181,32 @@ export default function AboutView() {
                   <div>
                     <h3
                       className={cn(
-                        "text-base sm:text-xl md:text-2xl font-bold uppercase italic tracking-tight font-primary",
+                        "text-base sm:text-xl md:text-2xl font-bold uppercase not-italic tracking-tight font-primary flex items-center flex-wrap gap-x-2 gap-y-1",
                         isLightMode ? "text-[#111111]" : "text-white"
                       )}
-                      style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
+                      style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700, fontStyle: "normal" }}
                     >
-                      {step.name} <span className="opacity-80 font-bold text-xs sm:text-base md:text-lg not-italic tracking-normal">— {step.subtitle}</span>
+                      <span
+                        className={cn(
+                          "font-mono font-bold not-italic",
+                          isLightMode ? "text-[#E50909]" : "text-white/65"
+                        )}
+                        style={{ fontStyle: "normal", fontWeight: 700 }}
+                      >
+                        {step.step}
+                      </span>
+                      <span style={{ fontStyle: "normal", fontWeight: 700 }}>
+                        {step.name}
+                      </span>
+                      <span
+                        className={cn(
+                          "opacity-80 font-bold text-xs sm:text-base md:text-lg not-italic tracking-normal",
+                          isLightMode ? "text-[#475467]" : "text-white/85"
+                        )}
+                        style={{ fontStyle: "normal" }}
+                      >
+                        — {step.subtitle}
+                      </span>
                     </h3>
                   </div>
                 </div>
@@ -211,11 +231,12 @@ export default function AboutView() {
                     <span
                       key={tag}
                       className={cn(
-                        "px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-primary font-bold uppercase italic tracking-wider border transition-colors",
+                        "px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-primary font-bold uppercase not-italic tracking-wider border transition-colors",
                         isLightMode
                           ? "bg-black/[0.03] border-black/[0.08] text-[#343A40]"
                           : "bg-white/15 border-white/25 text-white shadow-sm"
                       )}
+                      style={{ fontStyle: "normal", fontWeight: 700 }}
                     >
                       {tag}
                     </span>
