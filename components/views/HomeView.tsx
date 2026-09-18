@@ -4,6 +4,7 @@ import React from "react";
 import { ArrowRight, Code2, Brain, Box, Rocket } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
+import BlurText from "@/components/ui/BlurText";
 
 interface HomeViewProps {
   onNavigate: (section: string) => void;
@@ -36,7 +37,7 @@ export default function HomeView({ onNavigate }: HomeViewProps) {
   const { isLightMode } = useTheme();
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-28 sm:pt-32 pb-12 sm:pb-16 flex flex-col justify-between min-h-screen">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-24 sm:pt-28 pb-20 sm:pb-28 lg:pb-32 flex flex-col justify-between min-h-[100svh]">
       {/* ── Top & Main Content (Center Aligned with Dheesh Medekar in One Line) ── */}
       <div className="w-full flex flex-col items-center text-center my-auto max-w-4xl mx-auto">
         
@@ -56,16 +57,21 @@ export default function HomeView({ onNavigate }: HomeViewProps) {
           </span>
         </div>
 
-        {/* Hero Name Heading */}
-        <h1 
+        {/* Hero Name Heading with BlurText reveal */}
+        <BlurText
+          as="h1"
+          text="Dheesh Medekar"
+          delay={120}
+          animateBy="words"
+          direction="top"
+          stepDuration={0.35}
+          threshold={0.1}
           className={cn(
             "text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-none mb-6 whitespace-nowrap text-center transition-colors select-none font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
           )}
           style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 750 }}
-        >
-          Dheesh Medekar
-        </h1>
+        />
 
         {/* Roles Stack */}
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mb-6 text-xs sm:text-sm font-primary tracking-widest">

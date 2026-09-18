@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { projects } from "@/data/projects";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { GithubIcon } from "@/components/ui/SocialIcons";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
 import AccordionGallery, { AccordionGalleryItem } from "@/components/ui/AccordionGallery";
+import BlurText from "@/components/ui/BlurText";
 
 export default function ProjectsView() {
   const { isLightMode } = useTheme();
@@ -26,13 +27,21 @@ export default function ProjectsView() {
     }));
   }, []);
 
+  const handlePrev = useCallback(() => {
+    setActiveIndex((prev) => (prev - 1 + projects.length) % projects.length);
+  }, []);
+
+  const handleNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % projects.length);
+  }, []);
+
   const activeProject = projects[activeIndex] || projects[0];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-24 sm:pt-32 pb-14 sm:pb-16 min-h-screen flex flex-col justify-center select-none">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-24 sm:pt-28 pb-20 sm:pb-28 lg:pb-32 min-h-[100svh] flex flex-col justify-center select-none">
       
       {/* ── 1. Section Header ────────────────────────────────────────────────── */}
-      <div className="flex flex-col items-center text-center mx-auto mb-8 sm:mb-12 max-w-2xl">
+      <div className="flex flex-col items-center text-center mx-auto mb-6 sm:mb-10 max-w-2xl">
         <div
           className={cn(
             "inline-flex items-center gap-2 px-3.5 py-1 rounded-full backdrop-blur-md mb-3 sm:mb-4 transition-colors",
@@ -54,15 +63,20 @@ export default function ProjectsView() {
           </span>
         </div>
 
-        <h2
+        <BlurText
+          as="h2"
+          text="Engineering Systems"
+          delay={120}
+          animateBy="words"
+          direction="top"
+          stepDuration={0.35}
+          threshold={0.1}
           className={cn(
             "text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-2 transition-colors font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
           )}
           style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
-        >
-          Engineering Systems
-        </h2>
+        />
         <p
           className={cn(
             "text-xs sm:text-sm md:text-base font-normal transition-colors font-body",
@@ -74,14 +88,14 @@ export default function ProjectsView() {
         </p>
       </div>
 
-      {/* ── 2. Visual Accordion Gallery (React Bits GSAP Accordion Gallery) ── */}
-      <div className="w-full mb-8 sm:mb-10">
+      {/* ── 2. Visual Accordion Gallery (Horizontal Showcase with Prev/Next Controls) ── */}
+      <div className="relative w-full mb-6 sm:mb-8 group/gallery">
         <AccordionGallery
           items={galleryItems}
           defaultIndex={0}
           activeIndex={activeIndex}
           onActiveChange={setActiveIndex}
-          height={440}
+          height={420}
           gap={12}
           radius={22}
           expandRatio={0.50}
@@ -92,6 +106,35 @@ export default function ProjectsView() {
           isLightMode={isLightMode}
           trigger="hover"
         />
+
+        {/* Floating Lateral Navigation Arrows for Quick Horizontal Scrolling */}
+        <button
+          type="button"
+          onClick={handlePrev}
+          aria-label="Previous project"
+          className={cn(
+            "absolute left-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full border transition-all duration-200 cursor-pointer shadow-lg backdrop-blur-md opacity-80 hover:opacity-100 hover:scale-105 active:scale-95 hidden sm:flex items-center justify-center",
+            isLightMode
+              ? "bg-white/90 border-black/10 text-[#111111] hover:bg-white"
+              : "bg-[#0A0C14]/85 border-white/20 text-white hover:bg-[#121624] hover:border-red-500/50 hover:shadow-[0_0_15px_rgba(229,9,9,0.3)]"
+          )}
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
+
+        <button
+          type="button"
+          onClick={handleNext}
+          aria-label="Next project"
+          className={cn(
+            "absolute right-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full border transition-all duration-200 cursor-pointer shadow-lg backdrop-blur-md opacity-80 hover:opacity-100 hover:scale-105 active:scale-95 hidden sm:flex items-center justify-center",
+            isLightMode
+              ? "bg-white/90 border-black/10 text-[#111111] hover:bg-white"
+              : "bg-[#0A0C14]/85 border-white/20 text-white hover:bg-[#121624] hover:border-red-500/50 hover:shadow-[0_0_15px_rgba(229,9,9,0.3)]"
+          )}
+        >
+          <ChevronRight className="w-5 h-5" />
+        </button>
       </div>
 
       {/* ── 3. Connected Project Details & Action Card ──────────────────────── */}
@@ -112,8 +155,22 @@ export default function ProjectsView() {
           >
             {/* Top Navigation Row: Step Switcher Tabs + Active Category Badge */}
             <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-black/[0.06] dark:border-white/10">
-              {/* Project Quick Selector Tabs */}
+              {/* Project Quick Selector Tabs with Prev/Next Controls */}
               <div className="flex items-center gap-1.5 sm:gap-2">
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  aria-label="Previous project"
+                  className={cn(
+                    "p-1.5 sm:p-2 rounded-full border transition-all duration-200 cursor-pointer flex items-center justify-center",
+                    isLightMode
+                      ? "bg-black/[0.03] text-[#475467] border-black/10 hover:border-black/20 hover:text-[#111111]"
+                      : "bg-white/[0.04] text-white/70 border-white/10 hover:border-white/20 hover:text-white"
+                  )}
+                >
+                  <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                </button>
+
                 {projects.map((proj, idx) => {
                   const isSelected = idx === activeIndex;
                   return (
@@ -136,6 +193,20 @@ export default function ProjectsView() {
                     </button>
                   );
                 })}
+
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  aria-label="Next project"
+                  className={cn(
+                    "p-1.5 sm:p-2 rounded-full border transition-all duration-200 cursor-pointer flex items-center justify-center",
+                    isLightMode
+                      ? "bg-black/[0.03] text-[#475467] border-black/10 hover:border-black/20 hover:text-[#111111]"
+                      : "bg-white/[0.04] text-white/70 border-white/10 hover:border-white/20 hover:text-white"
+                  )}
+                >
+                  <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                </button>
               </div>
 
               {/* Active Category Badge */}

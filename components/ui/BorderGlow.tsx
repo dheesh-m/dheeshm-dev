@@ -154,15 +154,10 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
   const rafRef = useRef<number | null>(null);
   const isHoveredRef = useRef(false);
   const sweepActiveRef = useRef(false);
-
-  const getCenterOfElement = useCallback((el: HTMLElement) => {
-    const { width, height } = el.getBoundingClientRect();
-    return [width / 2, height / 2];
-  }, []);
+  const cardRectRef = useRef<DOMRect | null>(null);
 
   const getEdgeProximity = useCallback(
-    (el: HTMLElement, x: number, y: number) => {
-      const [cx, cy] = getCenterOfElement(el);
+    (cx: number, cy: number, x: number, y: number) => {
       const dx = x - cx;
       const dy = y - cy;
       let kx = Infinity;
@@ -171,12 +166,11 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
       if (dy !== 0) ky = cy / Math.abs(dy);
       return Math.min(Math.max(1 / Math.min(kx, ky), 0), 1);
     },
-    [getCenterOfElement]
+    []
   );
 
   const getCursorAngle = useCallback(
-    (el: HTMLElement, x: number, y: number) => {
-      const [cx, cy] = getCenterOfElement(el);
+    (cx: number, cy: number, x: number, y: number) => {
       const dx = x - cx;
       const dy = y - cy;
       if (dx === 0 && dy === 0) return 0;
@@ -185,7 +179,7 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
       if (degrees < 0) degrees += 360;
       return degrees;
     },
-    [getCenterOfElement]
+    []
   );
 
   const colorSensitivity = edgeSensitivity + 20;
@@ -213,12 +207,18 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
     (e: React.PointerEvent<HTMLDivElement>) => {
       const card = cardRef.current;
       if (!card) return;
-      const rect = card.getBoundingClientRect();
+      let rect = cardRectRef.current;
+      if (!rect) {
+        rect = card.getBoundingClientRect();
+        cardRectRef.current = rect;
+      }
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
 
-      const edgeProx = getEdgeProximity(card, x, y);
-      const angle = getCursorAngle(card, x, y);
+      const edgeProx = getEdgeProximity(cx, cy, x, y);
+      const angle = getCursorAngle(cx, cy, x, y);
 
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
@@ -231,10 +231,14 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
 
   const handlePointerEnter = useCallback(() => {
     isHoveredRef.current = true;
+    if (cardRef.current) {
+      cardRectRef.current = cardRef.current.getBoundingClientRect();
+    }
   }, []);
 
   const handlePointerLeave = useCallback(() => {
     isHoveredRef.current = false;
+    cardRectRef.current = null;
     if (!sweepActiveRef.current) {
       updateCssValues(45, 0, false);
     }

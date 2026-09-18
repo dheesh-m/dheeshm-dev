@@ -102,7 +102,7 @@ export default function SplashCursor({
   SPLAT_FORCE = 4000,
   SHADING = true,
   RAINBOW_MODE = false,
-  COLOR = "#7F1D1D",
+  COLOR = "#A855F7",
   className = "",
 }: SplashCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -149,9 +149,9 @@ export default function SplashCursor({
       return;
     }
 
-    const isMobile = typeof window !== "undefined" && (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches);
+    const isMobile = typeof window !== "undefined" && (window.innerWidth < 768 || "ontouchstart" in window);
 
-    // Responsive simulation tuning: optimize grid resolution for touch fluidity while preserving visual style
+    // Responsive simulation tuning
     const effectiveSimRes = isMobile ? Math.min(SIM_RESOLUTION, 48) : SIM_RESOLUTION;
     const effectiveDyeRes = isMobile ? Math.min(DYE_RESOLUTION, 480) : DYE_RESOLUTION;
     const effectivePressureIters = isMobile ? Math.min(PRESSURE_ITERATIONS, 8) : PRESSURE_ITERATIONS;
@@ -1128,15 +1128,13 @@ export default function SplashCursor({
       return delta;
     }
 
-    let crimsonStep = 0;
-
     function hexToRGB(hex: string): ColorRGB {
       let val = hex.replace("#", "");
       if (val.length === 3) val = val[0] + val[0] + val[1] + val[1] + val[2] + val[2];
       const r = parseInt(val.slice(0, 2), 16) / 255;
       const g = parseInt(val.slice(2, 4), 16) / 255;
       const b = parseInt(val.slice(4, 6), 16) / 255;
-      return { r: r * 0.32, g: g * 0.32, b: b * 0.32 };
+      return { r: r * 0.22, g: g * 0.22, b: b * 0.22 };
     }
 
     function HSVtoRGB(h: number, s: number, v: number): ColorRGB {
@@ -1160,20 +1158,30 @@ export default function SplashCursor({
       return { r: r * 0.28, g: g * 0.28, b: b * 0.28 };
     }
 
+    let redSilverStep = 0;
     let rainbowHue = 0;
 
     function generateColor(): ColorRGB {
       if (!configRef.current.RAINBOW_MODE) {
-        // Refined Dark Red / Crimson palette:
-        // Primary: #7F1D1D (rgb(127, 29, 29))
-        // Secondary: #991B1B (rgb(153, 27, 27))
-        // Subtle highlight: #B91C1C (rgb(185, 28, 28))
-        crimsonStep = (crimsonStep + 0.035) % (Math.PI * 2);
-        const factor = (Math.sin(crimsonStep) + 1) / 2;
-        const r = ((127 + factor * (185 - 127)) / 255) * 0.32;
-        const g = ((29 - factor * 2) / 255) * 0.32;
-        const b = ((29 - factor * 2) / 255) * 0.32;
-        return { r, g, b };
+        // Red & Silver dual-mix fluid palette:
+        // Vibrant Racing Crimson: (0.94, 0.06, 0.08)
+        // Luminous Metallic Chrome Silver: (0.74, 0.78, 0.88)
+        redSilverStep = (redSilverStep + 0.065) % (Math.PI * 2);
+        const t = (Math.sin(redSilverStep) + 1) / 2;
+
+        const red = { r: 0.94, g: 0.06, b: 0.08 };
+        const silver = { r: 0.74, g: 0.78, b: 0.88 };
+
+        const mixR = red.r * (1 - t) + silver.r * t;
+        const mixG = red.g * (1 - t) + silver.g * t;
+        const mixB = red.b * (1 - t) + silver.b * t;
+
+        const intensity = 0.30;
+        return {
+          r: mixR * intensity,
+          g: mixG * intensity,
+          b: mixB * intensity,
+        };
       }
       rainbowHue = (rainbowHue + 0.008) % 1;
       return HSVtoRGB(rainbowHue, 0.95, 1.0);
@@ -1230,71 +1238,10 @@ export default function SplashCursor({
     }
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // ── Unified Pointer & Scroll Event Handlers ─────────────────────────────
-    let lastPointerX = -1;
-    let lastPointerY = -1;
-    let lastPointerType: string = "mouse";
+    // ── Pointer & Scroll Event Handlers ─────────────────────────────────────
+    let lastMouseX = -1;
+    let lastMouseY = -1;
     let lastScrollY = typeof window !== "undefined" ? window.scrollY : 0;
-
-    const onPointerDown = (e: PointerEvent) => {
-      lastPointerType = e.pointerType;
-      lastPointerX = e.clientX;
-      lastPointerY = e.clientY;
-      const pointer = pointers[0];
-      const posX = scaleByPixelRatio(e.clientX);
-      const posY = scaleByPixelRatio(e.clientY);
-      updatePointerDownData(pointer, e.pointerId, posX, posY);
-      clickSplat(pointer);
-      wakeUp();
-    };
-
-    const onPointerMove = (e: PointerEvent) => {
-      lastPointerType = e.pointerType;
-      lastPointerX = e.clientX;
-      lastPointerY = e.clientY;
-      const pointer = pointers[0];
-
-      // On desktop mouse: always track position even without clicking
-      // On touch / stylus: track whenever finger is touching down
-      if (e.pointerType === "mouse" || pointer.down) {
-        const posX = scaleByPixelRatio(e.clientX);
-        const posY = scaleByPixelRatio(e.clientY);
-        const color = generateColor();
-        updatePointerMoveData(pointer, posX, posY, color);
-        wakeUp();
-      }
-    };
-
-    const onPointerUp = (e: PointerEvent) => {
-      lastPointerType = e.pointerType;
-      const pointer = pointers[0];
-      updatePointerUpData(pointer);
-      wakeUp();
-    };
-
-    const onPointerCancel = (e: PointerEvent) => {
-      lastPointerType = e.pointerType;
-      const pointer = pointers[0];
-      updatePointerUpData(pointer);
-      pointer.moved = false;
-      pointer.deltaX = 0;
-      pointer.deltaY = 0;
-    };
-
-    // Passive touchmove backup for mobile browsers that transfer pointer events to compositor scroll
-    const onTouchMove = (e: TouchEvent) => {
-      if (!e.targetTouches || e.targetTouches.length === 0) return;
-      const touch = e.targetTouches[0];
-      lastPointerType = "touch";
-      lastPointerX = touch.clientX;
-      lastPointerY = touch.clientY;
-      const pointer = pointers[0];
-      const posX = scaleByPixelRatio(touch.clientX);
-      const posY = scaleByPixelRatio(touch.clientY);
-      const color = generateColor();
-      updatePointerMoveData(pointer, posX, posY, color);
-      wakeUp();
-    };
 
     const onScroll = () => {
       wakeUp();
@@ -1304,33 +1251,83 @@ export default function SplashCursor({
       const scrollDeltaY = currentScrollY - lastScrollY;
       lastScrollY = currentScrollY;
 
-      // Inject continuous fluid momentum when scrolling under cursor (desktop mouse or active touch)
-      if (lastPointerX >= 0 && lastPointerY >= 0 && Math.abs(scrollDeltaY) > 0) {
+      // Inject continuous fluid momentum when scrolling under cursor
+      if (lastMouseX >= 0 && lastMouseY >= 0 && Math.abs(scrollDeltaY) > 0) {
         const pointer = pointers[0];
-        // Only inject if mouse is hovered (desktop) or touch is currently held down (mobile)
-        if (lastPointerType === "mouse" || pointer.down) {
-          const posX = scaleByPixelRatio(lastPointerX);
-          const posY = scaleByPixelRatio(lastPointerY);
-          const color = generateColor();
+        const posX = scaleByPixelRatio(lastMouseX);
+        const posY = scaleByPixelRatio(lastMouseY);
+        const color = generateColor();
 
-          pointer.prevTexcoordX = pointer.texcoordX;
-          pointer.prevTexcoordY = pointer.texcoordY;
-          pointer.texcoordX = posX / canvas.width;
-          pointer.texcoordY = 1 - posY / canvas.height;
-          pointer.deltaX = 0;
-          pointer.deltaY = correctDeltaY(-scrollDeltaY * 0.0035);
-          pointer.moved = true;
-          pointer.color = color;
-        }
+        pointer.prevTexcoordX = pointer.texcoordX;
+        pointer.prevTexcoordY = pointer.texcoordY;
+        pointer.texcoordX = posX / canvas.width;
+        pointer.texcoordY = 1 - posY / canvas.height;
+        pointer.deltaX = 0;
+        pointer.deltaY = correctDeltaY(-scrollDeltaY * 0.0035);
+        pointer.moved = true;
+        pointer.color = color;
       }
     };
 
-    window.addEventListener("pointerdown", onPointerDown, { passive: true });
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerup", onPointerUp, { passive: true });
-    window.addEventListener("pointercancel", onPointerCancel, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    const onMouseDown = (e: MouseEvent) => {
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      const pointer = pointers[0];
+      const posX = scaleByPixelRatio(e.clientX);
+      const posY = scaleByPixelRatio(e.clientY);
+      updatePointerDownData(pointer, -1, posX, posY);
+      clickSplat(pointer);
+      wakeUp();
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      const pointer = pointers[0];
+      const posX = scaleByPixelRatio(e.clientX);
+      const posY = scaleByPixelRatio(e.clientY);
+      const color = generateColor();
+      updatePointerMoveData(pointer, posX, posY, color);
+      wakeUp();
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      const touches = e.targetTouches;
+      const pointer = pointers[0];
+      for (let i = 0; i < touches.length; i++) {
+        const posX = scaleByPixelRatio(touches[i].clientX);
+        const posY = scaleByPixelRatio(touches[i].clientY);
+        updatePointerDownData(pointer, touches[i].identifier, posX, posY);
+      }
+      wakeUp();
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      const touches = e.targetTouches;
+      const pointer = pointers[0];
+      for (let i = 0; i < touches.length; i++) {
+        const posX = scaleByPixelRatio(touches[i].clientX);
+        const posY = scaleByPixelRatio(touches[i].clientY);
+        updatePointerMoveData(pointer, posX, posY, generateColor());
+      }
+      wakeUp();
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      const touches = e.changedTouches;
+      const pointer = pointers[0];
+      for (let i = 0; i < touches.length; i++) {
+        updatePointerUpData(pointer);
+      }
+      wakeUp();
+    };
+
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("mousedown", onMouseDown, { passive: true });
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
 
     return () => {
       isRunning = false;
@@ -1339,12 +1336,12 @@ export default function SplashCursor({
         animationFrameId = null;
       }
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", onPointerUp);
-      window.removeEventListener("pointercancel", onPointerCancel);
-      window.removeEventListener("touchmove", onTouchMove);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
     };
   }, [
     SIM_RESOLUTION,

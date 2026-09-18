@@ -5,6 +5,7 @@ import ScrollStack, { ScrollStackItem } from "@/components/ui/ScrollStack";
 import { Eye, Brain, Code2, Rocket, Target, Compass, CheckCircle2 } from "lucide-react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
+import BlurText from "@/components/ui/BlurText";
 
 // Bold SuperYou-inspired fully dark-red treatments with striking high-contrast white font
 const STEP_DARK_TONES = [
@@ -95,7 +96,7 @@ export default function AboutView() {
   const { isLightMode } = useTheme();
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-28 sm:pt-32 pb-16 min-h-screen flex flex-col">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-24 sm:pt-28 pb-20 sm:pb-28 lg:pb-32 min-h-[100svh] flex flex-col">
       {/* ── Section Header ── */}
       <div className="flex flex-col items-center text-center mx-auto mb-10 sm:mb-14">
         <div className={cn(
@@ -113,15 +114,20 @@ export default function AboutView() {
           </span>
         </div>
 
-        <h2
+        <BlurText
+          as="h2"
+          text="How I Think"
+          delay={120}
+          animateBy="words"
+          direction="top"
+          stepDuration={0.35}
+          threshold={0.1}
           className={cn(
             "text-4xl sm:text-6xl font-bold tracking-tight mb-3 transition-colors font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
           )}
           style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
-        >
-          How I Think
-        </h2>
+        />
         <p
           className={cn(
             "text-sm sm:text-base max-w-2xl font-normal transition-colors font-body",

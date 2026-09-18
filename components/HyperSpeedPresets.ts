@@ -260,3 +260,7 @@ export const hyperspeedPresets: Record<string, any> = {
     }
   }
 };
+
+hyperspeedPresets.akira = hyperspeedPresets.two;
+hyperspeedPresets.golden = hyperspeedPresets.three;
+

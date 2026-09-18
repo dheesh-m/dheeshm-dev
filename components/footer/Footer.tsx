@@ -25,7 +25,7 @@ export default function Footer({ onBackToTop }: FooterProps) {
   };
 
   return (
-    <footer className={cn("w-full relative z-20 mt-auto overflow-hidden", isLightMode ? "bg-[#FFFFFF]" : "")}>
+    <footer className={cn("w-full relative z-10 overflow-hidden", isLightMode ? "bg-[#FFFFFF]" : "")}>
 
       {/* ══════════════════════════════════════════════════════════════════════
           LIGHT MODE FOOTER: MATCHES THE ORIGINAL REFERENCE IMAGE PIXEL-PERFECT

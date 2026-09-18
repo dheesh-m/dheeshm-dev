@@ -304,18 +304,26 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     if (useWindowScroll) {
       let isSubscribedToLenis = false;
       let cleanupLenisSub: (() => void) | null = null;
+      let rafId: number | null = null;
+      let pendingScrollY: number | undefined = undefined;
 
-      // Direct scroll handler: synchronous update without RAF delay for 1:1 mobile touch tracking
-      const handleScroll = (scrollY?: number) => {
-        const y = scrollY !== undefined ? scrollY : window.scrollY;
-        updateCardTransforms(y);
+      // RAF-batched scroll handler: exactly one transform update per screen refresh frame (60Hz/120Hz)
+      const scheduleCardUpdate = (scrollY?: number) => {
+        pendingScrollY = scrollY;
+        if (rafId === null) {
+          rafId = requestAnimationFrame(() => {
+            rafId = null;
+            const y = pendingScrollY !== undefined ? pendingScrollY : window.scrollY;
+            updateCardTransforms(y);
+          });
+        }
       };
 
       // Native scroll handler for touch or when Lenis is not active
       const onNativeScroll = () => {
         // If Lenis is actively handling scroll, let Lenis be the single scroll pipeline
         if (isSubscribedToLenis) return;
-        handleScroll(window.scrollY);
+        scheduleCardUpdate(window.scrollY);
       };
 
       // Debounced resize to avoid layout thrashing during mobile address-bar collapse
@@ -345,7 +353,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
         if (globalLenis && typeof globalLenis.on === 'function' && !isSubscribedToLenis) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const onLenisScroll = (e: any) => {
-            handleScroll(e.scroll !== undefined ? e.scroll : window.scrollY);
+            scheduleCardUpdate(e.scroll !== undefined ? e.scroll : window.scrollY);
           };
           globalLenis.on('scroll', onLenisScroll);
           isSubscribedToLenis = true;
@@ -369,6 +377,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
       }
 
       return () => {
+        if (rafId !== null) cancelAnimationFrame(rafId);
         if (resizeTimeout) clearTimeout(resizeTimeout);
         if (checkLenisTimer) clearTimeout(checkLenisTimer);
         cleanupLenisSub?.();

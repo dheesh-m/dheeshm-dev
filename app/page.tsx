@@ -46,25 +46,48 @@ const personJsonLd = {
 };
 
 export default function Home() {
-  const [activeSection, setActiveSection] = useState("home");
+  // Synchronously initialize from hash if available in browser to avoid flash of Home
+  const [activeSection, setActiveSection] = useState(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash.replace("#", "").toLowerCase();
+      if (hash && VALID_SECTIONS.includes(hash)) {
+        return hash;
+      }
+    }
+    return "home";
+  });
   const [isPageReady, setIsPageReady] = useState(false);
   const { isLightMode } = useTheme();
 
-  // URL Hash Sync
+  // URL Hash Sync & Browser Back/Forward History Support
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace("#", "");
+    const handleSync = () => {
+      const hash = window.location.hash.replace("#", "").toLowerCase();
       if (hash && VALID_SECTIONS.includes(hash)) {
         setActiveSection(hash);
+        window.scrollTo({ top: 0, behavior: "instant" });
+      } else if (!hash) {
+        setActiveSection("home");
+        window.scrollTo({ top: 0, behavior: "instant" });
+      } else {
+        // Fall back cleanly if hash is invalid
+        setActiveSection("home");
+        window.history.replaceState(null, "", "#home");
+        window.scrollTo({ top: 0, behavior: "instant" });
       }
     };
 
-    handleHashChange();
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
+    handleSync();
+    window.addEventListener("hashchange", handleSync);
+    window.addEventListener("popstate", handleSync);
+    return () => {
+      window.removeEventListener("hashchange", handleSync);
+      window.removeEventListener("popstate", handleSync);
+    };
   }, []);
 
   const handleSelectSection = useCallback((sectionKey: string) => {
+    if (!VALID_SECTIONS.includes(sectionKey)) return;
     setActiveSection(sectionKey);
 
     // Update URL hash without full reload
@@ -72,13 +95,13 @@ export default function Home() {
       window.history.pushState(null, "", `#${sectionKey}`);
     }
 
-    // Smooth scroll to top of new section
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Reset scroll position to top immediately on view switch
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, []);
 
   return (
     <div className={cn(
-      "relative min-h-screen selection:bg-red-500/20 overflow-x-hidden flex flex-col justify-between transition-colors duration-300",
+      "relative min-h-screen selection:bg-red-500/20 overflow-x-hidden flex flex-col transition-colors duration-300",
       isLightMode ? "bg-[#FFFFFF] text-[#111111]" : "bg-[#05060B] text-[#F4F6FA]"
     )}>
       {/* ── Entry Intro Loader ── */}
@@ -90,20 +113,35 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
 
-      {/* ── Persistent Hyperspeed Background (Mounted ONCE at root level) ── */}
-      <div className={cn(
-        "fixed inset-0 w-full h-full pointer-events-none z-0 overflow-hidden transition-colors duration-300",
-        isLightMode ? "bg-[#FFFFFF]" : "bg-[#05060B]"
-      )}>
+      {/* ── Dedicated Fixed Visual Layer: Persistent Hyperspeed Background (z-0) ── */}
+      <div
+        id="fixed-bg-layer"
+        aria-hidden="true"
+        className={cn(
+          "fixed inset-0 w-full h-full min-h-[100lvh] pointer-events-none z-0 overflow-hidden select-none transition-colors duration-300",
+          isLightMode ? "bg-[#FFFFFF]" : "bg-[#05060B]"
+        )}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          contain: "strict",
+          transform: "translate3d(0, 0, 0)",
+          WebkitTransform: "translate3d(0, 0, 0)",
+          willChange: "transform",
+        }}
+      >
         <Hyperspeed 
-          effectOptions={isLightMode ? hyperspeedPresets.light : hyperspeedPresets.three} 
+          effectOptions={isLightMode ? hyperspeedPresets.light : hyperspeedPresets.akira} 
           lightMode={isLightMode} 
         />
       </div>
 
-      {/* ── Persistent Crimson SplashCursor WebGL fluid simulation (z-[1]) ── */}
+      {/* ── Persistent Red & Silver SplashCursor WebGL fluid simulation (z-[1]) ── */}
       <SplashCursor
-        COLOR={isLightMode ? "#E50909" : "#7F1D1D"}
+        COLOR="#E50909"
         RAINBOW_MODE={false}
         SIM_RESOLUTION={64}
         DYE_RESOLUTION={720}
@@ -118,32 +156,35 @@ export default function Home() {
       />
 
       {/* ── Main Application UI ── */}
-      <div className="relative z-10 w-full flex-1 flex flex-col justify-between">
+      <div className="relative z-10 w-full flex-1 flex flex-col">
         {/* Floating Top Navbar */}
         <Navbar
           activeSection={activeSection}
           onSelectSection={handleSelectSection}
         />
 
-        {/* Dynamic Section View (Smooth Framer Motion crossfade) */}
+        {/* Dynamic Section View (Smooth Framer Motion crossfade with AnimatePresence) */}
         <main className="w-full flex-1 flex flex-col">
-          <motion.div
-            key={activeSection}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="w-full flex-1 flex flex-col"
-          >
-            {activeSection === "home" && <HomeView onNavigate={handleSelectSection} />}
-            {activeSection === "about" && <AboutView />}
-            {activeSection === "tech" && <TechView />}
-            {activeSection === "projects" && <ProjectsView />}
-            {activeSection === "experience" && <ExperienceView />}
-            {activeSection === "contact" && <ContactView />}
-          </motion.div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeSection}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full flex-1 flex flex-col"
+            >
+              {activeSection === "home" && <HomeView onNavigate={handleSelectSection} />}
+              {activeSection === "about" && <AboutView />}
+              {activeSection === "tech" && <TechView />}
+              {activeSection === "projects" && <ProjectsView />}
+              {activeSection === "experience" && <ExperienceView />}
+              {activeSection === "contact" && <ContactView />}
+            </motion.div>
+          </AnimatePresence>
         </main>
 
-        {/* Reusable Compact Footer (Immediately following every section view) */}
+        {/* Reusable Compact Footer (Immediately following every active section view) */}
         <Footer onBackToTop={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
       </div>
     </div>

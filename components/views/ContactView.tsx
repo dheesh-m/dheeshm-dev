@@ -6,6 +6,7 @@ import { GithubIcon, LinkedinIcon } from "@/components/ui/SocialIcons";
 import { EMAIL, SOCIALS } from "@/data/socials";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
+import BlurText from "@/components/ui/BlurText";
 
 export default function ContactView() {
   const { isLightMode } = useTheme();
@@ -18,7 +19,7 @@ export default function ContactView() {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-28 sm:pt-32 pb-16 min-h-screen flex flex-col justify-center items-center text-center">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-24 sm:pt-28 pb-16 sm:pb-24 lg:pb-28 min-h-[100svh] flex flex-col justify-center items-center text-center">
       <div className="w-full max-w-4xl flex flex-col items-center text-center mx-auto">
         
         {/* Section Indicator */}
@@ -38,16 +39,20 @@ export default function ContactView() {
         </div>
 
         {/* Heading */}
-        <h2 
+        <BlurText
+          as="h2"
+          text={"LET'S BUILD\nSOMETHING."}
+          delay={120}
+          animateBy="words"
+          direction="top"
+          stepDuration={0.35}
+          threshold={0.1}
           className={cn(
             "text-5xl sm:text-7xl lg:text-[5.5rem] font-bold tracking-tight leading-[0.95] mb-6 uppercase transition-colors text-center font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
           )}
           style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 750 }}
-        >
-          LET&apos;S BUILD<br />
-          <span>SOMETHING.</span>
-        </h2>
+        />
 
         {/* Supporting Text */}
         <p 

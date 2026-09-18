@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, ArrowRight } from "lucide-react";
+import BlurText from "@/components/ui/BlurText";
 
 interface TechItem {
   name: string;
@@ -406,9 +407,20 @@ export default function TechView() {
     };
   }, []);
 
-  // Mouse move handler for card radial glow (Zero React re-renders, 60+ FPS)
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+  // Cached card rects map for zero layout thrashing on mousemove (60+ FPS)
+  const cardRectsRef = useRef<Map<string, DOMRect>>(new Map());
+
+  const handleCardMouseEnter = (catId: string, el: HTMLDivElement) => {
+    setActiveCard(catId);
+    cardRectsRef.current.set(catId, el.getBoundingClientRect());
+  };
+
+  const handleMouseMove = (catId: string, e: React.MouseEvent<HTMLDivElement>) => {
+    let rect = cardRectsRef.current.get(catId);
+    if (!rect) {
+      rect = e.currentTarget.getBoundingClientRect();
+      cardRectsRef.current.set(catId, rect);
+    }
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     e.currentTarget.style.setProperty("--mouse-x", `${x}px`);
@@ -416,7 +428,7 @@ export default function TechView() {
   };
 
   return (
-    <div className="w-full max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-10 min-h-screen flex flex-col justify-center">
+    <div className="w-full max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-20 sm:pb-28 lg:pb-32 min-h-[100svh] flex flex-col justify-center">
       <style jsx global>{`
         @keyframes hubPulse {
           0%, 100% {
@@ -462,15 +474,20 @@ export default function TechView() {
           </span>
         </div>
 
-        <h2
+        <BlurText
+          as="h2"
+          text="Systems I Build With"
+          delay={120}
+          animateBy="words"
+          direction="top"
+          stepDuration={0.35}
+          threshold={0.1}
           className={cn(
             "text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-1.5 transition-colors font-primary",
             isLightMode ? "text-[#111111]" : "text-white"
           )}
           style={{ fontFamily: "var(--font-inter), sans-serif", fontWeight: 700 }}
-        >
-          Systems I Build With
-        </h2>
+        />
         <p
           className={cn(
             "text-xs sm:text-[13px] max-w-lg font-normal transition-colors font-body",
@@ -649,8 +666,8 @@ export default function TechView() {
 
                 <div
                   ref={(el) => { cardRefs.current[idx] = el; }}
-                  onMouseEnter={() => setActiveCard(cat.id)}
-                  onMouseMove={handleMouseMove}
+                  onMouseEnter={(e) => handleCardMouseEnter(cat.id, e.currentTarget)}
+                  onMouseMove={(e) => handleMouseMove(cat.id, e)}
                   className={cn(
                     "group relative rounded-[18px] xl:rounded-[20px] px-5 py-4 xl:px-6 xl:py-4 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden",
                     "backdrop-blur-xl select-none flex flex-col justify-between w-full self-start",

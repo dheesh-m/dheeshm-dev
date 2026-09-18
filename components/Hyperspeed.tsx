@@ -938,6 +938,8 @@ class App {
   speedUp: number;
   timeOffset: number;
   hasValidSize: boolean;
+  lastWidth: number;
+  lastHeight: number;
 
   constructor(container: HTMLElement, options: HyperspeedOptions) {
     this.options = options;
@@ -953,13 +955,16 @@ class App {
 
     const initW = Math.max(1, container.offsetWidth);
     const initH = Math.max(1, container.offsetHeight);
+    this.lastWidth = initW;
+    this.lastHeight = initH;
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: false,
       alpha: true
     });
     this.renderer.setSize(initW, initH, false);
-    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setPixelRatio(Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.75));
+    this.renderer.domElement.style.pointerEvents = 'none';
 
     this.composer = new EffectComposer(this.renderer);
     container.appendChild(this.renderer.domElement);
@@ -1020,6 +1025,7 @@ class App {
 
     this.onWindowResize = this.onWindowResize.bind(this);
     window.addEventListener('resize', this.onWindowResize);
+    window.addEventListener('orientationchange', this.onWindowResize);
 
     if (container.offsetWidth > 0 && container.offsetHeight > 0) {
       this.hasValidSize = true;
@@ -1027,15 +1033,27 @@ class App {
   }
 
   onWindowResize() {
-    const width = this.container.offsetWidth;
-    const height = this.container.offsetHeight;
+    if (this.disposed || !this.container) return;
+    const width = this.container.offsetWidth || (typeof window !== 'undefined' ? window.innerWidth : 800);
+    const height = this.container.offsetHeight || (typeof window !== 'undefined' ? window.innerHeight : 600);
 
     if (width <= 0 || height <= 0) {
       this.hasValidSize = false;
       return;
     }
 
-    this.renderer.setSize(width, height);
+    // Ignore minor height fluctuations (< 120px) caused by mobile browser address bar collapse
+    const widthChanged = Math.abs(width - this.lastWidth) > 4;
+    const heightChangedSignificantly = Math.abs(height - this.lastHeight) > 120;
+
+    if (!widthChanged && !heightChangedSignificantly && this.hasValidSize) {
+      return;
+    }
+
+    this.lastWidth = width;
+    this.lastHeight = height;
+
+    this.renderer.setSize(width, height, false);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.composer.setSize(width, height);
@@ -1221,6 +1239,7 @@ class App {
     }
 
     window.removeEventListener('resize', this.onWindowResize);
+    window.removeEventListener('orientationchange', this.onWindowResize);
     if (this.container) {
       this.container.removeEventListener('mousedown', this.onMouseDown);
       this.container.removeEventListener('mouseup', this.onMouseUp);
@@ -1270,14 +1289,6 @@ class App {
       } else {
         requestAnimationFrame(this.tick);
         return;
-      }
-    }
-
-    if (resizeRendererToDisplaySize(this.renderer, this.setSize)) {
-      const canvas = this.renderer.domElement;
-      if (this.hasValidSize) {
-        this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
-        this.camera.updateProjectionMatrix();
       }
     }
 
@@ -1333,7 +1344,7 @@ const Hyperspeed: FC<HyperspeedProps> = ({ effectOptions = DEFAULT_EFFECT_OPTION
     };
   }, [effectOptions, lightMode]);
 
-  return <div id="lights" className="w-full h-full" ref={hyperspeed}></div>;
+  return <div id="lights" className="w-full h-full pointer-events-none" ref={hyperspeed}></div>;
 };
 
 export default Hyperspeed;
